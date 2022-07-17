@@ -1,6 +1,6 @@
 ---
 marp: true
-theme: gaia
+theme: default
 size: 16:9
 paginate: true
 headingDivider: 2
@@ -148,7 +148,7 @@ pre {
 }
 </style>
 
-* 以下の内容を **blink.sv** に追加
+* 以下の内容を **top.sv** に追加
 
 ```verilog
 module top(
@@ -231,8 +231,9 @@ endmodule
 
 * IO制約を行ったら、配置配線を行いビットストリームを生成する
 * **Place & Route** をダブルクリックする。配置配線とビットストリーム生成が実行される
+* 成功すると `(プロジェクトのディレクトリ)/impl/pnr/blink.fs` が生成される。
 
-## ビットストリームの書き込み
+## ビットストリームの書き込み準備
 
 * **openFPGALoader** を使ってビットストリームを書き込む
   * https://github.com/trabucayre/openFPGALoader
@@ -244,18 +245,80 @@ endmodule
   * https://github.com/trabucayre/openFPGALoader/releases/tag/v0.8.0
 
 ```shell
-$ mkdir ~/openFPGALoader && curl -L https://github.com/trabucayre/openFPGALoader/releases/download/v0.8.0/ubtuntu20.04-openFPGALoader.tgz | tar zx -C ~/openFPGALoader
+$ mkdir -p ~/openFPGALoader && curl -L https://github.com/trabucayre/openFPGALoader/releases/download/v0.8.0/ubtuntu20.04-openFPGALoader.tgz | tar zx -C ~/openFPGALoader
 $ export PATH=~/openFPGALoader/usr/local/bin:$PATH # パスを通しておく
 ```
 
-## openFPGALoaderのインストール (Windows)
+## openFPGALoaderのインストール (Windows) (1/3)
 
 * openFPGALoaderのリリースページのバイナリはMSYS用で面倒なので、Windows向けスタティックリンク版を用意
   * https://github.com/ciniml/seccamp_2022_riscv_cpu/tree/main/blob/openFPGALoader-0.8.0_win.zip
 
 ```shell
-$ mkdir ~/openFPGALoader && curl -OL https://github.com/ciniml/seccamp_2022_riscv_cpu/tree/main/blob/openFPGALoader-0.8.0_win.zip
+$ mkdir -p ~/openFPGALoader && curl -OL https://github.com/ciniml/seccamp_2022_riscv_cpu/raw/main/blob/openFPGALoader-0.8.0_win.zip
 $ unzip -u openFPGALoader-0.8.0_win.zip -d ~/openFPGALoader
-$ export PATH=~/openFPGALoader/bin:$PATH
+$ export PATH=~/openFPGALoader/openFPGALoader-win/bin:$PATH
 ```
 
+## openFPGALoaderのインストール (Windows) (2/3)
+
+![bg right:35% fit](figure/zadig_driver.drawio.svg)
+
+* openFPGALoaderから書き込み回路にアクセスするために **Zadig** でドライバを差し替える
+  * https://github.com/pbatard/libwdi/releases/download/v1.4.1/zadig-2.7.exe
+
+## openFPGALoaderのインストール (Windows) (3/3)
+
+![bg right:35% fit](figure/zadig_driver.drawio.svg)
+
+1. **Options -> List All Devices** にチェックを入れる
+2. PCにTang Nano 9Kを接続し、リストボックスから **JTAG Debugger (Interface 0)** を選択する
+3. **Driver** の右側のリストから **WinUSB** を選択する
+4. **Reinstall Driver** を押す
+
+## openFPGALoaderの動作確認
+
+* Tang Nano 9Kを検出してみる
+* 以降、Windowsでは、 `openFPGALoader` を `openFPGALoader.exe` に置き換えて実行すること
+
+```shell
+$ openFPGALoader --detect
+Jtag frequency : requested 6.00MHz   -> real 6.00MHz
+index 0:
+        idcode 0x100481b
+        manufacturer Gowin
+        family GW1N
+        model  GW1N(R)-9C
+        irlength 8
+```
+
+## ビットストリームの書き込み
+
+* 先ほど生成したビットストリームを書き込む
+* `path/to/blink.fs` は `(プロジェクトのディレクトリ)/impl/pnr/blink.fs` のパスに置き換えること
+
+<style scoped>
+pre {
+  font-size: 22px;
+}
+</style>
+
+```shell
+$ openFPGALoader --board tangnano9k --write-sram path/to/blink.fs
+write to ram
+Jtag frequency : requested 6.00MHz   -> real 6.00MHz
+Parse file Parse blink.fs:
+Done
+DONE
+Jtag frequency : requested 2.50MHz   -> real 2.00MHz
+erase SRAM Done
+Flash SRAM: [==================================================] 100.00%
+Done
+SRAM Flash: Success
+```
+
+## まとめ
+
+* FPGAの書き込み手順については各FPGAベンダーのツール毎にことなるが、流れは大体同じ
+  * 論理合成、制約の設定、配置配線、ビットストリーム生成、書き込み
+* ここまでの手順でComProc CPU Boardを使う準備が整った
