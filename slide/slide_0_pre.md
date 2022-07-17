@@ -99,3 +99,29 @@ _header: ""
 
 ## FPGAのデザイン合成確認
 
+* 出荷時のファームウェアとことなるデザインを書き込んで <br/> FPGAのデザインの論理合成・書き込みを行えることを確認する
+* 論理合成とは
+  * Verilog HDLなどで記述された論理回路をFPGAに書き込み可能な形式 (**ビットストリーム**) に変換することを指す
+  * 厳密には **論理合成 (Logic Synthesis)** はHDLからFPGAに書き込み可能なビットストリームを生成するプロセスの一部をさすが、ここでは説明を割愛する
+* GUIで行う方法、CUIで行う方法の2つがある
+
+
+## GUIを使った作業手順
+
+* GOWIN EDAのGUIを使ったデザインの合成手順
+* GOWIN EDAのインストールパスを `$GOWIN_HOME` とする
+  * e.g. `~/gowin/1.9.8.03_edu`
+* まずは GOWIN EDAを起動する
+
+```shell
+$ $GOWIN_HOME/IDE/bin/gw_ide&
+```
+
+* Windowsの場合はスタートメニューからGowin IDEを起動
+
+## GUIを使った作業手順
+
+![bg right:45% fit](figure/gowin_eda_gui_new_project.drawio.svg)
+
+1. **File -> New** メニューを選んで、**New** ダイアログで **FPGA Design Project** を選ぶ
+2. 
