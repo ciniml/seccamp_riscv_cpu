@@ -119,9 +119,143 @@ $ $GOWIN_HOME/IDE/bin/gw_ide&
 
 * Windowsの場合はスタートメニューからGowin IDEを起動
 
-## GUIを使った作業手順
+## プロジェクトの作成(1/2)
 
 ![bg right:45% fit](figure/gowin_eda_gui_new_project.drawio.svg)
 
-1. **File -> New** メニューを選んで、**New** ダイアログで **FPGA Design Project** を選ぶ
-2. 
+1. **File -> New** メニューを選んで、**New** ダイアログで **FPGA Design Project** を選んで **OK** を押す
+2. **Project Name** 画面で **Name** に `blink` 、 **Create in** に適当なホームディレクトリ以下のディレクトリを指定して **Next** を押す
+
+## プロジェクトの作成(2/2)
+
+![bg right:45% fit](figure/gowin_eda_gui_new_project_2.drawio.svg)
+
+3. **Series** で **GW1NR** を選択し、 **Part Number** で **GW1NR-LV9QN88PC6/I5** を選択し、 **Next** を押す
+4. **Summary** 画面で **Finish** を押す
+
+## HDLファイルの追加(1/2)
+
+![bg right:45% fit](figure/gowin_eda_gui_add_blink_source.drawio.svg)
+
+1. **Design** 画面を右クリックして **New File** を選択する
+2. **Verilog File** を選択して **OK** を押す
+3. **Name** に **top** と入力し、拡張子リストから **.sv** を選択して **OK** を押す
+## HDLファイルの追加(2/2)
+
+<style scoped>
+pre {
+  font-size: 18px;
+}
+</style>
+
+* 以下の内容を **blink.sv** に追加
+
+```verilog
+module top(
+    input wire          clock,
+    output logic [5:0]  led
+);
+
+
+initial begin
+    led <= 0;
+end
+
+logic [24:0] counter = 0;
+
+always_ff @(posedge clock) begin
+    if( counter < 25'd27_000_000 ) begin
+        counter++;
+    end
+    else begin
+        led <= ~led;
+        counter <= '0;
+    end
+end
+
+endmodule
+```
+
+## 論理合成(1/4)
+
+![bg right:45% fit](figure/gowin_eda_gui_synthesis.drawio.svg)
+
+1. **Process** タブの **Synthesis** をダブルクリックする
+2. **Console** ウィンドウにエラーメッセージがたくさん出力される。
+
+## 論理合成(2/4)
+
+* プロジェクトのVerilog言語バージョンの設定がデフォルトでVerilog 95なのが問題
+* 拡張子 **.sv** でもSystemVerilog扱いにならない
+
+## 論理合成(3/4)
+
+![bg right:40% fit](figure/gowin_eda_gui_configuration_sv.drawio.svg)
+
+1. **Project -> Configuration** メニューを選択する
+2. **Synthesize - General** を選択する
+3. **Verilog Language** を **System Verilog 2017** に設定する。
+
+
+## フロアプラン - IO制約
+
+![bg right:45% fit](figure/gowin_eda_gui_floorplan.drawio.svg)
+
+* デザインのポートとFPGAのピンの対応付けを行う
+* ピンの情報はTang Nano 9Kの回路図を確認する
+
+## Tang Nano 9Kの回路図
+
+* Tang Nano 9Kの情報はSipeedのサイトにある 
+* https://dl.sipeed.com/shareURL/TANG/Nano%209K/2_Schematic
+
+## 対象のピンを確認
+
+![bg right:40% fit](figure/tang_nano_9k_blink_pins.drawio.svg)
+
+* Tang Nano 9Kの回路図では、ネット名にFPGAのピン番号が記載されている
+  * 他のボードだとそのかぎりではないので、回路図を追いかける必要がある
+
+## IO制約の設定
+
+![bg right:45% fit](figure/gowin_eda_gui_floorplan_io_constraint.drawio.svg)
+
+1. **IO Constraints** の全ての行を選択して右クリックし、 **IO Type -> LVCMOS33** を選択
+2. 各ピンの **Location** を画像の通り設定
+  * 回路図と比較してみること
+3. **Ctrl+S** を入力して保存したのち、FloorPlannerウィンドウを閉じる
+
+## 配置配線
+
+![bg right:45% fit](figure/gowin_eda_gui_implement.drawio.svg)
+
+* IO制約を行ったら、配置配線を行いビットストリームを生成する
+* **Place & Route** をダブルクリックする。配置配線とビットストリーム生成が実行される
+
+## ビットストリームの書き込み
+
+* **openFPGALoader** を使ってビットストリームを書き込む
+  * https://github.com/trabucayre/openFPGALoader
+* まずは **openFPGALoader** をインストールする
+
+## openFPGALoaderのインストール (Linux)
+
+* openFPGALoaderのリリースページからバイナリをダウンロードして展開
+  * https://github.com/trabucayre/openFPGALoader/releases/tag/v0.8.0
+
+```shell
+$ mkdir ~/openFPGALoader && curl -L https://github.com/trabucayre/openFPGALoader/releases/download/v0.8.0/ubtuntu20.04-openFPGALoader.tgz | tar zx -C ~/openFPGALoader
+$ export PATH=~/openFPGALoader/usr/local/bin:$PATH # パスを通しておく
+```
+
+## openFPGALoaderのインストール (Windows)
+
+* openFPGALoaderのリリースページのバイナリはMSYS用で面倒なので、Windows向けスタティックリンク版を用意
+  * https://github.com/ciniml/seccamp_2022_riscv_cpu/tree/main/blob/openFPGALoader-0.8.0_win.zip
+
+```shell
+$ mkdir ~/openFPGALoader && curl -OL https://github.com/ciniml/seccamp_2022_riscv_cpu/tree/main/blob/openFPGALoader-0.8.0_win.zip
+$ unzip -u openFPGALoader-0.8.0_win.zip -d ~/openFPGALoader
+$ export PATH=~/openFPGALoader/bin:$PATH
+```
+
