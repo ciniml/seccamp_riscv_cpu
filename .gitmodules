@@ -1,0 +1,6 @@
+[submodule "external/riscv-chisel-book"]
+	path = external/riscv-chisel-book
+	url = https://github.com/chadyuu/riscv-chisel-book
+[submodule "external/fpga_samples"]
+	path = external/fpga_samples
+	url = https://github.com/ciniml/fpga_samples
