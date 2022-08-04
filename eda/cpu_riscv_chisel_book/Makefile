@@ -22,7 +22,7 @@ SRCS := $(wildcard src/$(TARGET)/*.cst) $(wildcard src/$(TARGET)/*.sdc) $(wildca
 include ../build_gowin.mk
 
 $(RISCV_CORE_SRC): $(CHISEL_DESIGN_SRCS)
-	cd $(ROOT_DIR) && sbt "project riscv_chisel_book; runMain $(RISCV_ELABORATE)"
+	cd $(ROOT_DIR) && sbt "project root; runMain $(RISCV_ELABORATE)"
 
 src/sw/bootrom.hex: src/sw/bootrom.c src/sw/link.ld src/sw/Makefile
 	cd src/sw; make
