@@ -17,13 +17,13 @@ class DmemPortIo extends Bundle {
   val wdata = Input(UInt(WORD_LEN.W))
 }
 
-class Memory(memoryPath: Option[Int => String], baseAddress: UInt = "x00000000".U) extends Module {
+class Memory(memoryPath: Option[Int => String], baseAddress: UInt = "x80000000".U) extends Module {
   val io = IO(new Bundle {
     val imem = new ImemPortIo()
     val dmem = new DmemPortIo()
   })
 
-  val mems = (0 to 3).map(_ => Mem(16384/4, UInt(8.W)))
+  val mems = (0 to 3).map(_ => SyncReadMem(16384/4, UInt(8.W)))
   if( memoryPath.isDefined ) {
     val memoryPath_ = memoryPath.get
     for(i <- 0 to 3) {
