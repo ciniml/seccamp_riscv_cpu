@@ -8,11 +8,13 @@ import chisel3.util.experimental.loadMemoryFromFileInline
 class ImemPortIo extends Bundle {
   val addr = Input(UInt(WORD_LEN.W))
   val inst = Output(UInt(WORD_LEN.W))
+  val valid = Output(Bool())
 }
 
 class DmemPortIo extends Bundle {
   val addr  = Input(UInt(WORD_LEN.W))
   val rdata = Output(UInt(WORD_LEN.W))
+  val rvalid = Output(Bool())
   val wen   = Input(Bool())
   val wdata = Input(UInt(WORD_LEN.W))
 }
@@ -30,11 +32,20 @@ class Memory(memoryPath: Option[Int => String], baseAddress: UInt = "x80000000".
       loadMemoryFromFileInline(mems(i), memoryPath_(i))
     }
   }
+  val imemWordAddrBits = io.imem.addr.getWidth - 2
   val imemWordAddr = (io.imem.addr - baseAddress) >> 2
-  val dmemWordAddr = (io.dmem.addr - baseAddress) >> 2
+  val imemWordAddrFetched = Reg(UInt(imemWordAddrBits.W)) // フェッチ済みのアドレス
+  val isFirstCycle = RegInit(true.B)  // リセット直後かどうか？
+  isFirstCycle := false.B
+  // リセット直後でなく、対象アドレスがフェッチ済みならデータ有効
+  io.imem.valid := !isFirstCycle && imemWordAddrFetched === imemWordAddr
+  imemWordAddrFetched := imemWordAddr
   io.imem.inst := Cat(
     (0 to 3).map(i => mems(i).read(imemWordAddr)).reverse
   )
+
+  io.dmem.rvalid := false.B
+  val dmemWordAddr = (io.dmem.addr - baseAddress) >> 2
   io.dmem.rdata := Cat(
     (0 to 3).map(i => mems(i).read(dmemWordAddr)).reverse
   )

@@ -68,7 +68,7 @@ class Core extends Module {
 
   val if_reg_pc = RegInit(START_ADDR)
   io.imem.addr := if_reg_pc
-  val if_inst = io.imem.inst
+  val if_inst = Mux(io.imem.valid, io.imem.inst, BUBBLE)  // 命令が無効ならBUBBLEにする
 
   val stall_flg     = Wire(Bool())
   val exe_br_flg    = Wire(Bool())
@@ -82,7 +82,7 @@ class Core extends Module {
     exe_br_flg         -> exe_br_target,
     exe_jmp_flg         -> exe_alu_out,
     (if_inst === ECALL) -> csr_regfile(0x305), // go to trap_vector
-    stall_flg           -> if_reg_pc, // stall
+    (stall_flg || !io.imem.valid) -> if_reg_pc, // stall
   ))
   if_reg_pc := if_pc_next
 
@@ -314,7 +314,9 @@ class Core extends Module {
 
   //**********************************
   // IO & Debug
-  io.success := id_reg_inst === "x00000513".U
+  val successDetected = RegInit(false.B)
+  successDetected := Mux(if_inst =/= BUBBLE, if_inst === "x00000513".U, successDetected)
+  io.success := successDetected
   io.exit := if_inst === ECALL
   printf(p"if_reg_pc        : 0x${Hexadecimal(if_reg_pc)}\n")
   printf(p"id_reg_pc        : 0x${Hexadecimal(id_reg_pc)}\n")
