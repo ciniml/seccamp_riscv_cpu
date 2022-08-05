@@ -4,3 +4,6 @@
 [submodule "external/fpga_samples"]
 	path = external/fpga_samples
 	url = https://github.com/ciniml/fpga_samples
+[submodule "external/riscv-tests"]
+	path = external/riscv-tests
+	url = https://github.com/ciniml/riscv-tests
