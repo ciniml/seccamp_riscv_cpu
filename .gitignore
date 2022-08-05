@@ -12,3 +12,4 @@ project
 .bsp
 .bloop
 rtl/comproc_cpu_board
+test_run_dir
