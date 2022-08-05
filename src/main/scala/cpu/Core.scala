@@ -71,6 +71,7 @@ class Core extends Module {
   val if_inst = Mux(io.imem.valid, io.imem.inst, BUBBLE)  // 命令が無効ならBUBBLEにする
 
   val stall_flg     = Wire(Bool())
+  val mem_stall_flg = Wire(Bool())  // データバス要因のストール
   val exe_br_flg    = Wire(Bool())
   val exe_br_target = Wire(UInt(WORD_LEN.W))
   val exe_jmp_flg   = Wire(Bool())
@@ -107,7 +108,7 @@ class Core extends Module {
   // EXとのデータハザード→stall
   val id_rs1_data_hazard = (exe_reg_rf_wen === REN_S) && (id_rs1_addr_b =/= 0.U) && (id_rs1_addr_b === exe_reg_wb_addr)
   val id_rs2_data_hazard = (exe_reg_rf_wen === REN_S) && (id_rs2_addr_b =/= 0.U) && (id_rs2_addr_b === exe_reg_wb_addr)
-  stall_flg := (id_rs1_data_hazard || id_rs2_data_hazard)
+  stall_flg := (id_rs1_data_hazard || id_rs2_data_hazard || mem_stall_flg)
 
   // branch,jump,stall時にIDをBUBBLE化
   val id_inst = Mux((exe_br_flg || exe_jmp_flg || stall_flg), BUBBLE, id_reg_inst)  
@@ -203,24 +204,26 @@ class Core extends Module {
 
 
   //**********************************
-  // ID/EX register 
-  exe_reg_pc            := id_reg_pc
-  exe_reg_op1_data      := id_op1_data
-  exe_reg_op2_data      := id_op2_data
-  exe_reg_rs2_data      := id_rs2_data
-  exe_reg_wb_addr       := id_wb_addr
-  exe_reg_rf_wen        := id_rf_wen
-  exe_reg_exe_fun       := id_exe_fun
-  exe_reg_wb_sel        := id_wb_sel
-  exe_reg_imm_i_sext    := id_imm_i_sext
-  exe_reg_imm_s_sext    := id_imm_s_sext
-  exe_reg_imm_b_sext    := id_imm_b_sext
-  exe_reg_imm_u_shifted := id_imm_u_shifted
-  exe_reg_imm_z_uext    := id_imm_z_uext
-  exe_reg_csr_addr      := id_csr_addr
-  exe_reg_csr_cmd       := id_csr_cmd
-  exe_reg_mem_wen       := id_mem_wen
-
+  // ID/EX register
+  // MEMステージがストールしていない場合のみEXEのパイプラインレジスタを更新する。
+  when( !mem_stall_flg ) {
+    exe_reg_pc            := id_reg_pc
+    exe_reg_op1_data      := id_op1_data
+    exe_reg_op2_data      := id_op2_data
+    exe_reg_rs2_data      := id_rs2_data
+    exe_reg_wb_addr       := id_wb_addr
+    exe_reg_rf_wen        := id_rf_wen
+    exe_reg_exe_fun       := id_exe_fun
+    exe_reg_wb_sel        := id_wb_sel
+    exe_reg_imm_i_sext    := id_imm_i_sext
+    exe_reg_imm_s_sext    := id_imm_s_sext
+    exe_reg_imm_b_sext    := id_imm_b_sext
+    exe_reg_imm_u_shifted := id_imm_u_shifted
+    exe_reg_imm_z_uext    := id_imm_z_uext
+    exe_reg_csr_addr      := id_csr_addr
+    exe_reg_csr_cmd       := id_csr_cmd
+    exe_reg_mem_wen       := id_mem_wen
+  }
 
   //**********************************
   // Execute (EX) Stage
@@ -256,25 +259,30 @@ class Core extends Module {
 
   //**********************************
   // EX/MEM register
-  mem_reg_pc         := exe_reg_pc
-  mem_reg_op1_data   := exe_reg_op1_data
-  mem_reg_rs2_data   := exe_reg_rs2_data
-  mem_reg_wb_addr    := exe_reg_wb_addr
-  mem_reg_alu_out    := exe_alu_out
-  mem_reg_rf_wen     := exe_reg_rf_wen
-  mem_reg_wb_sel     := exe_reg_wb_sel
-  mem_reg_csr_addr   := exe_reg_csr_addr
-  mem_reg_csr_cmd    := exe_reg_csr_cmd
-  mem_reg_imm_z_uext := exe_reg_imm_z_uext
-  mem_reg_mem_wen    := exe_reg_mem_wen
-
+  // MEMステージがストールしていない場合のみMEMのパイプラインレジスタを更新する。
+  when( !mem_stall_flg ) {
+    mem_reg_pc         := exe_reg_pc
+    mem_reg_op1_data   := exe_reg_op1_data
+    mem_reg_rs2_data   := exe_reg_rs2_data
+    mem_reg_wb_addr    := exe_reg_wb_addr
+    mem_reg_alu_out    := exe_alu_out
+    mem_reg_rf_wen     := exe_reg_rf_wen
+    mem_reg_wb_sel     := exe_reg_wb_sel
+    mem_reg_csr_addr   := exe_reg_csr_addr
+    mem_reg_csr_cmd    := exe_reg_csr_cmd
+    mem_reg_imm_z_uext := exe_reg_imm_z_uext
+    mem_reg_mem_wen    := exe_reg_mem_wen
+  }
 
   //**********************************
   // Memory Access Stage
 
   io.dmem.addr  := mem_reg_alu_out
+  io.dmem.ren   := mem_reg_wb_sel === WB_MEM  // ロード命令ならrenをアサート
   io.dmem.wen   := mem_reg_mem_wen
   io.dmem.wdata := mem_reg_rs2_data
+  // WBでデータバスの内容が必要だが、データバスのデータが有効でないならストール
+  mem_stall_flg := io.dmem.ren && !io.dmem.rvalid
 
   // CSR
   val csr_rdata = csr_regfile(mem_reg_csr_addr)
@@ -300,7 +308,7 @@ class Core extends Module {
   //**********************************
   // MEM/WB regsiter
   wb_reg_wb_addr := mem_reg_wb_addr
-  wb_reg_rf_wen  := mem_reg_rf_wen
+  wb_reg_rf_wen  := Mux(!mem_stall_flg, mem_reg_rf_wen, REN_X)  // ストールしてなければライトバックする
   wb_reg_wb_data := mem_wb_data 
 
 
