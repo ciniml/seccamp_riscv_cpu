@@ -17,6 +17,7 @@ class DmemPortIo extends Bundle {
   val ren = Input(Bool())
   val rvalid = Output(Bool())
   val wen   = Input(Bool())
+  val wstrb = Input(UInt(4.W))
   val wdata = Input(UInt(WORD_LEN.W))
 }
 
@@ -44,7 +45,7 @@ class Memory(memoryPath: Option[Int => String], baseAddress: UInt = "x80000000".
   io.imem.inst := Cat(
     (0 to 3).map(i => mems(i).read(imemWordAddr)).reverse
   )
-  
+
   val dmemWordAddr = (io.dmem.addr - baseAddress) >> 2
   val rvalid = RegInit(false.B)
   val rdata = Cat(
@@ -63,7 +64,9 @@ class Memory(memoryPath: Option[Int => String], baseAddress: UInt = "x80000000".
   }
   when(io.dmem.wen){
     for(i <- 0 to 3) {
-      mems(i).write((io.dmem.addr - baseAddress) >> 2, io.dmem.wdata(8*(i+1)-1, 8*i))
+      when(io.dmem.wstrb(i)) {
+        mems(i).write((io.dmem.addr - baseAddress) >> 2, io.dmem.wdata(8*(i+1)-1, 8*i))
+      }
     }
   }
 }
