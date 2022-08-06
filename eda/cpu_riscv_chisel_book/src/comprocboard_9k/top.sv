@@ -63,6 +63,7 @@ logic reset;
 assign reset = reset_seq[0];
 
 logic [31:0] io_debug_pc;
+logic [31:0] io_gpio_out;
 logic io_success;
 logic io_exit;
 
@@ -80,7 +81,7 @@ always_ff @(posedge clock) begin
   end
 end
 
-assign led = ~{3'b000, reset, io_success, io_exit};
+assign led = ~io_gpio_out[5:0]; //~{3'b000, reset, io_success, io_exit};
 
 Top core(
   .clock(clock && !cpu_halt),
