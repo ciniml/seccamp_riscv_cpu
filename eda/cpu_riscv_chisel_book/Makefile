@@ -12,8 +12,7 @@ RISCV_ELABORATE := fpga.Elaborate_ComProcCpuBoard
 RISCV_ELABORATE_OUTPUT_DIR := $(RTL_DIR)/comproc_cpu_board
 endif
 
-RISCV_CORE_SRC := $(RISCV_ELABORATE_OUTPUT_DIR)/riscv.v
-CHISEL_SRC := 
+RISCV_CORE_SRC := src/$(TARGET)/riscv.v
 PROJECT_ADDITIONAL_ARGS := $(abspath $(RISCV_CORE_SRC))
 PROJECT_ADDITIONAL_CLEAN := $(RISCV_CORE_SRC)
 
@@ -23,6 +22,7 @@ include ../build_gowin.mk
 
 $(RISCV_CORE_SRC): $(CHISEL_DESIGN_SRCS)
 	cd $(ROOT_DIR) && sbt "project root; runMain $(RISCV_ELABORATE)"
+	cp $(RISCV_ELABORATE_OUTPUT_DIR)/riscv.v $@
 
 src/sw/bootrom.hex: src/sw/bootrom.c src/sw/link.ld src/sw/Makefile
 	cd src/sw; make

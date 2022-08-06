@@ -5,13 +5,14 @@ import chisel3.util._
 import common.Instructions._
 import common.Consts._
 
-class Core extends Module {
+class Core(startAddress: UInt = START_ADDR) extends Module {
   val io = IO(
     new Bundle {
       val imem = Flipped(new ImemPortIo())
       val dmem = Flipped(new DmemPortIo())
       val success = Output(Bool())
       val exit = Output(Bool())
+      val debug_pc = Output(UInt(WORD_LEN.W))
     }
   )
 
@@ -69,7 +70,7 @@ class Core extends Module {
   //**********************************
   // Instruction Fetch (IF) Stage
 
-  val if_reg_pc = RegInit(START_ADDR)
+  val if_reg_pc = RegInit(startAddress)
   io.imem.addr := if_reg_pc
   val if_inst = Mux(io.imem.valid, io.imem.inst, BUBBLE)  // 命令が無効ならBUBBLEにする
 
@@ -359,6 +360,7 @@ class Core extends Module {
   successDetected := Mux(if_inst =/= BUBBLE, if_inst === "x00000513".U, successDetected)
   io.success := successDetected
   io.exit := if_inst === ECALL
+  io.debug_pc := if_reg_pc
   printf(p"if_reg_pc        : 0x${Hexadecimal(if_reg_pc)}\n")
   printf(p"id_reg_pc        : 0x${Hexadecimal(id_reg_pc)}\n")
   printf(p"id_reg_inst      : 0x${Hexadecimal(id_reg_inst)}\n")

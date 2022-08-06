@@ -4,7 +4,8 @@
 # Please note that the relative path is based on the project directory, not the directory which contains this file.
 
 TARGET ?= tangnano1k
-BITSTREAM := build/$(TARGET)/impl/pnr/$(PROJECT_NAME).fs
+BUILD_DIR := build/$(TARGET)
+BITSTREAM := $(BUILD_DIR)/impl/pnr/$(PROJECT_NAME).fs
 SRC_DIR := $(abspath src/$(TARGET))
 RTL_DIR := $(abspath ../../rtl)
 

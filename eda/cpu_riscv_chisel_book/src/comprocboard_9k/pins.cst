@@ -1,0 +1,86 @@
+IO_LOC "clock" 52;
+IO_PORT "clock" IO_TYPE=LVCMOS33;
+
+IO_LOC "button_s2" 3;
+IO_PORT "button_s2" IO_TYPE=LVCMOS33;
+
+IO_LOC "row[0]" 34;
+IO_LOC "row[1]" 35;
+IO_LOC "row[2]" 41;
+IO_LOC "row[3]" 42;
+IO_LOC "row[4]" 51;
+IO_LOC "row[5]" 53;
+IO_LOC "row[6]" 54;
+IO_LOC "row[7]" 55;
+IO_LOC "d[0]" 56;
+IO_LOC "d[1]" 57;
+IO_LOC "d[2]" 68;
+IO_LOC "d[3]" 69;
+IO_LOC "d[4]" 32;
+IO_LOC "d[5]" 31;
+IO_LOC "d[6]" 49;
+IO_LOC "d[7]" 48;
+IO_LOC "seven_seg" 40;
+IO_PORT "row[0]" IO_TYPE=LVCMOS33;
+IO_PORT "row[1]" IO_TYPE=LVCMOS33;
+IO_PORT "row[2]" IO_TYPE=LVCMOS33;
+IO_PORT "row[3]" IO_TYPE=LVCMOS33;
+IO_PORT "row[4]" IO_TYPE=LVCMOS33;
+IO_PORT "row[5]" IO_TYPE=LVCMOS33;
+IO_PORT "row[6]" IO_TYPE=LVCMOS33;
+IO_PORT "row[7]" IO_TYPE=LVCMOS33;
+IO_PORT "d[0]" IO_TYPE=LVCMOS33;
+IO_PORT "d[1]" IO_TYPE=LVCMOS33;
+IO_PORT "d[2]" IO_TYPE=LVCMOS33;
+IO_PORT "d[3]" IO_TYPE=LVCMOS33;
+IO_PORT "d[4]" IO_TYPE=LVCMOS33;
+IO_PORT "d[5]" IO_TYPE=LVCMOS33;
+IO_PORT "d[6]" IO_TYPE=LVCMOS33;
+IO_PORT "d[7]" IO_TYPE=LVCMOS33;
+IO_PORT "seven_seg" IO_TYPE=LVCMOS33;
+
+IO_LOC  "led[0]" 10;
+IO_LOC  "led[1]" 11;
+IO_LOC  "led[2]" 13;
+IO_LOC  "led[3]" 14;
+IO_LOC  "led[4]" 15;
+IO_LOC  "led[5]" 16;
+IO_PORT "led[0]" IO_TYPE=LVCMOS18;
+IO_PORT "led[1]" IO_TYPE=LVCMOS18;
+IO_PORT "led[2]" IO_TYPE=LVCMOS18;
+IO_PORT "led[3]" IO_TYPE=LVCMOS18;
+IO_PORT "led[4]" IO_TYPE=LVCMOS18;
+IO_PORT "led[5]" IO_TYPE=LVCMOS18;
+
+IO_LOC "uart_rx" 30
+IO_LOC "uart_tx" 33
+IO_PORT "uart_rx" IO_TYPE=LVCMOS33;
+IO_PORT "uart_tx" IO_TYPE=LVCMOS33;
+
+IO_LOC "lcd_db[3]" 73
+IO_LOC "lcd_db[2]" 72
+IO_LOC "lcd_db[1]" 71
+IO_LOC "lcd_db[0]" 70
+IO_LOC "lcd_rs" 74
+IO_LOC "lcd_rw" 75
+IO_LOC "lcd_e" 76
+IO_PORT "lcd_db[3]" IO_TYPE=LVCMOS33 SLEW_RATE=FAST
+IO_PORT "lcd_db[2]" IO_TYPE=LVCMOS33 SLEW_RATE=FAST
+IO_PORT "lcd_db[1]" IO_TYPE=LVCMOS33 SLEW_RATE=FAST
+IO_PORT "lcd_db[0]" IO_TYPE=LVCMOS33 SLEW_RATE=FAST
+IO_PORT "lcd_rs" IO_TYPE=LVCMOS33
+IO_PORT "lcd_rw" IO_TYPE=LVCMOS33
+IO_PORT "lcd_e" IO_TYPE=LVCMOS33
+
+IO_LOC "debug_out[5]" 27
+IO_LOC "debug_out[4]" 26
+IO_LOC "debug_out[3]" 25
+IO_LOC "debug_out[2]" 39
+IO_LOC "debug_out[1]" 36
+IO_LOC "debug_out[0]" 37
+IO_PORT "debug_out[5]" IO_TYPE=LVCMOS33
+IO_PORT "debug_out[4]" IO_TYPE=LVCMOS33
+IO_PORT "debug_out[3]" IO_TYPE=LVCMOS33
+IO_PORT "debug_out[2]" IO_TYPE=LVCMOS33
+IO_PORT "debug_out[1]" IO_TYPE=LVCMOS33
+IO_PORT "debug_out[0]" IO_TYPE=LVCMOS33

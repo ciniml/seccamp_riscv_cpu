@@ -25,8 +25,8 @@ if {${TARGET} == "comprocboard_9k"} {
 #add_file -type verilog [file normalize ${RTL_DIR}/uart/uart_tx.sv]
 #add_file -type verilog [file normalize ${RTL_DIR}/uart/uart_rx.sv]
 add_file -type verilog [file normalize ${RISCV_CORE_SRC}]
-#add_file -type verilog [file normalize ${SRC_DIR}/top.sv]
-#add_file -type cst [file normalize ${SRC_DIR}/pins.cst]
-#add_file -type sdc [file normalize ${SRC_DIR}/timing.sdc]
+add_file -type verilog [file normalize ${SRC_DIR}/top.sv]
+add_file -type cst [file normalize ${SRC_DIR}/pins.cst]
+add_file -type sdc [file normalize ${SRC_DIR}/timing.sdc]
 
 run all
