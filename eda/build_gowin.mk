@@ -14,7 +14,7 @@ include ../targets/$(TARGET)/target.mk
 DEVICE ?= $(DEVICE_FAMILY)
 PROGRAMMER_CLI_DIR ?= $(dir $(shell which programmer_cli))
 PROGRAMMER_CABLE ?=
-USE_OPENFPGA_LOADER ?= 0
+USE_OPENFPGA_LOADER ?= 1
 OPENFPGA_LOADER ?= $(shell which openFPGALoader)
 PROJECT_ADDITIONAL_ARGS ?= 
 PROJECT_ADDITIONAL_CLEAN ?=
