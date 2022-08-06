@@ -598,7 +598,7 @@ if_reg_pc := if_pc_next
 * メモリアクセス系以外のテストが通ることを確認すること
   * LB, LBU, LH, LW, SB, SBU, SH, SW のテストは除外
 
-## データバスアクセス時のストール実装 (1/5)
+## データバスアクセス時のストール実装 (1/6)
 
 * 命令メモリと同様にデータバスアクセスのストールも実装する
 * データバスのアクセスは読み出しデータ有効信号 `rvalid` だけでなく、読み出しを実行するかどうかの信号 `ren` を追加する
@@ -615,7 +615,7 @@ class DmemPortIo extends Bundle {
 }
 ```
 
-## データバスアクセス時のストール実装 (2/5)
+## データバスアクセス時のストール実装 (2/6)
 
 * メモリ側の変更
   * `rdata` の内容は 1サイクル後に `addr` の番地の内容になる
@@ -639,7 +639,7 @@ when( rvalid ) {
 }
 ```
 
-## データバスアクセス時のストール実装 (3/5)
+## データバスアクセス時のストール実装 (3/6)
 
 * コア側の変更 (IF, ID ステージ)
 
@@ -656,7 +656,7 @@ when( !mem_stall_flg ) {
 }
 ```
 
-## データバスアクセス時のストール実装 (4/5)
+## データバスアクセス時のストール実装 (4/6)
 
 * コア側の変更 (EXステージ)
 
@@ -669,7 +669,7 @@ when( !mem_stall_flg ) {
 }
 ```
 
-## データバスアクセス時のストール実装 (5/5)
+## データバスアクセス時のストール実装 (5/6)
 
 * コア側の変更 (MEMステージ)
 ```scala
@@ -690,3 +690,178 @@ wb_reg_wb_addr := mem_reg_wb_addr
 wb_reg_rf_wen  := Mux(!mem_stall_flg, mem_reg_rf_wen, REN_X)  // ストールしてなければライトバックする
 wb_reg_wb_data := mem_wb_data 
 ```
+
+## データバスアクセス時のストール実装 (6/6)
+
+* 再度 `riscv-tests` のシミュレーションを実行
+* `LW` `SW` のテストが通ることを確認
+
+<style scoped>
+pre {
+  font-size: 12px;
+}
+</style>
+
+```
+[info] RiscvTest:
+[info] RiscV
+[info] - must runs rv32ui-p-add
+(省略)
+[info] - must runs rv32ui-p-lb *** FAILED ***
+[info]   io_success=false (0, 0x0) did not equal expected=true (1, 0x1) (lines in riscv-test.scala: 61) (riscv-test.scala:66)
+[info] - must runs rv32ui-p-lbu *** FAILED ***
+[info]   io_success=false (0, 0x0) did not equal expected=true (1, 0x1) (lines in riscv-test.scala: 61) (riscv-test.scala:66)
+[info] - must runs rv32ui-p-lh *** FAILED ***
+[info]   io_success=false (0, 0x0) did not equal expected=true (1, 0x1) (lines in riscv-test.scala: 61) (riscv-test.scala:66)
+[info] - must runs rv32ui-p-lhu *** FAILED ***
+[info]   io_success=false (0, 0x0) did not equal expected=true (1, 0x1) (lines in riscv-test.scala: 61) (riscv-test.scala:66)
+[info] - must runs rv32ui-p-lui
+[info] - must runs rv32ui-p-lw
+(省略)
+[info] - must runs rv32ui-p-sb *** FAILED ***
+[info]   io_success=false (0, 0x0) did not equal expected=true (1, 0x1) (lines in riscv-test.scala: 61) (riscv-test.scala:66)
+[info] - must runs rv32ui-p-sh *** FAILED ***
+[info]   io_success=false (0, 0x0) did not equal expected=true (1, 0x1) (lines in riscv-test.scala: 61) (riscv-test.scala:66)
+[info] - must runs rv32ui-p-simple
+(省略)
+[info] - must runs rv32ui-p-sw
+(省略)i
+[info] Run completed in 47 seconds, 965 milliseconds.
+[info] Total number of tests run: 38
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 32, failed 6, canceled 0, ignored 0, pending 0
+[info] *** 6 TESTS FAILED ***
+```
+
+## 未実装ロード・ストア命令の実装 (1/7)
+
+* バイト単位・ハーフワード単位のロード・ストア命令を実装する
+  * アセンブリ言語でプログラムを書くなら実装しないのも手だが、Cで書くなら実装しておくのが無難
+
+## 未実装ロード・ストア命令の実装 (2/7)
+
+* 命令デコーダの改修
+  * 新たにメモリアクセス単位の情報を表す信号を追加
+
+```scala
+val csignals = ListLookup(id_inst,
+              List(ALU_X    , OP1_RS1, OP2_RS2, MEN_X, REN_X, WB_X  , CSR_X, MW_X),
+  Array(
+    LB    -> List(ALU_ADD  , OP1_RS1, OP2_IMI, MEN_X, REN_S, WB_MEM, CSR_X, MW_B),  // MW_B: バイト (符号付き)
+    LBU   -> List(ALU_ADD  , OP1_RS1, OP2_IMI, MEN_X, REN_S, WB_MEM, CSR_X, MW_BU), // MW_BU: バイト (符号なし)
+    SB    -> List(ALU_ADD  , OP1_RS1, OP2_IMS, MEN_S, REN_X, WB_X  , CSR_X, MW_B),
+    LH    -> List(ALU_ADD  , OP1_RS1, OP2_IMI, MEN_X, REN_S, WB_MEM, CSR_X, MW_H),  // MW_H: ハーフワード (符号付き)
+    LHU   -> List(ALU_ADD  , OP1_RS1, OP2_IMI, MEN_X, REN_S, WB_MEM, CSR_X, MW_HU), // MW_HU: ハーフワード (符号なし)
+    SH    -> List(ALU_ADD  , OP1_RS1, OP2_IMS, MEN_S, REN_X, WB_X  , CSR_X, MW_H),
+    LW    -> List(ALU_ADD  , OP1_RS1, OP2_IMI, MEN_X, REN_S, WB_MEM, CSR_X, MW_W),  // MW_W: ワード
+    SW    -> List(ALU_ADD  , OP1_RS1, OP2_IMS, MEN_S, REN_X, WB_X  , CSR_X, MW_W),
+    ADD   -> List(ALU_ADD  , OP1_RS1, OP2_RS2, MEN_X, REN_S, WB_ALU, CSR_X, MW_X),  // MW_X: 不使用
+    // (省略)
+  ))
+```
+
+## 未実装ロード・ストア命令の実装 (3/7)
+
+* パイプラインレジスタの追加
+* アクセス単位を後段のステージに伝搬
+
+```scala
+//**********************************
+// ID/EX register
+// MEMステージがストールしていない場合のみEXEのパイプラインレジスタを更新する。
+when( !mem_stall_flg ) {
+  exe_reg_pc            := id_reg_pc
+  // 省略
+  exe_reg_mem_w         := id_mem_w
+}
+```
+
+## 未実装ロード・ストア命令の実装 (4/7)
+
+* アクセス単位を後段のステージに伝搬
+* 書き込み時のストローブ信号を生成
+  * 書き込み対象のバイト位置に対するマスク信号
+
+```scala
+//**********************************
+// EX/MEM register
+// MEMステージがストールしていない場合のみMEMのパイプラインレジスタを更新する。
+when( !mem_stall_flg ) {
+  mem_reg_pc         := exe_reg_pc
+  // 省略
+  mem_reg_mem_w      := exe_reg_mem_w
+  mem_reg_mem_wstrb  := (MuxCase("b1111".U, Seq(  // メモリアクセス単位からストローブ信号を生成
+    (exe_reg_mem_w === MW_B) -> "b0001".U,
+    (exe_reg_mem_w === MW_H) -> "b0011".U,
+    (exe_reg_mem_w === MW_W) -> "b1111".U,
+  )) << (exe_alu_out(1, 0)))(3, 0)
+}
+```
+
+## 未実装ロード・ストア命令の実装 (5/7)
+
+* データバスにバイトストローブ信号を出力
+* 書き込みデータをアドレスのバイトオフセット分ずらす
+
+```scala
+io.dmem.wstrb := mem_reg_mem_wstrb
+io.dmem.wdata := (mem_reg_rs2_data << (8.U * mem_reg_alu_out(1, 0)))(WORD_LEN-1, 0) // バイトアドレスでデータをシフト
+```
+
+## 未実装ロード・ストア命令の実装 (6/7)
+
+* 読み出したデータをアドレスのバイトオフセット分ずらす
+* アクセス単位にしたがってバイト単位でのマスクと符号拡張
+
+<style scoped>
+pre {
+  font-size: 16px;
+}
+</style>
+
+```scala
+// ロードしたデータのバイト位置合わせと符号拡張
+def signExtend(value: UInt, w: Int) = { // 符号つきで符号拡張する
+  Fill(WORD_LEN - w, value(w - 1)) ## value(w - 1, 0)
+}
+def zeroExtend(value: UInt, w: Int) = { // 符号なしで符号拡張する
+  Fill(WORD_LEN - w, 0.U) ## value(w - 1, 0)
+}
+val mem_wb_byte_offset = mem_reg_alu_out(1, 0)                  // アドレスの下位2ビットを抽出
+val mem_wb_rdata = io.dmem.rdata >> (8.U * mem_wb_byte_offset)  // バイトオフセット分読み出しデータを右にずらす
+val mem_wb_data_load = MuxCase(mem_wb_rdata, Seq(
+  (mem_reg_mem_w === MW_B) -> signExtend(mem_wb_rdata, 8),    // 符号付きバイト・ロード
+  (mem_reg_mem_w === MW_H) -> signExtend(mem_wb_rdata, 16),   // 符号付きハーフワード・ロード
+  (mem_reg_mem_w === MW_BU) -> zeroExtend(mem_wb_rdata, 8),   // 符号無しバイト・ロード
+  (mem_reg_mem_w === MW_HU) -> zeroExtend(mem_wb_rdata, 16),  // 符号無しハーフワード・ロード
+))
+
+mem_wb_data := MuxCase(mem_reg_alu_out, Seq(
+  (mem_reg_wb_sel === WB_MEM) -> mem_wb_data_load,
+  (mem_reg_wb_sel === WB_PC)  -> (mem_reg_pc + 4.U(WORD_LEN.W)),
+  (mem_reg_wb_sel === WB_CSR) -> csr_rdata
+))
+```
+
+## 未実装ロード・ストア命令の実装 (7/7)
+
+* 全テストがパスするようになった
+
+```
+...
+[info] - must runs rv32ui-p-lb
+[info] - must runs rv32ui-p-lbu
+[info] - must runs rv32ui-p-lh
+[info] - must runs rv32ui-p-lhu
+[info] - must runs rv32ui-p-lui
+[info] - must runs rv32ui-p-lw
+...
+[info] - must runs rv32ui-p-sb
+[info] - must runs rv32ui-p-sh
+...
+[info] - must runs rv32ui-p-sw
+...
+[info] Tests: succeeded 38, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+```
+
