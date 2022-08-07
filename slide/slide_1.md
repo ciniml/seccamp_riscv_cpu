@@ -865,3 +865,248 @@ mem_wb_data := MuxCase(mem_reg_alu_out, Seq(
 [info] All tests passed.
 ```
 
+## FPGAでの動作確認 (1/5)
+
+* CPU上のファームウェアを作成
+* riscv-testsでテストをパスしたときと同じ命令列を用意
+* 正常に動作すれば、テストベンチで使用しているのと同様に `success` 信号と `exit` 信号がアサートされる
+  * `il a0,0` の次に `ecall` を呼んだら `success` がアサートされる
+
+<style scoped>
+pre {
+  font-size: 14px;
+}
+</style>
+
+```c
+extern void __attribute__((naked)) __attribute__((section(".isr_vector"))) isr_vector(void)
+{
+    asm volatile ("j _start");
+}
+extern void __attribute__((naked)) __attribute__((noreturn)) trap_handler(void)
+{
+    while(true);
+}
+extern void __attribute__((naked)) _start(void)
+{
+    asm volatile (
+                  "la t0, trap_handler; " /* トラップベクタ初期化 */ \
+                  "csrw mtvec, t0;      " /*                    */ \
+                  "li a0, 0;            " /* success判定        */ \
+                  "ecall                " /* トラップ           */ \
+    );
+}
+```
+
+## FPGAでの動作確認 (2/5)
+
+* ファームウェアのビルド結果
+
+```
+00000000 <isr_vector>:
+   0:	0080006f          	j	8 <_start>
+00000004 <trap_handler>:
+   4:	0000006f          	j	4 <trap_handler>
+00000008 <_start>:
+   8:	00000297          	auipc	t0,0x0
+   c:	ffc28293          	addi	t0,t0,-4 # 4 <trap_handler>
+  10:	30529073          	csrw	mtvec,t0
+  14:	00000513          	li	a0,0
+  18:	00000073          	ecall
+```
+
+## FPGAでの動作確認 (3/5)
+
+* トップレベルデザインの作成
+  * 7seg LEDにPCの下位8bitを出力
+  * `io_exit` がアサートされたら CPUクロックを停止する
+<style scoped>
+pre {
+  font-size: 14px;
+}
+</style>
+
+```verilog
+logic [31:0] io_debug_pc;
+logic io_success;
+logic io_exit;
+assign d = io_debug_pc[9:2];  // 7seg LED
+logic cpu_halt = 0;
+always_ff @(posedge clock) begin
+  if( reset ) begin
+    cpu_halt <= 0;
+  end
+  else begin
+    if( io_exit ) begin
+      cpu_halt <= 1;
+    end
+  end
+end
+assign led = ~{3'b000, reset, io_success, io_exit};
+Top core(
+  .clock(clock && !cpu_halt),
+  .*
+);
+```
+
+## FPGAでの動作確認 (4/5)
+
+* 合成と書き込みを行う
+
+```shell
+$ cd eda/cpu_riscv_chisel_book
+$ make
+$ make run
+```
+
+## FPGAでの動作確認 (5/5)
+
+* 書き込んで実行すると左から2つのLEDが点灯する
+
+![bg right fit](./figure/fpga_first_run.drawio.svg)
+
+# CPUと外部のI/O処理
+
+## CPUが外部と入出力する方法
+
+1. Memory Mapped I/O
+2. 拡張レジスタ
+3. 拡張命令
+
+## Memory Mapped I/O (MMIO)
+
+* データバスにつなげられるのはメモリだけではない
+* データバスのインターフェースと同じであればつなげられる
+  * e.g. `DMemPortIo`
+* CPUのメモリ空間上に外部と入出力するためのアドレスを割り当てる
+  * 入力: 対応するアドレスからの読み出し
+  * 出力: 対応するアドレスへの書き込み
+
+## 拡張レジスタ
+
+* RISC-Vには4096ワード分の **CSR (Control and Status Register)** 空間がある
+* Memory Mapped I/Oと同様に、CSRの空間経由でCPU外の回路とやり取りをする
+
+## 拡張命令
+
+* RISC-Vでは、独自の命令を拡張命令として追加することができる
+* CPU外と入出力を行う専用命令を実装する
+
+## GPIO(General Purpose I/O) の実装 (1/5)
+
+* CPUからLEDの点灯・消灯できるように **GPIO** を実装する
+* アドレス `32'ha000_0000` に書き込んだ内容の下位6bitをLEDへの出力とする
+
+![fit](./figure/gpio_mapping_led.drawio.svg)
+
+## GPIO(General Purpose I/O) の実装 (2/5)
+
+* 現状、CPUのデータバスには1つのターゲットしか接続できない
+  * データメモリを接続済み
+* アドレスを確認してアクセス先を分岐する **アドレス・デコーダ** を実装する
+
+```scala
+// 使い方
+val decoder = Module(new DMemDecoder(Seq(
+  (BigInt(0x00000000L), BigInt(memSize)), // メモリ
+  (BigInt(0xA0000000L), BigInt(64)),      // GPIO
+)))
+
+class DMemDecoder(targetAddressRanges: Seq[(BigInt, BigInt)]) extends Module {
+  val io = IO(new Bundle {
+    val initiator = new DmemPortIo()  // CPU側接続ポート
+    val targets = Vec(targetAddressRanges.size, Flipped(new DmemPortIo))  // ターゲット側接続ポート
+  })
+```
+
+## GPIO(General Purpose I/O) の実装 (3/5)
+
+```scala
+  val rvalid = WireDefault(true.B)
+  val rdata = WireDefault("xdeadbeef".U(32.W))
+  val wready = WireDefault(false.B)
+  io.initiator.rvalid := rvalid
+  io.initiator.rdata := rdata
+  // アドレス範囲のリストに対して分岐を生成する
+  for(((start, length), index) <- targetAddressRanges.zipWithIndex) {
+    val target = io.targets(index)
+
+    val addr = WireDefault(0.U(32.W))
+    val ren = WireDefault(false.B)
+    val wen = WireDefault(false.B)
+    val wdata = WireDefault("xdeadbeef".U(32.W))
+    val wstrb = WireDefault("b1111".U)
+    
+    target.addr := addr
+    target.ren := ren
+    target.wen := wen
+    target.wdata := wdata
+    target.wstrb := wstrb
+    // アドレス範囲ならCPU側とターゲット側の信号を接続する
+    when(start.U <= io.initiator.addr && io.initiator.addr < (start + length).U ) {
+      addr := io.initiator.addr - start.U
+      ren := io.initiator.ren
+      rvalid := target.rvalid
+      rdata := target.rdata
+      wen := io.initiator.wen
+      wdata := io.initiator.wdata
+      wstrb := io.initiator.wstrb
+    }
+  }
+}
+```
+
+## GPIO(General Purpose I/O) の実装 (4/5)
+
+* コアとデコーダ、メモリ、GPIOを接続する
+
+<style scoped>
+pre {
+  font-size: 20px;
+}
+</style>
+
+```scala
+val core = Module(new Core(startAddress = baseAddress.U(WORD_LEN.W)))
+val decoder = Module(new DMemDecoder(Seq(
+  (BigInt(0x00000000L), BigInt(memSize)), // メモリ
+  (BigInt(0xA0000000L), BigInt(64)),      // GPIO
+)))
+
+val memory = Module(new Memory(Some(i => f"../sw/bootrom_${i}.hex"), baseAddress.U(WORD_LEN.W), memSize))
+val gpio = Module(new Gpio)
+
+core.io.imem <> memory.io.imem
+core.io.dmem <> decoder.io.initiator  // CPUにデコーダを接続
+decoder.io.targets(0) <> memory.io.dmem // 0番ポートにメモリを接続
+decoder.io.targets(1) <> gpio.io.mem    // 1番ポートにGPIOを接続
+io.gpio_out := gpio.io.out  // GPIOの出力を外部ポートに接続
+```
+
+## GPIO(General Purpose I/O) の実装 (5/5)
+
+* ファームウェアを変更してGPIOの出力を変化させる
+  * bit0~bit5を順に点灯
+  * bit5点灯後はbit0に戻る
+  * 更新速度調整のため `100000` 回ループする
+    * 最適化で削除されないように変数に `volatile` をつけておく
+
+<style scoped>
+pre {
+  font-size: 20px;
+}
+</style>
+
+```c
+static volatile uint32_t* const REG_GPIO_OUT = (volatile uint32_t*)0xA0000000;
+void __attribute__((noreturn)) main(void)
+{
+    uint32_t led_out = 1;
+    while(1) {
+        *REG_GPIO_OUT = led_out;
+        led_out = (led_out << 1) | ((led_out >> 5) & 1);
+        for(volatile uint32_t delay = 0; delay < 100000; delay++);
+    }
+}
+```
+
