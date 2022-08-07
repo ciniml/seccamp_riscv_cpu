@@ -82,8 +82,11 @@ end
 
 assign led = ~io_gpio_out[5:0]; //~{3'b000, reset, io_success, io_exit};
 
+logic cpu_clock;
+assign cpu_clock = clock && !cpu_halt;
+
 Top core(
-  .clock(clock && !cpu_halt),
+  .clock(cpu_clock),
   .io_uart_tx(uart_tx),
   .*
 );

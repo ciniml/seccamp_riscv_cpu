@@ -8,7 +8,7 @@ LDFLAGS = -Wl,-Tlink.ld -nostartfiles
 
 OBJS := bootrom.o
 
-BOOTROM_TARGETS := bootrom_0.hex bootrom_1.hex bootrom_2.hex bootrom_3.hex
+BOOTROM_TARGETS := bootrom.hex bootrom_0.hex bootrom_1.hex bootrom_2.hex bootrom_3.hex
 
 all: bootrom.bin $(BOOTROM_TARGETS) bootrom.dump
 
