@@ -3,11 +3,13 @@ package cpu
 import chisel3._
 import chisel3.util._
 import common.Consts._
+import uart.UartTx
 
 class Top extends Module {
   val io = IO(new Bundle {
     val debug_pc = Output(UInt(WORD_LEN.W))
     val gpio_out = Output(UInt(32.W))
+    val uart_tx = Output(Bool())
     val success = Output(Bool())
     val exit = Output(Bool())
   })
@@ -28,6 +30,9 @@ class Top extends Module {
   decoder.io.targets(1) <> gpio.io.mem    // 1番ポートにGPIOを接続
   //io.gpio_out := gpio.io.out  // GPIOの出力を外部ポートに接続
   io.gpio_out := core.io.gpio_out  // GPIO CSRの出力を外部ポートに接続
+
+  val uartTx = Module(new UartTx(27000000, 115200))
+  io.uart_tx := uartTx.io.tx
 
   io.success := core.io.success
   io.exit := core.io.exit

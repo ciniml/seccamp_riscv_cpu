@@ -43,7 +43,6 @@ assign lcd_rs = 0;
 assign lcd_rw = 0;
 assign lcd_e = 0;
 assign lcd_db = 0;
-assign uart_tx = 0;
 assign debug_out = 0;
 
 // Reset sequencer.
@@ -85,6 +84,7 @@ assign led = ~io_gpio_out[5:0]; //~{3'b000, reset, io_success, io_exit};
 
 Top core(
   .clock(clock && !cpu_halt),
+  .io_uart_tx(uart_tx),
   .*
 );
 
