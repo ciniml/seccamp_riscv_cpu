@@ -26,7 +26,8 @@ class Top extends Module {
   core.io.dmem <> decoder.io.initiator  // CPUにデコーダを接続
   decoder.io.targets(0) <> memory.io.dmem // 0番ポートにメモリを接続
   decoder.io.targets(1) <> gpio.io.mem    // 1番ポートにGPIOを接続
-  io.gpio_out := gpio.io.out  // GPIOの出力を外部ポートに接続
+  //io.gpio_out := gpio.io.out  // GPIOの出力を外部ポートに接続
+  io.gpio_out := core.io.gpio_out  // GPIO CSRの出力を外部ポートに接続
 
   io.success := core.io.success
   io.exit := core.io.exit

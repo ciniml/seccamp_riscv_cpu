@@ -10,6 +10,7 @@ class Core(startAddress: UInt = START_ADDR) extends Module {
     new Bundle {
       val imem = Flipped(new ImemPortIo())
       val dmem = Flipped(new DmemPortIo())
+      val gpio_out = Output(UInt(32.W))
       val success = Output(Bool())
       val exit = Output(Bool())
       val debug_pc = Output(UInt(WORD_LEN.W))
@@ -17,8 +18,10 @@ class Core(startAddress: UInt = START_ADDR) extends Module {
   )
 
   val regfile = Mem(32, UInt(WORD_LEN.W))
-  val csr_regfile = Mem(4096, UInt(WORD_LEN.W)) 
-
+  // val csr_regfile = Mem(4096, UInt(WORD_LEN.W)) // 
+  val csr_gpio_out = RegInit(0.U(WORD_LEN.W))   // 
+  val csr_trap_vector = RegInit(0.U(WORD_LEN.W))   // 
+  io.gpio_out := csr_gpio_out
 
   //**********************************
   // Pipeline State Registers
@@ -86,7 +89,7 @@ class Core(startAddress: UInt = START_ADDR) extends Module {
 	  // 優先順位重要！ジャンプ成立とストールが同時発生した場合、ジャンプ処理を優先
     exe_br_flg         -> exe_br_target,
     exe_jmp_flg         -> exe_alu_out,
-    (if_inst === ECALL) -> csr_regfile(0x305), // go to trap_vector
+    (if_inst === ECALL) -> csr_trap_vector, // go to trap_vector
     (stall_flg || !io.imem.valid) -> if_reg_pc, // stall
   ))
   if_reg_pc := if_pc_next
@@ -303,7 +306,10 @@ class Core(startAddress: UInt = START_ADDR) extends Module {
   mem_stall_flg := io.dmem.ren && !io.dmem.rvalid
 
   // CSR
-  val csr_rdata = csr_regfile(mem_reg_csr_addr)
+  val csr_rdata = MuxCase(0.U(WORD_LEN.W), Seq(
+    (mem_reg_csr_addr === CSR_CUSTOM_GPIO.U) -> csr_gpio_out,
+    (mem_reg_csr_addr === CSR_MTVEC.U) -> csr_trap_vector,
+  ))
 
   val csr_wdata = MuxCase(0.U(WORD_LEN.W), Seq(
     (mem_reg_csr_cmd === CSR_W) -> mem_reg_op1_data,
@@ -313,7 +319,11 @@ class Core(startAddress: UInt = START_ADDR) extends Module {
   ))
   
   when(mem_reg_csr_cmd > 0.U){
-    csr_regfile(mem_reg_csr_addr) := csr_wdata
+    when( mem_reg_csr_addr === CSR_MTVEC.U ) {
+      csr_trap_vector := csr_wdata
+    } .elsewhen( mem_reg_csr_addr === CSR_CUSTOM_GPIO.U ) {
+      csr_gpio_out := csr_wdata
+    }
   }
 
   // ロードしたデータのバイト位置合わせと符号拡張

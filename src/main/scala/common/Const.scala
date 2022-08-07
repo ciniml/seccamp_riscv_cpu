@@ -16,6 +16,9 @@ object Consts {
   val VL_ADDR       = 0xC20
   val VTYPE_ADDR    = 0xC21
 
+  val CSR_CUSTOM_GPIO = 0x7c0
+  val CSR_MTVEC = 0x305
+
   val EXE_FUN_LEN = 5
   val ALU_X       =  0.U(EXE_FUN_LEN.W)
   val ALU_ADD     =  1.U(EXE_FUN_LEN.W)
