@@ -16,41 +16,14 @@ _paginate: false
 _header: ""
 -->
 
-## 目次
+<style>
+img[alt~="center"] {
+  display: block;
+  margin: 0 auto;
+}
+</style>
 
-* 講義で直接取り扱う領域
-
-* 論理回路
-  * 組み合わせ論理回路
-  * 順序回路
-* FPGAで実現可能な論理回路
-* 論理合成
-* 配置配線
-* 書籍のCPUを合成してみる
-* 問題
-* メモリの構造
-* メモリのアクセス方法
-* 対策
-  * 命令メモリ
-  * データメモリ
-* CPUと外の世界の接続
-  * 専用命令
-  * アクセラレータ・インターフェース
-  * MMIO
-  * 共有メモリ
-* CPUからLチカ
-  * LEDを光らせるには
-  * Tang Nano 9Kの回路
-  * 余談:電流制限抵抗とVf-If特性
-  * GPIO
-  * 専用命令
-  * アクセラレータ・インターフェース
-  * MMIO
-* PCとの通信
-  * シリアル通信プロトコル
-  * UART
-  * UARTの送受信回路
-
+# はじめに
 
 ## 講義で取り扱う領域
 
@@ -71,6 +44,8 @@ _header: ""
   * e.g. LB, LH, SB, SHなどのワード単位以外のロード・ストア命令
 * 5段パイプライン
 
+# FPGAで動くようにする
+
 ## FPGAで合成チャレンジ！
 
 * 意外とそのまま行けたりするんじゃないの？という話もあるので、まずは合成できるベースまで持っていく
@@ -80,12 +55,6 @@ _header: ""
 * Field Programmable Gate Arrayの略
 * ここでは、製造後に論理回路の構成を変更可能なICくらいの認識で良い
 * 詳しいことが知りたい場合は [FPGAの原理と構成](https://shop.ohmsha.co.jp/shopdetail/000000004588/) を参照のこと
-
-## FPGAの論理回路を構成する流れ
-
-* 論理合成
-* 配置配線
-* ビットストリーム書き込み
 
 ## ChiselからVerilog HDLの生成
 
@@ -97,6 +66,13 @@ _header: ""
 * `runMain` で実行できるように `App` の派生クラスを定義する
 * `ChiselStage` の `emitVerilog` に、Verilogに変換したいChiselのモジュールを渡して呼び出す
 * 第2引数に変換時のパラメータを含む `Array` を指定する
+* [ソースコード](https://github.com/ciniml/seccamp_2022_riscv_cpu/commit/2034593fdcbc47afe6c69645725156650721e34f#diff-82642955d40c62f14b05b84c1f51eaa3adf0551a9c488f93978c2262f2840ce5R13)
+
+<style scoped>
+pre {
+  font-size: 18px;
+}
+</style>
 
 ```scala
 package fpga
@@ -249,11 +225,11 @@ end
     * `The number(131072) of DFF in the design exceeds the resource limit(6480) of current device(GW1NR-LV9QN88PC6/I5)`
   * エラーメッセージの内容と一致
 
+[ソースコード](https://github.com/ciniml/seccamp_2022_riscv_cpu/commit/2034593fdcbc47afe6c69645725156650721e34f#r80562783)
 ```scala
 // Memory.scala 26行目
 val mem = Mem(16384, UInt(8.W))
 ```
-
 → なぜ推論されなかったのか？
 
 ## Chiselの `Mem` 型
@@ -296,10 +272,11 @@ end
 * 同期読み出し・同期書き込みメモリ
 * こっちを使えばいけそう？
 
-# `SyncReadMem` に変更してみる
+## `SyncReadMem` に変更してみる
 
 * 変更
 
+[ソースコード](https://github.com/ciniml/seccamp_2022_riscv_cpu/commit/e1ec4bbaeda81a61d2eb007ea0bfba133e377872#diff-35d538729e9742f94efbfb81f1a91eb4b396247989a4906ed56ad7f0888cd0c3R26)
 ```scala
 val mem = SyncReadMem(16384, UInt(8.W))
 ```
@@ -329,6 +306,8 @@ ERROR (IF0003) : Cannot infer "mem" due to multiple write clocks("/home/kenta/re
   * 所謂Dual Port Memory
 * FPGAに実装するには一つのSRAMあたりポート数を2つまでに減らす必要がある
 
+![bg fit right:30%](figure/dual_port_memory.drawio.svg)
+
 ## ポート数が増えている原因
 
 * 32bit読み書きのために8bit幅で4回ずつ読み書きしている
@@ -336,9 +315,11 @@ ERROR (IF0003) : Cannot infer "mem" due to multiple write clocks("/home/kenta/re
 
 <style scoped>
 pre {
-  font-size: 18px;
+  font-size: 16px;
 }
 </style>
+
+[ソースコード](https://github.com/ciniml/seccamp_2022_riscv_cpu/commit/e1ec4bbaeda81a61d2eb007ea0bfba133e377872#diff-35d538729e9742f94efbfb81f1a91eb4b396247989a4906ed56ad7f0888cd0c3L29)
 
 ```scala
 val mem = SyncReadMem(16384, UInt(8.W))
@@ -368,7 +349,6 @@ when(io.dmem.wen){
 
 ![bg right fit](figure/ram_inference_multi_bank.drawio.svg)
 
-
 * ポート数が足りないのであれば、SRAMの割り当て方を変えればよい
   * e.g. 複数SRAMを並べる
 * 今回の場合は1度に32bitアクセスしたいので、8bitごとに4つにわけて並べる
@@ -377,6 +357,7 @@ when(io.dmem.wen){
 
 * Chiselでは、 `Vec` 型を使った配列型をメモリの要素型とすれば対応可能
 
+[ソースコード](https://github.com/ciniml/seccamp_2022_riscv_cpu/commit/e1ec4bbaeda81a61d2eb007ea0bfba133e377872#diff-35d538729e9742f94efbfb81f1a91eb4b396247989a4906ed56ad7f0888cd0c3R26)
 ```scala
 // 要素型を8bit幅x4つの配列にし、メモリの長さを1/4に変更
 val mem = SyncReadMem(16384/4, Vec(4, UInt(8.W))) 
@@ -421,10 +402,11 @@ when(io.dmem.wen){
 
 <style scoped>
 pre {
-  font-size: 14px;
+  font-size: 12px;
 }
 </style>
 
+[ソースコード](https://github.com/ciniml/seccamp_2022_riscv_cpu/commit/14aa890565e0715827d8f9daf794c11be58c20ef#diff-35d538729e9742f94efbfb81f1a91eb4b396247989a4906ed56ad7f0888cd0c3R26)
 ```scala
 val mems = (0 to 3).map(_ => Mem(16384/4, UInt(8.W)))
 if( memoryPath.isDefined ) {
@@ -533,8 +515,9 @@ sbt:riscv_chisel_book> testOnly cpu.RiscvTest -- -DwriteVcd=1
 ## 対策の方法 - パイプラインのストール(2/5)
 
 * メモリ・インターフェース ( `IMemPortIo` ) の変更
-* データが準備できているかどうかを表す **Valid信号** `valid` を追加する
+* データが準備できているかどうかを表す信号 `valid` を追加する
 
+[ソースコード](https://github.com/ciniml/seccamp_2022_riscv_cpu/commit/ef3f511794050ec15e51f08b06553637b40f9fe4#diff-35d538729e9742f94efbfb81f1a91eb4b396247989a4906ed56ad7f0888cd0c3R11)
 ```scala
 class ImemPortIo extends Bundle {
   val addr = Input(UInt(WORD_LEN.W))
@@ -547,6 +530,7 @@ class ImemPortIo extends Bundle {
 
 * メモリ側の変更
 
+[ソースコード](https://github.com/ciniml/seccamp_2022_riscv_cpu/commit/ef3f511794050ec15e51f08b06553637b40f9fe4#diff-35d538729e9742f94efbfb81f1a91eb4b396247989a4906ed56ad7f0888cd0c3R41)
 ```scala
 val imemWordAddrBits = io.imem.addr.getWidth - 2
 val imemWordAddr = (io.imem.addr - baseAddress) >> 2
@@ -564,9 +548,10 @@ io.imem.inst := Cat(
 ## 対策の方法 - パイプラインのストール(4/5)
 
 * コア側の変更
-  * 命令が向こうなら `BUBBLE` に置き換えておく
+  * 命令が無効なら `BUBBLE` に置き換えておく
   * ストールの条件に `!io.imem.valid` を追加
 
+[ソースコード](https://github.com/ciniml/seccamp_2022_riscv_cpu/commit/ef3f511794050ec15e51f08b06553637b40f9fe4#diff-a7379774385a2459290484d37a76b1de78586b3696ac0317b74fb0cd69f45c35R71)
 ```scala
 val if_inst = Mux(io.imem.valid, io.imem.inst, BUBBLE)  // 命令が無効ならBUBBLEにする
 // ...
@@ -586,7 +571,7 @@ if_reg_pc := if_pc_next
   * メモリアクセス系のテスト以外はパスする
   * 但し、CPUの動作速度が半分に低下
 
-![fit](figure/imem_fetch_stall.drawio.svg)
+![center](figure/imem_fetch_stall.drawio.svg)
 
 
 ## 演習1 - 命令実行速度の低下抑制
@@ -604,6 +589,7 @@ if_reg_pc := if_pc_next
 * データバスのアクセスは読み出しデータ有効信号 `rvalid` だけでなく、読み出しを実行するかどうかの信号 `ren` を追加する
   * データバスからのメモリアクセスは毎サイクル行うわけではない
 
+[ソースコード](https://github.com/ciniml/seccamp_2022_riscv_cpu/commit/097dc534cf180d918411ccb269a39f8727572d2b#diff-35d538729e9742f94efbfb81f1a91eb4b396247989a4906ed56ad7f0888cd0c3R18)
 ```scala
 class DmemPortIo extends Bundle {
   val addr  = Input(UInt(WORD_LEN.W))
@@ -620,6 +606,14 @@ class DmemPortIo extends Bundle {
 * メモリ側の変更
   * `rdata` の内容は 1サイクル後に `addr` の番地の内容になる
   * `ren` がアサートされた次のサイクルで `rvalid` をアサート
+
+<style scoped>
+pre {
+  font-size: 17px;
+}
+</style>
+
+* [ソースコード](https://github.com/ciniml/seccamp_2022_riscv_cpu/commit/097dc534cf180d918411ccb269a39f8727572d2b#diff-35d538729e9742f94efbfb81f1a91eb4b396247989a4906ed56ad7f0888cd0c3R49)
 ```scala
 val dmemWordAddr = (io.dmem.addr - baseAddress) >> 2
 val rvalid = RegInit(false.B)
@@ -641,8 +635,7 @@ when( rvalid ) {
 
 ## データバスアクセス時のストール実装 (3/6)
 
-* コア側の変更 (IF, ID ステージ)
-
+* コア側の変更 (IF, ID ステージ) [ソースコード](https://github.com/ciniml/seccamp_2022_riscv_cpu/commit/097dc534cf180d918411ccb269a39f8727572d2b#diff-a7379774385a2459290484d37a76b1de78586b3696ac0317b74fb0cd69f45c35R74)
 ```scala
 val mem_stall_flg = Wire(Bool())  // データバス要因のストール
 // (省略)
@@ -658,8 +651,7 @@ when( !mem_stall_flg ) {
 
 ## データバスアクセス時のストール実装 (4/6)
 
-* コア側の変更 (EXステージ)
-
+* コア側の変更 (EXステージ) [ソースコード](https://github.com/ciniml/seccamp_2022_riscv_cpu/commit/097dc534cf180d918411ccb269a39f8727572d2b#diff-a7379774385a2459290484d37a76b1de78586b3696ac0317b74fb0cd69f45c35R263)
 ```scala
 // MEMステージがストールしていない場合のみMEMのパイプラインレジスタを更新する。
 when( !mem_stall_flg ) {
@@ -671,7 +663,13 @@ when( !mem_stall_flg ) {
 
 ## データバスアクセス時のストール実装 (5/6)
 
-* コア側の変更 (MEMステージ)
+<style scoped>
+pre {
+  font-size: 18px;
+}
+</style>
+
+* コア側の変更 (MEMステージ) [ソースコード](https://github.com/ciniml/seccamp_2022_riscv_cpu/commit/097dc534cf180d918411ccb269a39f8727572d2b#diff-a7379774385a2459290484d37a76b1de78586b3696ac0317b74fb0cd69f45c35R281)
 ```scala
 //**********************************
 // Memory Access Stage
@@ -682,7 +680,7 @@ io.dmem.wdata := mem_reg_rs2_data
 // WBでデータバスの内容が必要だが、データバスのデータが有効でないならストール
 mem_stall_flg := io.dmem.ren && !io.dmem.rvalid
 ```
-* コア側の変更 (WBステージ)
+* コア側の変更 (WBステージ) [ソースコード](https://github.com/ciniml/seccamp_2022_riscv_cpu/commit/097dc534cf180d918411ccb269a39f8727572d2b#diff-a7379774385a2459290484d37a76b1de78586b3696ac0317b74fb0cd69f45c35R311)
 ```scala
 //**********************************
 // MEM/WB regsiter
@@ -738,11 +736,28 @@ pre {
 * バイト単位・ハーフワード単位のロード・ストア命令を実装する
   * アセンブリ言語でプログラムを書くなら実装しないのも手だが、Cで書くなら実装しておくのが無難
 
+<style scoped>
+table {
+  font-size: 24px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+
+| ニーモニック | 処理内容 |
+|:------------|:-----------|
+| LB          | `rs <- sext( [rs1 + imm][7:0] )` | 
+| LH          | `rs <- sext( [rs1 + imm][15:0] )` | 
+| LBU         | `rs <- zext( [rs1 + imm][7:0] )` | 
+| LHU         | `rs <- zext( [rs1 + imm][15:0] )` | 
+| SB          | `byte[rd + imm] <- rs1[7:0]` | 
+| SH          | `halfword[rd + imm] <- rs1[15:0]` | 
+
 ## 未実装ロード・ストア命令の実装 (2/7)
 
 * 命令デコーダの改修
   * 新たにメモリアクセス単位の情報を表す信号を追加
-
+* [ソースコード](https://github.com/ciniml/seccamp_2022_riscv_cpu/commit/6ea2737facacfe5c82e5c2a7bc4f41be6b44fee0#diff-a7379774385a2459290484d37a76b1de78586b3696ac0317b74fb0cd69f45c35R151)
 ```scala
 val csignals = ListLookup(id_inst,
               List(ALU_X    , OP1_RS1, OP2_RS2, MEN_X, REN_X, WB_X  , CSR_X, MW_X),
@@ -764,6 +779,7 @@ val csignals = ListLookup(id_inst,
 
 * パイプラインレジスタの追加
 * アクセス単位を後段のステージに伝搬
+* [ソースコード](https://github.com/ciniml/seccamp_2022_riscv_cpu/commit/6ea2737facacfe5c82e5c2a7bc4f41be6b44fee0#diff-a7379774385a2459290484d37a76b1de78586b3696ac0317b74fb0cd69f45c35R235)
 
 ```scala
 //**********************************
@@ -781,7 +797,7 @@ when( !mem_stall_flg ) {
 * アクセス単位を後段のステージに伝搬
 * 書き込み時のストローブ信号を生成
   * 書き込み対象のバイト位置に対するマスク信号
-
+* [ソースコード](https://github.com/ciniml/seccamp_2022_riscv_cpu/commit/6ea2737facacfe5c82e5c2a7bc4f41be6b44fee0#diff-a7379774385a2459290484d37a76b1de78586b3696ac0317b74fb0cd69f45c35R285)
 ```scala
 //**********************************
 // EX/MEM register
@@ -802,7 +818,7 @@ when( !mem_stall_flg ) {
 
 * データバスにバイトストローブ信号を出力
 * 書き込みデータをアドレスのバイトオフセット分ずらす
-
+* [ソースコード](https://github.com/ciniml/seccamp_2022_riscv_cpu/commit/6ea2737facacfe5c82e5c2a7bc4f41be6b44fee0#diff-a7379774385a2459290484d37a76b1de78586b3696ac0317b74fb0cd69f45c35R299)
 ```scala
 io.dmem.wstrb := mem_reg_mem_wstrb
 io.dmem.wdata := (mem_reg_rs2_data << (8.U * mem_reg_alu_out(1, 0)))(WORD_LEN-1, 0) // バイトアドレスでデータをシフト
@@ -812,10 +828,10 @@ io.dmem.wdata := (mem_reg_rs2_data << (8.U * mem_reg_alu_out(1, 0)))(WORD_LEN-1,
 
 * 読み出したデータをアドレスのバイトオフセット分ずらす
 * アクセス単位にしたがってバイト単位でのマスクと符号拡張
-
+* [ソースコード](https://github.com/ciniml/seccamp_2022_riscv_cpu/commit/6ea2737facacfe5c82e5c2a7bc4f41be6b44fee0#diff-a7379774385a2459290484d37a76b1de78586b3696ac0317b74fb0cd69f45c35R318)
 <style scoped>
 pre {
-  font-size: 16px;
+  font-size: 15px;
 }
 </style>
 
@@ -867,7 +883,7 @@ mem_wb_data := MuxCase(mem_reg_alu_out, Seq(
 
 ## FPGAでの動作確認 (1/5)
 
-* CPU上のファームウェアを作成
+* CPU上のファームウェアを作成 [ソースコード](https://github.com/ciniml/seccamp_2022_riscv_cpu/commit/05fae1e3b5059715e06e8c95b14d4be97653f79c#diff-0785f5b437a55d192dd769633eeaa1e5699cd729b6b321f4271d98400cc14f48R16)
 * riscv-testsでテストをパスしたときと同じ命令列を用意
 * 正常に動作すれば、テストベンチで使用しているのと同様に `success` 信号と `exit` 信号がアサートされる
   * `il a0,0` の次に `ecall` を呼んだら `success` がアサートされる
@@ -917,7 +933,7 @@ extern void __attribute__((naked)) _start(void)
 
 ## FPGAでの動作確認 (3/5)
 
-* トップレベルデザインの作成
+* トップレベルデザインの作成 [ソースコード](https://github.com/ciniml/seccamp_2022_riscv_cpu/commit/05fae1e3b5059715e06e8c95b14d4be97653f79c#diff-3972609792db8309937b2dd8a914a38fe56c7e3c88fa260e729271cf1aa3890eR78)
   * 7seg LEDにPCの下位8bitを出力
   * `io_exit` がアサートされたら CPUクロックを停止する
 <style scoped>
@@ -965,12 +981,21 @@ $ make run
 
 ![bg right fit](./figure/fpga_first_run.drawio.svg)
 
+## 合成結果の確認
+
+* 合成系の出力として、ビットストリーム以外に合成レポートが出力される
+  * リソースの使用量
+* クロックの情報を設定すると、タイミング解析結果が出力される
+  * 各クロックのパスが **タイミング制約** を満たすかどうか
+
+* 対応するファイルが出力されているので確認する
+
 # CPUと外部のI/O処理
 
 ## CPUが外部と入出力する方法
 
-1. Memory Mapped I/O
-2. 拡張レジスタ
+1. **Memory Mapped I/O**
+2. **拡張レジスタ**
 3. 拡張命令
 
 ## Memory Mapped I/O (MMIO)
@@ -1004,6 +1029,7 @@ $ make run
 * 現状、CPUのデータバスには1つのターゲットしか接続できない
   * データメモリを接続済み
 * アドレスを確認してアクセス先を分岐する **アドレス・デコーダ** を実装する
+* [ソースコード](https://github.com/ciniml/seccamp_2022_riscv_cpu/commit/46e84d9285ff5bcf9cc8da86511fd5bf940d9033#diff-ca3b707c5378f962dfb7e66927c4822083cceac837b0146c59cf3b0cdac9f5d1R17)
 
 ```scala
 // 使い方
@@ -1020,6 +1046,14 @@ class DMemDecoder(targetAddressRanges: Seq[(BigInt, BigInt)]) extends Module {
 ```
 
 ## GPIO(General Purpose I/O) の実装 (3/5)
+
+* [ソースコード](https://github.com/ciniml/seccamp_2022_riscv_cpu/commit/46e84d9285ff5bcf9cc8da86511fd5bf940d9033#diff-3daa67444acede43a5360c3c218a428045a87ffc58acff6a6ccf81a6e7a27df2R21)
+
+<style scoped>
+pre {
+  font-size: 13px;
+}
+</style>
 
 ```scala
   val rvalid = WireDefault(true.B)
@@ -1058,7 +1092,7 @@ class DMemDecoder(targetAddressRanges: Seq[(BigInt, BigInt)]) extends Module {
 
 ## GPIO(General Purpose I/O) の実装 (4/5)
 
-* コアとデコーダ、メモリ、GPIOを接続する
+* コアとデコーダ、メモリ、GPIOを接続する [ソースコード](https://github.com/ciniml/seccamp_2022_riscv_cpu/commit/46e84d9285ff5bcf9cc8da86511fd5bf940d9033#diff-ca3b707c5378f962dfb7e66927c4822083cceac837b0146c59cf3b0cdac9f5d1R18)
 
 <style scoped>
 pre {
@@ -1085,7 +1119,7 @@ io.gpio_out := gpio.io.out  // GPIOの出力を外部ポートに接続
 
 ## GPIO(General Purpose I/O) の実装 (5/5)
 
-* ファームウェアを変更してGPIOの出力を変化させる
+* ファームウェアを変更してGPIOの出力を変化させる [ソースコード](https://github.com/ciniml/seccamp_2022_riscv_cpu/commit/46e84d9285ff5bcf9cc8da86511fd5bf940d9033#diff-0785f5b437a55d192dd769633eeaa1e5699cd729b6b321f4271d98400cc14f48R23)
   * bit0~bit5を順に点灯
   * bit5点灯後はbit0に戻る
   * 更新速度調整のため `100000` 回ループする
@@ -1110,3 +1144,182 @@ void __attribute__((noreturn)) main(void)
 }
 ```
 
+## 拡張レジスタの実装 (1/3)
+
+* GPIOの出力を保持するCSRを定義 [ソースコード](https://github.com/ciniml/seccamp_2022_riscv_cpu/commit/192077333749872e82b488d2de8fdd19abe4baaf#diff-a7379774385a2459290484d37a76b1de78586b3696ac0317b74fb0cd69f45c35R309)
+  * RISC-VのCSRにはいくつかカスタム用の領域が定義されている
+  * 今回は、M-Mode用CSRのカスタム領域の先頭 **0x7c0** を使用する
+
+```scala
+// CSR
+val csr_rdata = MuxCase(0.U(WORD_LEN.W), Seq(
+  (mem_reg_csr_addr === CSR_CUSTOM_GPIO.U) -> csr_gpio_out,
+  (mem_reg_csr_addr === CSR_MTVEC.U) -> csr_trap_vector,
+))
+// (省略)
+when(mem_reg_csr_cmd > 0.U){
+  when( mem_reg_csr_addr === CSR_MTVEC.U ) {
+    csr_trap_vector := csr_wdata
+  } .elsewhen( mem_reg_csr_addr === CSR_CUSTOM_GPIO.U ) {
+    csr_gpio_out := csr_wdata
+  }
+}
+```
+
+## 拡張レジスタの実装 (2/3)
+
+* CSRの内容をコアの外に直接出力 [ソースコード](https://github.com/ciniml/seccamp_2022_riscv_cpu/commit/192077333749872e82b488d2de8fdd19abe4baaf#diff-a7379774385a2459290484d37a76b1de78586b3696ac0317b74fb0cd69f45c35R22)
+  * MMIOのときに出力していた信号にCSRの内容を接続
+
+```scala
+// Core.scala
+val csr_gpio_out = RegInit(0.U(WORD_LEN.W))   // 
+val csr_trap_vector = RegInit(0.U(WORD_LEN.W))   // 
+io.gpio_out := csr_gpio_out
+// Top.scala
+//io.gpio_out := gpio.io.out  // GPIOの出力を外部ポートに接続
+io.gpio_out := core.io.gpio_out  // GPIO CSRの出力を外部ポートに接続
+```
+
+## 拡張レジスタの実装 (3/3)
+
+* ファームウェアでMMIOアクセス部分をCSRアクセスに置き換え
+* [ソースコード](https://github.com/ciniml/seccamp_2022_riscv_cpu/commit/192077333749872e82b488d2de8fdd19abe4baaf#diff-0785f5b437a55d192dd769633eeaa1e5699cd729b6b321f4271d98400cc14f48R29)
+
+```c
+static uint64_t write_gpio_csr(uint32_t value)
+{
+    asm volatile ("csrw 0x7c0, %0" :: "r" (value)); // CSR 0x7c0に書き込む
+} 
+void __attribute__((noreturn)) main(void)
+{
+    uint32_t led_out = 1;
+    while(1) {
+        write_gpio_csr(led_out);
+        led_out = (led_out << 1) | ((led_out >> 5) & 1);
+        for(volatile uint32_t delay = 0; delay < 100000; delay++);
+    }
+}
+```
+
+# UART通信機能の実装
+
+## UARTとは (1/2)
+
+* UART (Universal Asynchronous Receiver Transmitter)
+* 調歩同期方式のシリアル通信
+  * c.f. クロック同期方式
+* 送信側・受信側であらかじめ取り決めた通信レート(baud rate:ボー・レート)でシンボルを送信
+* いくつかのまとまったビット列を表す **フレーム** を通信単位とする
+  * 現代的には大体の場合8bit単位
+* フレームで表現するビット列のLSBから順に送信する
+
+![bg right:30% fit](figure/uart_description.drawio.svg)
+
+## UARTとは (2/2)
+
+* アイドル状態では高い電位 '1' の状態
+* データは正論理(高い電位 = '1' 低い電位 = '0`) で表現する
+* フレームの始端に必ず **スタート・ビット (S)** として 低い電位 '0' を付加する
+* フレームの終端に必ず **ストップ・ビット (P)** として 高い電位 '1' を付加する
+  * ストップ・ビットで必ず '1' に戻るので、スタート・ビットを検出できる
+![bg right:30% fit](figure/uart_description.drawio.svg)
+
+## UART送信回路の作成
+
+* 送信は比較的単純
+* ボー・レートの間隔でスタート・ビット、データ列、ストップ・ビットを出力すればよい
+
+## 特定の文字を送り続けるUART送信回路の作成 (1/2)
+
+* `A` を送信しつづける回路 [ソースコード](https://github.com/ciniml/seccamp_2022_riscv_cpu/commit/fe84b16e66171563c58250a69775d0f8e6a0c803#diff-b26e819fbf617b667d8095d98abeaf05974d59eb1db91ef3ee2139478b139427R6)
+
+<style scoped>
+pre {
+  font-size: 16px;
+}
+</style>
+
+```scala
+class UartTx(clockFrequency: Int, baudRate: Int) extends Module {
+    val io = IO(new Bundle{
+        val tx = Output(Bool())
+    })
+    val baudDivider = clockFrequency/baudRate               // クロック周波数/ボー・レート
+    val rateCounter = RegInit(0.U(log2Ceil(baudDivider).W)) // ボー・レート周期生成用カウンタ
+    val bitCounter = RegInit(0.U(log2Ceil(8 + 2).W))        // 残り送信ビット数カウンタ
+    val bits = Reg(Vec(8 + 2, Bool()))                      // 送信ビット・バッファ
+    io.tx := bitCounter === 0.U || bits(0)  // 送信中ならbit0を出力。それ以外は'1'を出力
+    val ready = bitCounter === 0.U  // ビット・カウンタ == 0なので、次の送信を開始できるか？
+    when(ready) {
+        bits := Cat(1.U, 0x41.U(8.W), 0.U).asBools  // STOP(1), 'A', START(0)
+        bitCounter := (8 + 2).U                     // 残送信ビット数 = 10bit (STOP + DATA + START)
+        rateCounter := (baudDivider - 1).U          // レートカウンタを初期化
+    }
+    when( bitCounter > 0.U ) {
+        when(rateCounter === 0.U) { // 次のボーレート周期の送信タイミング
+            (0 to 8).foreach(i => bits(i) := bits(i + 1))   // ビットバッファを右シフトする
+            bitCounter := bitCounter - 1.U
+            rateCounter := (baudDivider - 1).U
+        } .otherwise {
+            rateCounter := rateCounter - 1.U
+        }
+    }
+}
+```
+
+## 特定の文字を送り続けるUART送信回路の作成 (2/2)
+
+* 送信回路のインスタンス作成と接続 [ソースコード](https://github.com/ciniml/seccamp_2022_riscv_cpu/commit/fe84b16e66171563c58250a69775d0f8e6a0c803#diff-ca3b707c5378f962dfb7e66927c4822083cceac837b0146c59cf3b0cdac9f5d1R34)
+
+```scala
+class Top extends Module {
+  val io = IO(new Bundle {
+    val debug_pc = Output(UInt(WORD_LEN.W))
+    val gpio_out = Output(UInt(32.W))
+    val uart_tx = Output(Bool())
+    val success = Output(Bool())
+    val exit = Output(Bool())
+  })
+  // ...  
+  val uartTx = Module(new UartTx(27000000, 115200))
+  io.uart_tx := uartTx.io.tx
+  // ...
+}
+```
+
+## 特定の文字を送り続けるUART送信回路の作成 (3/4)
+
+* SystemVerilogのトップレベルモジュールに出力 [ソースコード](https://github.com/ciniml/seccamp_2022_riscv_cpu/commit/fe84b16e66171563c58250a69775d0f8e6a0c803#diff-3972609792db8309937b2dd8a914a38fe56c7e3c88fa260e729271cf1aa3890eR87)
+
+```verilog
+// top.sv
+Top core(
+  .clock(clock && !cpu_halt),
+  .io_uart_tx(uart_tx), // UART送信出力ピン
+  .*
+);
+```
+
+## 特定の文字を送り続けるUART送信回路の作成 (4/4)
+
+* 動作確認
+  * ComProc CPU BoardのUSB-UARTモジュールをPCに接続
+  * モジュールに対応するデバイスをターミナルソフトで開く
+    * Windows: Tera Term等
+    * Linux  : miniterm等
+  * ボー・レートは 115200 に設定
+* ひたすら `A` が表示される
+
+```
+$ miniterm /dev/ttyUSB0 115200
+--- Miniterm on /dev/ttyUSB0  115200,8,N,1 ---
+--- Quit: Ctrl+] | Menu: Ctrl+T | Help: Ctrl+T followed by Ctrl+H ---
+AAAAAAAAAAAAAAAAAAAAAAAAAAAA
+```
+
+## 演習: CPUからUARTの送信を行う回路の作成
+
+* 固定の文字を送信するUART回路を改造してCPUに接続
+* CPUへの接続方法はGPIOと同様の方法、もしくは全く別の方法いずれでもよい
+* ファームウェアを変更して、 `Hello, RISC-V` の文字列をPCに送信する
