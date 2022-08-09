@@ -479,7 +479,7 @@ when(io.dmem.wen){
 * 合成して効果を確認
   * 論理合成・配置配線が成功する
 
-## シミュレーション確認(1/4)
+## シミュレーション確認(1/5)
 
 * `riscv-tests` のテストを実行
 * 全テスト失敗する
@@ -490,7 +490,7 @@ when(io.dmem.wen){
 [info]   Cause: java.lang.RuntimeException: [module Memory] Cannot initialize memory mem of non ground type UInt<8>[4]
 ```
 
-## シミュレーション確認(2/4)
+## シミュレーション確認(2/5)
 
 * 対策として、 `SyncReadMem` の型を `Vec[UInt]` にするのではなく、 `SyncReadMem` を複数用意する
 * `loadMemoryFromFile` の入力データもバイト単位で分割しておく
@@ -526,12 +526,28 @@ when(io.dmem.wen){
 }
 ```
 
-## シミュレーション確認(3/4)
+## シミュレーション確認(4/5)　
+
+* `riscv-tests` をビルドする
+  * `riscv64-unknown-elf` のツールチェインのパスが通っている前提
+
+```shell
+$ git submodule update --init --recursive
+$ cd external/riscv-tests
+$ ./configure && make
+```
+
+## シミュレーション確認(3/5)
 
 * `Mem` を使った場合
   * 未実装の命令 `LB` `LBU` `LH` `LHU` のテスト以外は成功
+* sbtで `testOnly cpu.RiscvTest` を実行
 
 ```
+$ sbt
+...
+sbt:riscv_chisel_book> testOnly cpu.RiscvTest
+...
 [info] RiscvTest:
 [info] RiscV
 [info] - must runs rv32ui-p-add
@@ -552,7 +568,7 @@ when(io.dmem.wen){
 [info] *** 6 TESTS FAILED ***
 ```
 
-## シミュレーション確認(4/4)
+## シミュレーション確認(4/5)
 
 * `SyncReadMem` を使った場合
   * ほとんどのテストが失敗
@@ -670,7 +686,7 @@ if_reg_pc := if_pc_next
 ![center](figure/imem_fetch_stall.drawio.svg)
 
 
-## 演習1 - 命令実行速度の低下抑制
+## 演習1 - 命令実行速度の低下抑制 (1/2)
 
 * 命令メモリの読み出し対策を入れて動作速度(IPC)が半分に低下
   * さすがに性能的に許容できない
@@ -678,6 +694,13 @@ if_reg_pc := if_pc_next
   * 非同期メモリに戻す方法以外のみ許可
 * メモリアクセス系以外のテストが通ることを確認すること
   * LB, LBU, LH, LW, SB, SBU, SH, SW のテストは除外
+
+## 演習1 - 命令実行速度の低下抑制 (2/2)
+
+* ヒント
+  * 分岐しない場合、CPUはアドレス順に実行するので、現在のアドレス+4の内容を先読みしておく。
+  * 先読みしているアドレスと異なるアドレスが要求された場合は、そのアドレスから読み出しをする
+    * その際、1サイクルの間はvalidでなくなる
 
 ## データバスアクセス時のストール実装 (1/6)
 
