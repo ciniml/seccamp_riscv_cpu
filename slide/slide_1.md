@@ -531,6 +531,7 @@ when(io.dmem.wen){
 * `riscv-tests` をビルドする
   * `riscv64-unknown-elf` のツールチェインのパスが通っている前提
   * ツールチェーンは [freedom-toolsからダウンロード](https://static.dev.sifive.com/dev-tools/freedom-tools/v2020.12/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz) するとよい
+
 ```shell
 $ git submodule update --init --recursive
 $ cd external/riscv-tests
