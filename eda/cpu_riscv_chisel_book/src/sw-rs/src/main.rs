@@ -6,6 +6,7 @@ use core::fmt::Write;
 use hal::serial::nb::Read;
 use bootrom_pac;
 use embedded_hal as hal;
+use riscv::asm;
 
 global_asm!(r#"
 .section .isr_vector,"ax",@progbits
@@ -150,7 +151,11 @@ pub extern "C" fn main() -> ! {
     
     writeln!(&mut uart, "Hello, RISC-V from Rust").unwrap();
 
+    let mut led_out = 1u8;
     loop {
-        writeln!(&mut uart, "Hello, RISC-V from Rust").unwrap();
+        peripherals.GPIO.data.write(|w| w.led().bits(led_out));
+        led_out = ((led_out << 1) & 0x3f) | (led_out >> 5);
+        //writeln!(&mut uart, "Hello, RISC-V from Rust").unwrap();
+        for _ in 0..100000 { unsafe { asm!("nop"); } }
     }
 }

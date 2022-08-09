@@ -21,7 +21,20 @@
                 <register>
                     <name>DATA</name>
                     <addressOffset>0x0</addressOffset>
-                    <access>read-write</access>
+                    <fields>
+                        <field>
+                            <name>LED</name>
+                            <bitOffset>0</bitOffset>
+                            <bitWidth>6</bitWidth>
+                            <access>read-write</access>
+                            <writeConstraint>
+                                <range>
+                                    <minimum>0x00</minimum>
+                                    <maximum>0x3f</maximum>
+                                </range>
+                            </writeConstraint>
+                        </field>
+                    </fields>
                 </register>
             </registers>
         </peripheral>

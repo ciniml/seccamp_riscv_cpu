@@ -17,3 +17,10 @@ object Elaborate_ComProcCpuBoard extends App {
   ))
 }
 
+object Elaborate_ComProcCpuBoard_RustBootrom extends App {
+  (new ChiselStage).emitVerilog(new Top(i =>  f"../sw-rs/bootrom-rs_${i}.hex"), Array(
+    "-o", "riscv.v",
+    "--target-dir", "rtl/comproc_cpu_board",
+  ))
+}
+
