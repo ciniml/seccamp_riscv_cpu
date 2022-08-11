@@ -15,6 +15,20 @@ class TopTestSystem extends Module {
   val top = Module(new Top(i => f"eda/cpu_riscv_chisel_book/src/sw/bootrom_${i}.hex", true))
   io.success := top.io.success
   io.exit := top.io.exit
+  // top.io.uart_rx := true.B
+  // top.io.pixel_clock := top.clock
+  // top.io.pixel_reset := top.reset
+}
+
+class TopWithHDMITestSystem extends Module {
+  val io = IO(new Bundle{
+    val success = Output(Bool())
+    val exit = Output(Bool())
+  })
+
+  val top = Module(new TopWithHDMI(i => f"eda/cpu_riscv_chisel_book/src/sw/bootrom_${i}.hex", true))
+  io.success := top.io.success
+  io.exit := top.io.exit
   top.io.uart_rx := true.B
   top.io.pixel_clock := top.clock
   top.io.pixel_reset := top.reset

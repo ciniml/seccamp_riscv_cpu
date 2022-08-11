@@ -5,7 +5,7 @@ import chisel3.util._
 import common.Consts._
 import uart.UartTx
 
-class Top(memoryPathGen: Int => String = i => f"../sw/bootrom_${i}.hex") extends Module {
+class Top(memoryPathGen: Int => String = i => f"../sw/bootrom_${i}.hex", suppressDebugMessage: Boolean = false) extends Module {
   val io = IO(new Bundle {
     val debug_pc = Output(UInt(WORD_LEN.W))
     val gpio_out = Output(UInt(32.W))
@@ -15,7 +15,7 @@ class Top(memoryPathGen: Int => String = i => f"../sw/bootrom_${i}.hex") extends
   })
   val baseAddress = BigInt("00000000", 16)
   val memSize = 8192
-  val core = Module(new Core(startAddress = baseAddress.U(WORD_LEN.W)))
+  val core = Module(new Core(startAddress = baseAddress.U(WORD_LEN.W), suppressDebugMessage))
   val decoder = Module(new DMemDecoder(Seq(
     (BigInt(0x00000000L), BigInt(memSize)), // メモリ
     (BigInt(0xA0000000L), BigInt(64)),      // GPIO

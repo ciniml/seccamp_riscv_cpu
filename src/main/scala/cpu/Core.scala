@@ -5,7 +5,7 @@ import chisel3.util._
 import common.Instructions._
 import common.Consts._
 
-class Core(startAddress: UInt = START_ADDR) extends Module {
+class Core(startAddress: UInt = START_ADDR, suppressDebugMessage: Boolean = false) extends Module {
   val io = IO(
     new Bundle {
       val imem = Flipped(new ImemPortIo())
@@ -371,19 +371,21 @@ class Core(startAddress: UInt = START_ADDR) extends Module {
   io.success := successDetected
   io.exit := if_inst === ECALL
   io.debug_pc := if_reg_pc
-  printf(p"if_reg_pc        : 0x${Hexadecimal(if_reg_pc)}\n")
-  printf(p"id_reg_pc        : 0x${Hexadecimal(id_reg_pc)}\n")
-  printf(p"id_reg_inst      : 0x${Hexadecimal(id_reg_inst)}\n")
-  printf(p"stall_flg        : 0x${Hexadecimal(stall_flg)}\n")
-  printf(p"id_inst          : 0x${Hexadecimal(id_inst)}\n")
-  printf(p"id_rs1_data      : 0x${Hexadecimal(id_rs1_data)}\n")
-  printf(p"id_rs2_data      : 0x${Hexadecimal(id_rs2_data)}\n")
-  printf(p"exe_reg_pc       : 0x${Hexadecimal(exe_reg_pc)}\n")
-  printf(p"exe_reg_op1_data : 0x${Hexadecimal(exe_reg_op1_data)}\n")
-  printf(p"exe_reg_op2_data : 0x${Hexadecimal(exe_reg_op2_data)}\n")
-  printf(p"exe_alu_out      : 0x${Hexadecimal(exe_alu_out)}\n")
-  printf(p"mem_reg_pc       : 0x${Hexadecimal(mem_reg_pc)}\n")
-  printf(p"mem_wb_data      : 0x${Hexadecimal(mem_wb_data)}\n")
-  printf(p"wb_reg_wb_data   : 0x${Hexadecimal(wb_reg_wb_data)}\n")
-  printf("---------\n")
+  if( !suppressDebugMessage ) {
+    printf(p"if_reg_pc        : 0x${Hexadecimal(if_reg_pc)}\n")
+    printf(p"id_reg_pc        : 0x${Hexadecimal(id_reg_pc)}\n")
+    printf(p"id_reg_inst      : 0x${Hexadecimal(id_reg_inst)}\n")
+    printf(p"stall_flg        : 0x${Hexadecimal(stall_flg)}\n")
+    printf(p"id_inst          : 0x${Hexadecimal(id_inst)}\n")
+    printf(p"id_rs1_data      : 0x${Hexadecimal(id_rs1_data)}\n")
+    printf(p"id_rs2_data      : 0x${Hexadecimal(id_rs2_data)}\n")
+    printf(p"exe_reg_pc       : 0x${Hexadecimal(exe_reg_pc)}\n")
+    printf(p"exe_reg_op1_data : 0x${Hexadecimal(exe_reg_op1_data)}\n")
+    printf(p"exe_reg_op2_data : 0x${Hexadecimal(exe_reg_op2_data)}\n")
+    printf(p"exe_alu_out      : 0x${Hexadecimal(exe_alu_out)}\n")
+    printf(p"mem_reg_pc       : 0x${Hexadecimal(mem_reg_pc)}\n")
+    printf(p"mem_wb_data      : 0x${Hexadecimal(mem_wb_data)}\n")
+    printf(p"wb_reg_wb_data   : 0x${Hexadecimal(wb_reg_wb_data)}\n")
+    printf("---------\n")
+  }
 }

@@ -21,8 +21,8 @@ class Gpio() extends Module {
       0.U -> out, // Output
   ))
   when(io.mem.wen) {
-      val mask = Cat((0 to 3).map(i => Mux(io.mem.wstrb(i), 0xff.U(8.W), 0x00.U(8.W))).reverse)
-      switch(io.mem.addr(3,2)) {
+    val mask = Cat((0 to 3).map(i => Mux(io.mem.wstrb(i), 0xff.U(8.W), 0x00.U(8.W))).reverse)
+    switch(io.mem.addr(3,2)) {
         // Output
         is(0.U) {
           out := (out & ~mask) | (io.mem.wdata & mask)
