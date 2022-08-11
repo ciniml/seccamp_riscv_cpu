@@ -37,7 +37,7 @@ void* __attribute__((inline)) memset(void* dest, int ch, size_t count)
 {
     uint8_t* dest_ = (uint8_t*)dest;
     while(count--) {
-        *dest_ = ch;
+        *(dest_++) = ch;
     }
     return dest;
 }
