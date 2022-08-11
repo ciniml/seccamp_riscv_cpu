@@ -28,6 +28,6 @@ object Elaborate_ComProcCpuBoard_RustBootrom extends App {
 object Elaborate_ComProcCpuBoard_HDMI extends App {
   (new ChiselStage).emitVerilog(new TopWithHDMI, Array(
     "-o", "riscv.v",
-    "--target-dir", "rtl/comproc_cpu_board",
+    "--target-dir", "rtl/comproc_cpu_board_hdmi",
   ))
 }

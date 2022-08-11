@@ -116,7 +116,7 @@ assign led = ~io_gpio_out[5:0]; //~{3'b000, reset, io_success, io_exit};
 logic cpu_clock;
 assign cpu_clock = clock && !cpu_halt;
 
-Top core(
+TopWithHDMI core(
   .clock(cpu_clock),
   .io_uart_tx(uart_tx),
   .io_uart_rx(uart_rx),

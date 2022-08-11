@@ -8,12 +8,10 @@ CHISEL_DESIGN_DIR ?= $(ROOT_DIR)/src/main/scala
 CHISEL_DESIGN_SRCS := $(shell find $(CHISEL_DESIGN_DIR) -name "*.scala")
 
 BOOTROM_HEX ?= src/sw/bootrom.hex
-#BOOTROM_HEX ?= src/sw-rs/bootrom.hex
 
 ifeq ($(TARGET),comprocboard_9k)
-RISCV_ELABORATE := fpga.Elaborate_ComProcCpuBoard 
-#RISCV_ELABORATE := fpga.Elaborate_ComProcCpuBoard_RustBootrom 
-RISCV_ELABORATE_OUTPUT_DIR := $(RTL_DIR)/comproc_cpu_board
+RISCV_ELABORATE := fpga.Elaborate_ComProcCpuBoard_HDMI
+RISCV_ELABORATE_OUTPUT_DIR := $(RTL_DIR)/comproc_cpu_board_hdmi
 endif
 
 RISCV_CORE_SRC := src/$(TARGET)/riscv.v

@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stddef.h>
 
 extern void __attribute__((naked)) __attribute__((section(".isr_vector"))) isr_vector(void)
 {
@@ -32,6 +33,14 @@ static volatile uint32_t* const REG_VIDEO_CONTROLLER = (volatile uint32_t*)0xB00
 // 箱の高さ
 #define BOX_HEIGHT (8)
 
+void* __attribute__((inline)) memset(void* dest, int ch, size_t count)
+{
+    uint8_t* dest_ = (uint8_t*)dest;
+    while(count--) {
+        *dest_ = ch;
+    }
+    return dest;
+}
 
 static void copy_from_vram(uint8_t* buffer, const uint32_t* vram, uint32_t xs, uint32_t ys, uint32_t xe, uint32_t ye)
 {
