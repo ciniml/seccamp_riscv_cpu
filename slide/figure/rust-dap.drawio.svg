@@ -1,0 +1,73 @@
+<svg host="65bd71144e" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="411px" height="91px" viewBox="-0.5 -0.5 411 91" content="&lt;mxfile&gt;&lt;diagram id=&quot;EhfymLrTTToJx64F29St&quot; name=&quot;ページ1&quot;&gt;3VjRbpswFP0aHjMBDmnySCDtNilqVFa1ffTABWsGI2Masq+fHUyAmKyRRjK1T/E9vhf7HB/bEAN4aXXHYJ6saYSIYZtRZQDfsG0L2Kb4kciuRmb2ogZihiOV1AIB/o0UqOriEkeo6CVySgnHeR8MaZahkPcwyBjd9tNeKemPmsMYaUAQQqKjTzjiiWKxMFv8K8JxokZezFVHCptcBRQJjOi2A4GVATxGKa9baeUhIrVrZKnrbk/0HubFUMbPKbDrgjdISkVNzYvvGq6MllmEZL5pgKXKR4yj6uSY1oGJcACiKeJsJ1KagmYV1eIfxNi2UlqOwpKujAqDavXiw6NbhqKhSA4TBhrh+xxl955ozQwbWJJjzuhPNGFlZqxuDNc35osriAKORJkNiGIPiDIdQZSpJsrG0ygLbmLIZcEZ/YU8SigTeEYz0b18xYQcQZDgOBNhKARAAl9KebDYQq7qSHEUyWcvL28woGsJBqS0R5By9h82FDhnQ5kX2lCWThBF4rBUoXJDwlOiCKMK82fRtlT7ReJfHBX5VSfN3zVBJmb13A06VTJsy/ZRU1dwyLgrD3zpRAKLAocNfIslp/00agZy2n9fAcGSlixUWY66eCCLUZN1YqEYIpDjt/7j/0V1R7MZKws+iWB+BbvZ7x9V8wudVDfvb68B930aywHdcs6VHDfXlH/Y2Gazph/ynjjn3JwNGBmMYOSFJudjsPzAWh6EarR0HE3LoXe6Me7cZhk7Ynrr4FvQeaWb+O7mM6k71506pO4YTrUsTV33Yd3R1ts8Xv7SmR4rMHDpDO3VMS4dS/9oCJ58Wd6K8P2He/eBDTY9PgqdixlMhO337b6v8ycBWP0B&lt;/diagram&gt;&lt;/mxfile&gt;">
+    <defs/>
+    <g>
+        <rect x="0" y="0" width="150" height="90" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="all"/>
+        <rect x="20" y="40" width="120" height="40" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="all"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" text-anchor="middle" font-size="12px">
+            <text x="79.5" y="57.5">
+                OpenOCD
+            </text>
+            <text x="79.5" y="71.5">
+                probe-run等
+            </text>
+        </g>
+        <rect x="0" y="10" width="30" height="20" fill="none" stroke="none" pointer-events="all"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" text-anchor="middle" font-size="12px">
+            <text x="14.5" y="24.5">
+                PC
+            </text>
+        </g>
+        <rect x="200" y="0" width="100" height="90" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="all"/>
+        <path d="M 296.37 60 L 343.63 60" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 291.12 60 L 298.12 56.5 L 296.37 60 L 298.12 63.5 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 348.88 60 L 341.88 63.5 L 343.63 60 L 341.88 56.5 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <rect x="210" y="40" width="80" height="40" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="all"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" text-anchor="middle" font-size="12px">
+            <text x="249.5" y="64.5">
+                rust-dap
+            </text>
+        </g>
+        <path d="M 146.37 60 L 203.63 60" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 141.12 60 L 148.12 56.5 L 146.37 60 L 148.12 63.5 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 208.88 60 L 201.88 63.5 L 203.63 60 L 201.88 56.5 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <rect x="200" y="0" width="60" height="30" fill="none" stroke="none" pointer-events="all"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" text-anchor="middle" font-size="12px">
+            <text x="229.5" y="19.5">
+                RP2040
+            </text>
+        </g>
+        <rect x="150" y="35" width="50" height="20" fill="none" stroke="none" pointer-events="all"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" text-anchor="middle" font-size="12px">
+            <text x="174.5" y="49.5">
+                USB
+            </text>
+        </g>
+        <rect x="150" y="60" width="50" height="30" fill="none" stroke="none" pointer-events="all"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" text-anchor="middle" font-size="12px">
+            <text x="174.5" y="72.5">
+                CMSIS
+            </text>
+            <text x="174.5" y="86.5">
+                -DAP
+            </text>
+        </g>
+        <rect x="350" y="40" width="60" height="40" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="all"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" text-anchor="middle" font-size="12px">
+            <text x="379.5" y="57.5">
+                ARM
+            </text>
+            <text x="379.5" y="71.5">
+                CPU
+            </text>
+        </g>
+        <rect x="300" y="30" width="50" height="30" fill="none" stroke="none" pointer-events="all"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" text-anchor="middle" font-size="12px">
+            <text x="324.5" y="42.5">
+                SWD/
+            </text>
+            <text x="324.5" y="56.5">
+                JTAG
+            </text>
+        </g>
+    </g>
+</svg>
