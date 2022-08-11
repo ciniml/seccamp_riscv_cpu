@@ -57,9 +57,9 @@ class TopWithHDMI(memoryPathGen: Int => String = i => f"../sw/bootrom_${i}.hex",
 
   // 640x480@60Hz CEA-861 timing
   // https://tomverbeure.github.io/video_timings_calculator
-  val videoParams = video.VideoParams(24, 33, 480, 10, 2, 48, 640, 16, 96)
-  //val videoParams = video.VideoParams(24, 30, 480, 9, 6, 60, 720, 16, 62)
-  val videoController = Module(new VideoController(videoParams, 8, 8, 8, value => Cat(value(7, 6), Fill(6, value(6)), value(5, 3), Fill(5, value(3)), value(2, 0), Fill(5, value(0))) /* BGR233 to BGR888 */ ))
+  //val videoParams = video.VideoParams(24, 33, 480, 10, 2, 48, 640, 16, 96)
+  val videoParams = video.VideoParams(24, 20, 720, 5, 5, 220, 1280, 110, 40)
+  val videoController = Module(new VideoController(videoParams, 8, 16, 16, value => Cat(value(7, 6), Fill(6, value(6)), value(5, 3), Fill(5, value(3)), value(2, 0), Fill(5, value(0))) /* BGR233 to BGR888 */ ))
   decoder.io.targets(2) <> videoController.io.mem
   decoder.io.targets(3) <> videoController.io.reg
   videoController.io.videoClock := io.pixel_clock

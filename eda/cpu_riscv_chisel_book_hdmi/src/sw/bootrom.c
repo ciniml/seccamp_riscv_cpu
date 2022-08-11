@@ -24,9 +24,9 @@ static volatile uint32_t* const REG_GPIO_OUT = (volatile uint32_t*)0xA0000000;
 static volatile uint32_t* const REG_VRAM = (volatile uint32_t*)0xB0000000;  // VRAMの先頭アドレス
 static volatile uint32_t* const REG_VIDEO_CONTROLLER = (volatile uint32_t*)0xB0020000L; // ビデオ・コントローラのレジスタ
 // 画面の幅
-#define VIDEO_WIDTH (640/8)
+#define VIDEO_WIDTH (1280/16)
 // 画面の高さ
-#define VIDEO_HEIGHT (480/8)
+#define VIDEO_HEIGHT (720/16)
 
 // 箱の幅
 #define BOX_WIDTH (8)

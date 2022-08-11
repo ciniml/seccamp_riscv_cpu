@@ -7,10 +7,10 @@ type=dvi_tx
 version=1.0
 
 [Config]
-DISABLE_IO_INSERTION=false
+DISABLE_IO_INSERTION=true
 ELVDS=true
 LANG=0
-RX_CLOCK_IN_FREQUENCY=25.2
+RX_CLOCK_IN_FREQUENCY=74.25
 Synthesis_tool=GowinSynthesis
 TLVDS=false
 USING_EXTERNAL_CLOCK=false

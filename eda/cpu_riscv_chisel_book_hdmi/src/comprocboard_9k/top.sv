@@ -44,7 +44,6 @@ module top(
 
 assign debug_out = 0;
 
-logic clock_pll_126;
 logic clock_dvi;
 logic pll_lock;
 
@@ -62,21 +61,15 @@ reset_seq reset_seq_int(
 
 logic reset_ext;
 reset_seq reset_seq_ext(
-  .clock(clock_pll_126),
+  .clock(clock_dvi),
   .reset_in(reset_button[0] || !pll_lock),
   .reset_out(reset_ext)
 );
 
 Gowin_rPLL rpll_main(
-    .clkout(clock_pll_126), //output clkout
+    .clkout(clock_dvi), //output clkout
     .lock(pll_lock), //output lock
     .clkin(clock) //input clkin
-);
-
-Gowin_CLKDIV clkdiv_main(
-    .clkout(clock_dvi), //output clkout
-    .hclkin(clock_pll_126), //input hclkin
-    .resetn(!reset_ext) //input resetn
 );
 
 logic reset_dvi;
