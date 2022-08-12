@@ -121,9 +121,9 @@ class VideoController(videoParams: VideoParams, vramPixelBits: Int, magnificatio
         dataEnable := activeHLower <= counterH && counterH < activeHUpper &&
                     activeVLower <= counterV && counterV < activeVUpper
 
-        // HSYNC/VSYNCを生成 (※HSYNC/VSYNCは負論理)
-        hSync := !(counterH < videoParams.pulseWidthH.U)
-        vSync := !(counterV < videoParams.pulseWidthV.U)
+        // HSYNC/VSYNCを生成
+        hSync := counterH < videoParams.pulseWidthH.U
+        vSync := counterV < videoParams.pulseWidthV.U
     
         io.video.hSync := hSync
         io.video.vSync := vSync

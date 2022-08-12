@@ -84,6 +84,17 @@ class VideoIO(val pixelBits: Int) extends Bundle {
     val hSync = Output(Bool())
     val vSync = Output(Bool())
     val dataEnable = Output(Bool())
+
+    def default(): VideoIO = {
+        WireInit(
+            this.Lit(
+                _.dataEnable -> false.B,
+                _.hSync -> true.B,
+                _.vSync -> true.B,
+                _.pixelData -> 0.U,
+            )
+        )
+    }
 }
 
 class VideoMemoryIO(val pixelBits: Int, val addressWidth: Int) extends Bundle {

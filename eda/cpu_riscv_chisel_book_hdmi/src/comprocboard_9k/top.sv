@@ -34,9 +34,9 @@ module top(
 
     // DVI
     output logic tmds_clk_p,
-    output logic tmds_clk_n,
+    //output logic tmds_clk_n,
     output logic [2:0] tmds_data_p,
-    output logic [2:0] tmds_data_n,
+    //output logic [2:0] tmds_data_n,
 
     // Debug
     output logic [5:0] debug_out
@@ -46,6 +46,8 @@ assign debug_out = 0;
 
 logic clock_dvi;
 logic pll_lock;
+logic clock_dvi_ser;
+logic pll_lock_ser;
 
 logic [2:0] reset_button = '1;
 always_ff @(posedge clock) begin
@@ -62,14 +64,19 @@ reset_seq reset_seq_int(
 logic reset_ext;
 reset_seq reset_seq_ext(
   .clock(clock_dvi),
-  .reset_in(reset_button[0] || !pll_lock),
+  .reset_in(reset_button[0] || !pll_lock || !pll_lock_ser),
   .reset_out(reset_ext)
 );
 
-Gowin_rPLL rpll_main(
+gowin_rpll_dvi rpll_dvi(
     .clkout(clock_dvi), //output clkout
     .lock(pll_lock), //output lock
     .clkin(clock) //input clkin
+);
+gowin_rpll_ser rpll_dvi_ser(
+    .clkout(clock_dvi_ser), //output clkout
+    .lock(pll_lock_ser), //output lock
+    .clkin(clock_dvi) //input clkin
 );
 
 logic reset_dvi;
@@ -83,34 +90,15 @@ logic [31:0] io_debug_pc;
 logic [31:0] io_gpio_out;
 logic io_success;
 logic io_exit;
-logic io_rgb_vs;
-logic io_rgb_hs;
-logic io_rgb_de;
-logic [7:0] io_rgb_r;
-logic [7:0] io_rgb_g;
-logic [7:0] io_rgb_b;
+logic [9:0] io_dvi_clock;
+logic [9:0] io_dvi_data0;
+logic [9:0] io_dvi_data1;
+logic [9:0] io_dvi_data2;
 
-//assign d = io_debug_pc[9:2];
-
-logic cpu_halt = 0;
-always_ff @(posedge clock) begin
-  if( reset ) begin
-    cpu_halt <= 0;
-  end
-  else begin
-    if( io_exit ) begin
-      cpu_halt <= 1;
-    end
-  end
-end
-
-assign led = ~io_gpio_out[5:0]; //~{3'b000, reset, io_success, io_exit};
-
-logic cpu_clock;
-assign cpu_clock = clock && !cpu_halt;
+assign led = ~{4'b000, pll_lock, pll_lock_ser}; // ~io_gpio_out[5:0]; //~{3'b000, reset, io_success, io_exit};
 
 TopWithHDMI core(
-  .clock(cpu_clock),
+  .clock(clock),
   .io_uart_tx(uart_tx),
   .io_uart_rx(uart_rx),
   .io_pixel_reset(reset_dvi),
@@ -118,19 +106,81 @@ TopWithHDMI core(
   .*
 );
 
-DVI_TX_Top dvi_tx(
-  .I_rst_n(!reset_dvi), //input I_rst_n
-  .I_rgb_clk(clock_dvi), //input I_rgb_clk
-  .I_rgb_vs(!io_rgb_vs), //input I_rgb_vs
-  .I_rgb_hs(!io_rgb_hs), //input I_rgb_hs
-  .I_rgb_de(io_rgb_de), //input I_rgb_de
-  .I_rgb_r(io_rgb_r), //input [7:0] I_rgb_r
-  .I_rgb_g(io_rgb_g), //input [7:0] I_rgb_g
-  .I_rgb_b(io_rgb_b), //input [7:0] I_rgb_b
-  .O_tmds_clk_p(tmds_clk_p), //output O_tmds_clk_p
-  .O_tmds_clk_n(tmds_clk_n), //output O_tmds_clk_n
-  .O_tmds_data_p(tmds_data_p), //output [2:0] O_tmds_data_p
-  .O_tmds_data_n(tmds_data_n) //output [2:0] O_tmds_data_n
+OSER10 #(
+  .GSREN("false"),
+  .LSREN("true")
+) oser_dvi_clock(
+  .Q(tmds_clk_p),
+  .D0(io_dvi_clock[0]),
+  .D1(io_dvi_clock[1]),
+  .D2(io_dvi_clock[2]),
+  .D3(io_dvi_clock[3]),
+  .D4(io_dvi_clock[4]),
+  .D5(io_dvi_clock[5]),
+  .D6(io_dvi_clock[6]),
+  .D7(io_dvi_clock[7]),
+  .D8(io_dvi_clock[8]),
+  .D9(io_dvi_clock[9]),
+  .FCLK(clock_dvi_ser),
+  .PCLK(clock_dvi),
+  .RESET(reset_dvi)
+);
+OSER10 #(
+  .GSREN("false"),
+  .LSREN("true")
+) oser_dvi_data0(
+  .Q(tmds_data_p[0]),
+  .D0(io_dvi_data0[0]),
+  .D1(io_dvi_data0[1]),
+  .D2(io_dvi_data0[2]),
+  .D3(io_dvi_data0[3]),
+  .D4(io_dvi_data0[4]),
+  .D5(io_dvi_data0[5]),
+  .D6(io_dvi_data0[6]),
+  .D7(io_dvi_data0[7]),
+  .D8(io_dvi_data0[8]),
+  .D9(io_dvi_data0[9]),
+  .FCLK(clock_dvi_ser),
+  .PCLK(clock_dvi),
+  .RESET(reset_dvi)
+);
+OSER10 #(
+  .GSREN("false"),
+  .LSREN("true")
+) oser_dvi_data1(
+  .Q(tmds_data_p[1]),
+  .D0(io_dvi_data1[0]),
+  .D1(io_dvi_data1[1]),
+  .D2(io_dvi_data1[2]),
+  .D3(io_dvi_data1[3]),
+  .D4(io_dvi_data1[4]),
+  .D5(io_dvi_data1[5]),
+  .D6(io_dvi_data1[6]),
+  .D7(io_dvi_data1[7]),
+  .D8(io_dvi_data1[8]),
+  .D9(io_dvi_data1[9]),
+  .FCLK(clock_dvi_ser),
+  .PCLK(clock_dvi),
+  .RESET(reset_dvi)
+);
+OSER10 #(
+  .GSREN("false"),
+  .LSREN("true")
+) oser_dvi_data2(
+  .Q(tmds_data_p[2]),
+  .D0(io_dvi_data2[0]),
+  .D1(io_dvi_data2[1]),
+  .D2(io_dvi_data2[2]),
+  .D3(io_dvi_data2[3]),
+  .D4(io_dvi_data2[4]),
+  .D5(io_dvi_data2[5]),
+  .D6(io_dvi_data2[6]),
+  .D7(io_dvi_data2[7]),
+  .D8(io_dvi_data2[8]),
+  .D9(io_dvi_data2[9]),
+  .FCLK(clock_dvi_ser),
+  .PCLK(clock_dvi),
+  .RESET(reset_dvi)
 );
 
 endmodule

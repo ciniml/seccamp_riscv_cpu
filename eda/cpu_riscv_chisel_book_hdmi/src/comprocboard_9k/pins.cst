@@ -8,10 +8,10 @@ IO_LOC "tmds_clk_p" 69,68;
 IO_LOC "tmds_data_p[0]" 71,70;
 IO_LOC "tmds_data_p[1]" 73,72;
 IO_LOC "tmds_data_p[2]" 75,74;
-IO_PORT "tmds_clk_p" PULL_MODE=NONE DRIVE=16;
-IO_PORT "tmds_data_p[0]" PULL_MODE=NONE DRIVE=16;
-IO_PORT "tmds_data_p[1]" PULL_MODE=NONE DRIVE=16;
-IO_PORT "tmds_data_p[2]" PULL_MODE=NONE DRIVE=16;
+IO_PORT "tmds_clk_p"     PULL_MODE=NONE IO_TYPE=LVCMOS33D DRIVE=8;
+IO_PORT "tmds_data_p[0]" PULL_MODE=NONE IO_TYPE=LVCMOS33D DRIVE=8;
+IO_PORT "tmds_data_p[1]" PULL_MODE=NONE IO_TYPE=LVCMOS33D DRIVE=8;
+IO_PORT "tmds_data_p[2]" PULL_MODE=NONE IO_TYPE=LVCMOS33D DRIVE=8;
 
 //IO_LOC "row[0]" 34;
 //IO_LOC "row[1]" 35;

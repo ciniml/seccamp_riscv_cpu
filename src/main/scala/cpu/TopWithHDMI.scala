@@ -9,6 +9,7 @@ import video.VideoSignalGenerator
 import video.VideoConfig
 import video.SimpleTestPatternGenerator
 import video.VideoController
+import video.DviOut
 
 class TopWithHDMI(memoryPathGen: Int => String = i => f"../sw/bootrom_${i}.hex", suppressDebugMessage: Boolean = false) extends Module {
   val io = IO(new Bundle {
@@ -21,12 +22,10 @@ class TopWithHDMI(memoryPathGen: Int => String = i => f"../sw/bootrom_${i}.hex",
 
     val pixel_reset = Input(Bool())
     val pixel_clock = Input(Clock())
-    val rgb_hs = Output(Bool())
-    val rgb_vs = Output(Bool())
-    val rgb_de = Output(Bool())
-    val rgb_r = Output(UInt(8.W))
-    val rgb_g = Output(UInt(8.W))
-    val rgb_b = Output(UInt(8.W))
+    val dvi_clock = Output(UInt(10.W))
+    val dvi_data0 = Output(UInt(10.W))
+    val dvi_data1 = Output(UInt(10.W))
+    val dvi_data2 = Output(UInt(10.W))
   })
   val baseAddress = BigInt("00000000", 16)
   val memSize = 8192
@@ -65,21 +64,19 @@ class TopWithHDMI(memoryPathGen: Int => String = i => f"../sw/bootrom_${i}.hex",
   videoController.io.videoClock := io.pixel_clock
   videoController.io.videoReset := io.pixel_reset
 
-  val useTestPatternGenerator = false
-  if( !useTestPatternGenerator ) {
-    io.rgb_de := videoController.io.video.dataEnable
-    io.rgb_hs := videoController.io.video.hSync
-    io.rgb_vs := videoController.io.video.vSync
-    io.rgb_r := videoController.io.video.pixelData(7, 0)
-    io.rgb_g := videoController.io.video.pixelData(15, 8)
-    io.rgb_b := videoController.io.video.pixelData(23, 16)
-  } else {
-    val tpg = Module(new SimpleTestPatternGenerator(videoParams))
-    io.rgb_de := tpg.io.video.dataEnable
-    io.rgb_hs := tpg.io.video.hSync
-    io.rgb_vs := tpg.io.video.vSync
-    io.rgb_r := tpg.io.video.pixelData(7, 0)
-    io.rgb_g := tpg.io.video.pixelData(15, 8)
-    io.rgb_b := tpg.io.video.pixelData(23, 16)
+  withClockAndReset(io.pixel_clock, io.pixel_reset) {
+    val dviOut = Module(new DviOut)
+    io.dvi_clock := dviOut.io.dviClock
+    io.dvi_data0 := dviOut.io.dviData0
+    io.dvi_data1 := dviOut.io.dviData1
+    io.dvi_data2 := dviOut.io.dviData2
+
+    val useTestPatternGenerator = false
+    if( !useTestPatternGenerator ) {
+      dviOut.io.video <> videoController.io.video
+    } else {
+      val tpg = Module(new SimpleTestPatternGenerator(videoParams))
+      dviOut.io.video <> tpg.io.video
+    }
   }
 }

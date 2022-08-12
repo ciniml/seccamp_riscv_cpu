@@ -79,28 +79,31 @@ void __attribute__((noreturn)) main(void)
     // 背景を描画：白～紫の7本の帯を描画
     volatile uint32_t* vram_p = REG_VRAM;
     for(uint32_t y = 0; y < VIDEO_HEIGHT; y++) {
-        for(uint32_t x = 0; x < VIDEO_WIDTH; x++) {
+        for(uint32_t x = 0; x < VIDEO_WIDTH; x++, vram_p++) {
             if( x < VIDEO_WIDTH * 1 / 7) {
-                *(vram_p++) = 0b11111111;   // B+G+R
+                *(vram_p) = 0b11111111;   // B+G+R
             }
             else if( x < VIDEO_WIDTH * 2 / 7) {
-                *(vram_p++) = 0b11000000;   // B
+                *(vram_p) = 0b11000000;   // B
             }
             else if( x < VIDEO_WIDTH * 3 / 7) {
-                *(vram_p++) = 0b11111000;   // B+G
+                *(vram_p) = 0b11111000;   // B+G
             }
             else if( x < VIDEO_WIDTH * 4 / 7) {
-                *(vram_p++) = 0b00111000;   // G
+                *(vram_p) = 0b00111000;   // G
             }
             else if( x < VIDEO_WIDTH * 5 / 7) {
-                *(vram_p++) = 0b00111111;   // G+R
+                *(vram_p) = 0b00111111;   // G+R
             }
             else if( x < VIDEO_WIDTH * 6 / 7) {
-                *(vram_p++) = 0b00000111;   // R
+                *(vram_p) = 0b00000111;   // R
             }
             else {
-                *(vram_p++) = 0b11000111;   // B+R
+                *(vram_p) = 0b11000111;   // B+R
             }
+            // if((y & 3) == 0 || (x & 3) == 0) {
+            //     *(vram_p) = 0;
+            // }
         }
     }
 
@@ -113,7 +116,7 @@ void __attribute__((noreturn)) main(void)
     while(1) {
         // 垂直同期周波数が60[Hz]になっているので、
         // VSYNC待ちにより、ループは1/60[s]ごとに動作する
-        while(*REG_VIDEO_CONTROLLER & 4);   // VSYNC待ち (VSYNCが0になるのを待つ)
+        while(!(*REG_VIDEO_CONTROLLER & 4));   // VSYNC待ち (VSYNCが1になるのを待つ)
 
         if( one_second_counter == 0 ) { // 1秒に1回処理をする
             *REG_GPIO_OUT = led_out;
