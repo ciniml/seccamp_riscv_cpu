@@ -1,0 +1,160 @@
+<?xml version="1" encoding="UTF-8"?>
+<GAO_CONFIG>
+    <Version>3.0</Version>
+    <Mode>Standard</Mode>
+    <AoCore index="0" sample_clock="clock" trig_type="0" storage_depth="2048" window_num="1" capture_amount="2048" trigger_pos="16">
+        <SignalList>
+            <Bus name="uart_tx_data_bits[7:0]">
+                <Signal>uart_tx_data_bits[7]</Signal>
+                <Signal>uart_tx_data_bits[6]</Signal>
+                <Signal>uart_tx_data_bits[5]</Signal>
+                <Signal>uart_tx_data_bits[4]</Signal>
+                <Signal>uart_tx_data_bits[3]</Signal>
+                <Signal>uart_tx_data_bits[2]</Signal>
+                <Signal>uart_tx_data_bits[1]</Signal>
+                <Signal>uart_tx_data_bits[0]</Signal>
+            </Bus>
+            <Signal>uart_tx_data_valid</Signal>
+            <Signal>uart_tx_data_ready</Signal>
+            <Bus name="uart_rx_data_bits[7:0]">
+                <Signal>uart_rx_data_bits[7]</Signal>
+                <Signal>uart_rx_data_bits[6]</Signal>
+                <Signal>uart_rx_data_bits[5]</Signal>
+                <Signal>uart_rx_data_bits[4]</Signal>
+                <Signal>uart_rx_data_bits[3]</Signal>
+                <Signal>uart_rx_data_bits[2]</Signal>
+                <Signal>uart_rx_data_bits[1]</Signal>
+                <Signal>uart_rx_data_bits[0]</Signal>
+            </Bus>
+            <Signal>uart_rx_data_valid</Signal>
+            <Signal>uart_rx_data_ready</Signal>
+            <Bus name="fifo_uart_tx_data_bits[7:0]">
+                <Signal>fifo_uart_tx_data_bits[7]</Signal>
+                <Signal>fifo_uart_tx_data_bits[6]</Signal>
+                <Signal>fifo_uart_tx_data_bits[5]</Signal>
+                <Signal>fifo_uart_tx_data_bits[4]</Signal>
+                <Signal>fifo_uart_tx_data_bits[3]</Signal>
+                <Signal>fifo_uart_tx_data_bits[2]</Signal>
+                <Signal>fifo_uart_tx_data_bits[1]</Signal>
+                <Signal>fifo_uart_tx_data_bits[0]</Signal>
+            </Bus>
+            <Signal>fifo_uart_tx_data_valid</Signal>
+            <Signal>fifo_uart_tx_data_ready</Signal>
+            <Bus name="fifo_uart_rx_data_bits[7:0]">
+                <Signal>fifo_uart_rx_data_bits[7]</Signal>
+                <Signal>fifo_uart_rx_data_bits[6]</Signal>
+                <Signal>fifo_uart_rx_data_bits[5]</Signal>
+                <Signal>fifo_uart_rx_data_bits[4]</Signal>
+                <Signal>fifo_uart_rx_data_bits[3]</Signal>
+                <Signal>fifo_uart_rx_data_bits[2]</Signal>
+                <Signal>fifo_uart_rx_data_bits[1]</Signal>
+                <Signal>fifo_uart_rx_data_bits[0]</Signal>
+            </Bus>
+            <Signal>fifo_uart_rx_data_valid</Signal>
+            <Signal>fifo_uart_rx_data_ready</Signal>
+        </SignalList>
+        <Triggers>
+            <Trigger index="0">
+                <SignalList>
+                    <Signal>reset</Signal>
+                    <Signal>mem_valid</Signal>
+                </SignalList>
+            </Trigger>
+            <Trigger index="1">
+                <SignalList>
+                    <Bus restorename="led_out[7:0]">
+                        <Signal>led_out[7]</Signal>
+                        <Signal>led_out[6]</Signal>
+                        <Signal>led_out[5]</Signal>
+                        <Signal>led_out[4]</Signal>
+                        <Signal>led_out[3]</Signal>
+                        <Signal>led_out[2]</Signal>
+                        <Signal>led_out[1]</Signal>
+                        <Signal>led_out[0]</Signal>
+                    </Bus>
+                </SignalList>
+            </Trigger>
+            <Trigger index="2">
+                <SignalList>
+                    <Bus restorename="mem_addr[31:0]">
+                        <Signal>mem_addr[31]</Signal>
+                        <Signal>mem_addr[30]</Signal>
+                        <Signal>mem_addr[29]</Signal>
+                        <Signal>mem_addr[28]</Signal>
+                        <Signal>mem_addr[27]</Signal>
+                        <Signal>mem_addr[26]</Signal>
+                        <Signal>mem_addr[25]</Signal>
+                        <Signal>mem_addr[24]</Signal>
+                        <Signal>mem_addr[23]</Signal>
+                        <Signal>mem_addr[22]</Signal>
+                        <Signal>mem_addr[21]</Signal>
+                        <Signal>mem_addr[20]</Signal>
+                        <Signal>mem_addr[19]</Signal>
+                        <Signal>mem_addr[18]</Signal>
+                        <Signal>mem_addr[17]</Signal>
+                        <Signal>mem_addr[16]</Signal>
+                        <Signal>mem_addr[15]</Signal>
+                        <Signal>mem_addr[14]</Signal>
+                        <Signal>mem_addr[13]</Signal>
+                        <Signal>mem_addr[12]</Signal>
+                        <Signal>mem_addr[11]</Signal>
+                        <Signal>mem_addr[10]</Signal>
+                        <Signal>mem_addr[9]</Signal>
+                        <Signal>mem_addr[8]</Signal>
+                        <Signal>mem_addr[7]</Signal>
+                        <Signal>mem_addr[6]</Signal>
+                        <Signal>mem_addr[5]</Signal>
+                        <Signal>mem_addr[4]</Signal>
+                        <Signal>mem_addr[3]</Signal>
+                        <Signal>mem_addr[2]</Signal>
+                        <Signal>mem_addr[1]</Signal>
+                        <Signal>mem_addr[0]</Signal>
+                    </Bus>
+                </SignalList>
+            </Trigger>
+            <Trigger index="3">
+                <SignalList>
+                    <Signal>uart_tx_data_valid</Signal>
+                    <Signal>uart_tx_data_ready</Signal>
+                    <Signal>uart_rx_data_valid</Signal>
+                    <Signal>uart_rx_data_ready</Signal>
+                </SignalList>
+            </Trigger>
+            <Trigger index="4"/>
+            <Trigger index="5"/>
+            <Trigger index="6"/>
+            <Trigger index="7"/>
+            <Trigger index="8"/>
+            <Trigger index="9"/>
+            <Trigger index="10"/>
+            <Trigger index="11"/>
+            <Trigger index="12"/>
+            <Trigger index="13"/>
+            <Trigger index="14"/>
+            <Trigger index="15"/>
+        </Triggers>
+        <MatchUnits>
+            <MatchUnit index="0" enabled="1" match_type="1" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="0R" value1="00" trigger="0"/>
+            <MatchUnit index="1" enabled="1" match_type="2" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="3" value0="11111111" value1="00000000" trigger="1"/>
+            <MatchUnit index="2" enabled="1" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" value1="00000000000000000000000000000000" trigger="2"/>
+            <MatchUnit index="3" enabled="1" match_type="1" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="11XX" value1="0000" trigger="3"/>
+            <MatchUnit index="4" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="5" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="6" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="7" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="8" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="9" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="10" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="11" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="12" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="13" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="14" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="15" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+        </MatchUnits>
+        <Expressions type="Static">
+            <Expression>(M0|M1)&amp;M2</Expression>
+            <Expression>M3</Expression>
+        </Expressions>
+    </AoCore>
+    <GAO_ID>1000110100110000</GAO_ID>
+</GAO_CONFIG>
