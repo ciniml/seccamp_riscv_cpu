@@ -1,0 +1,13 @@
+IO_LOC "clock" 4;
+IO_PORT "clock" IO_TYPE=LVCMOS33;
+
+IO_PORT "com_ser"   IO_TYPE=LVCMOS33;
+IO_PORT "com_rclk"  IO_TYPE=LVCMOS33;
+IO_PORT "com_srclk" IO_TYPE=LVCMOS33;
+IO_PORT "com_oe"    IO_TYPE=LVCMOS33;
+IO_PORT "seg_ser"   IO_TYPE=LVCMOS33;
+IO_PORT "seg_rclk"  IO_TYPE=LVCMOS33;
+IO_PORT "seg_srclk" IO_TYPE=LVCMOS33;
+IO_PORT "seg_oe"    IO_TYPE=LVCMOS33;
+
+// PMOD pin locations

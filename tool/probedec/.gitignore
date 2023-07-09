@@ -1,0 +1,4 @@
+*.bin
+*.csv
+Cargo.lock
+target

@@ -1,0 +1,70 @@
+IO_LOC "clock" 52;
+IO_PORT "clock" IO_TYPE=LVCMOS33;
+
+IO_PORT "com_ser"   IO_TYPE=LVCMOS33;
+IO_PORT "com_rclk"  IO_TYPE=LVCMOS33;
+IO_PORT "com_srclk" IO_TYPE=LVCMOS33;
+IO_PORT "com_oe"    IO_TYPE=LVCMOS33;
+IO_PORT "seg_ser"   IO_TYPE=LVCMOS33;
+IO_PORT "seg_rclk"  IO_TYPE=LVCMOS33;
+IO_PORT "seg_srclk" IO_TYPE=LVCMOS33;
+IO_PORT "seg_oe"    IO_TYPE=LVCMOS33;
+
+IO_PORT "anode[0]" IO_TYPE=LVCMOS33;
+IO_PORT "anode[1]" IO_TYPE=LVCMOS33;
+IO_PORT "anode[2]" IO_TYPE=LVCMOS33;
+IO_PORT "anode[3]" IO_TYPE=LVCMOS33;
+IO_PORT "anode[4]" IO_TYPE=LVCMOS33;
+IO_PORT "anode[5]" IO_TYPE=LVCMOS33;
+IO_PORT "anode[6]" IO_TYPE=LVCMOS33;
+IO_PORT "anode[7]" IO_TYPE=LVCMOS33;
+IO_PORT "cathode[0]" IO_TYPE=LVCMOS33;
+IO_PORT "cathode[1]" IO_TYPE=LVCMOS33;
+IO_PORT "cathode[2]" IO_TYPE=LVCMOS33;
+IO_PORT "cathode[3]" IO_TYPE=LVCMOS33;
+IO_PORT "cathode[4]" IO_TYPE=LVCMOS33;
+IO_PORT "cathode[5]" IO_TYPE=LVCMOS33;
+IO_PORT "cathode[6]" IO_TYPE=LVCMOS33;
+IO_PORT "cathode[7]" IO_TYPE=LVCMOS33;
+
+IO_LOC  "uart_rx" 18;
+IO_LOC  "uart_tx" 17;
+IO_PORT "uart_rx" IO_TYPE=LVCMOS33;
+IO_PORT "uart_tx" IO_TYPE=LVCMOS33;
+
+// embedded logic probe output
+IO_LOC  "probe_out" 69
+IO_PORT "probe_out" IO_TYPE=LVCMOS33;
+
+IO_LOC  "led_out[0]" 10;
+IO_LOC  "led_out[1]" 11;
+IO_LOC  "led_out[2]" 13;
+IO_LOC  "led_out[3]" 14;
+IO_LOC  "led_out[4]" 15;
+IO_LOC  "led_out[5]" 16;
+IO_PORT "led_out[0]" IO_TYPE=LVCMOS18;
+IO_PORT "led_out[1]" IO_TYPE=LVCMOS18;
+IO_PORT "led_out[2]" IO_TYPE=LVCMOS18;
+IO_PORT "led_out[3]" IO_TYPE=LVCMOS18;
+IO_PORT "led_out[4]" IO_TYPE=LVCMOS18;
+IO_PORT "led_out[5]" IO_TYPE=LVCMOS18;
+
+IO_LOC "switch_in[0]" 86;
+IO_LOC "switch_in[1]" 85;
+IO_LOC "switch_in[2]" 84;
+IO_LOC "switch_in[3]" 83;
+IO_LOC "switch_in[4]" 82;
+IO_LOC "switch_in[5]" 81;
+IO_LOC "switch_in[6]" 80;
+IO_LOC "switch_in[7]" 79;
+IO_PORT "switch_in[0]" IO_TYPE=LVCMOS15;
+IO_PORT "switch_in[1]" IO_TYPE=LVCMOS15;
+IO_PORT "switch_in[2]" IO_TYPE=LVCMOS15;
+IO_PORT "switch_in[3]" IO_TYPE=LVCMOS15;
+IO_PORT "switch_in[4]" IO_TYPE=LVCMOS15;
+IO_PORT "switch_in[5]" IO_TYPE=LVCMOS15;
+IO_PORT "switch_in[6]" IO_TYPE=LVCMOS15;
+IO_PORT "switch_in[7]" IO_TYPE=LVCMOS15;
+
+
+// PMOD pin locations

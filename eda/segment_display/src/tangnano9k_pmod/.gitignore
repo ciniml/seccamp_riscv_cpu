@@ -1,0 +1,4 @@
+output.vcd
+testbench
+riscv.v
+pins.cst

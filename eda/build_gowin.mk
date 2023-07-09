@@ -9,6 +9,13 @@ BITSTREAM := $(BUILD_DIR)/impl/pnr/$(PROJECT_NAME).fs
 SRC_DIR := $(abspath src/$(TARGET))
 RTL_DIR := $(abspath ../../rtl)
 
+FPGA_SAMPLES_DIR := $(abspath ../../external/fpga_samples)
+UTIL_DIR := $(FPGA_SAMPLES_DIR)/util
+MAPPMOD_DIR ?= $(UTIL_DIR)/mappmod
+MAPPMOD ?= $(MAPPMOD_DIR)/target/release/mappmod
+MOD_DIR := $(FPGA_SAMPLES_DIR)/mod
+TARGET_DEF_DIR := $(FPGA_SAMPLES_DIR)/eda/targets/$(TARGET)
+
 include ../targets/$(TARGET)/target.mk
 
 DEVICE ?= $(DEVICE_FAMILY)
@@ -53,3 +60,6 @@ clean:
 ifneq ($(PROJECT_ADDITIONAL_CLEAN),)
 	-$(RM) $(PROJECT_ADDITIONAL_CLEAN)
 endif
+
+$(MAPPMOD):
+	cd $(MAPPMOD_DIR); cargo build --release

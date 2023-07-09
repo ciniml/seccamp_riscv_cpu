@@ -17,7 +17,6 @@ object Consts {
   val VTYPE_ADDR    = 0xC21
 
   val CSR_CUSTOM_GPIO = 0x7c0
-  val CSR_MTVEC = 0x305
 
   val EXE_FUN_LEN = 5
   val ALU_X       =  0.U(EXE_FUN_LEN.W)
@@ -95,4 +94,15 @@ object Consts {
 
   val CSR_ADDR_CYCLE = 0xc00.U(12.W)
   val CSR_ADDR_CYCLEH = 0xc80.U(12.W)
+
+  val CSR_ADDR_MSTATUS = 0x300.U(12.W)
+  val CSR_ADDR_MISA = 0x301.U(12.W)
+  val CSR_ADDR_MIE = 0x304.U(12.W)
+  val CSR_ADDR_MTVEC = 0x305.U(12.W)
+  val CSR_ADDR_MSTATUSH = 0x310.U(12.W)
+  val CSR_ADDR_MSCRATCH = 0x340.U(12.W)
+  val CSR_ADDR_MEPC = 0x341.U(12.W)
+  val CSR_ADDR_MCAUSE = 0x342.U(12.W)
+  val CSR_ADDR_MTVAL = 0x343.U(12.W)
+  val CSR_ADDR_MIP = 0x344.U(12.W)
 }

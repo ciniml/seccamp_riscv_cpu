@@ -11,6 +11,7 @@ class Core(startAddress: UInt = START_ADDR, suppressDebugMessage: Boolean = fals
       val imem = Flipped(new ImemPortIo())
       val dmem = Flipped(new DmemPortIo())
       val gpio_out = Output(UInt(32.W))
+      val interrupt_in = Input(Bool())
       val success = Output(Bool())
       val exit = Output(Bool())
       val debug_pc = Output(UInt(WORD_LEN.W))
@@ -21,6 +22,27 @@ class Core(startAddress: UInt = START_ADDR, suppressDebugMessage: Boolean = fals
   // val csr_regfile = Mem(4096, UInt(WORD_LEN.W)) // 
   val csr_gpio_out = RegInit(0.U(WORD_LEN.W))   // 
   val csr_trap_vector = RegInit(0.U(WORD_LEN.W))   // 
+  // Machine mode CSRs
+  val csr_mstatus = RegInit(MStatusRegister.default())
+  val csr_mie = RegInit(MieRegister.default())
+  val csr_mip = WireInit(MipRegister.default())
+  val csr_mscratch = RegInit(0.U(WORD_LEN.W))
+  val csr_mepc = RegInit(0.U(WORD_LEN.W))
+  val csr_mcause = RegInit(0.U(WORD_LEN.W))
+  val csr_mtval = RegInit(0.U(WORD_LEN.W))
+  
+  // meip (machine mode external interrupt) bit in mip register is wired to interrupt_in
+  csr_mip.meip := io. interrupt_in
+
+  val CAUSE_INTERRUPT = (1.U(WORD_LEN.W) << (WORD_LEN - 1))
+  val CAUSE_INTERRUPT_SUPERVISOR_SOFTWARE_INTERRUPT = CAUSE_INTERRUPT | 0x1.U(WORD_LEN.W)
+  val CAUSE_INTERRUPT_MACHINE_SOFTWARE_INTERRUPT = CAUSE_INTERRUPT | 0x3.U(WORD_LEN.W)
+  val CAUSE_INTERRUPT_SUPERVISOR_TIMER_INTERRUPT = CAUSE_INTERRUPT | 0x5.U(WORD_LEN.W)
+  val CAUSE_INTERRUPT_MACHINE_TIMER_INTERRUPT = CAUSE_INTERRUPT | 0x7.U(WORD_LEN.W)
+  val CAUSE_INTERRUPT_SUPERVISOR_EXTERNAL_INTERRUPT = CAUSE_INTERRUPT | 0x9.U(WORD_LEN.W)
+  val CAUSE_INTERRUPT_MACHINE_EXTERNAL_INTERRUPT = CAUSE_INTERRUPT | 0xb.U(WORD_LEN.W)
+  val CAUSE_INSTRUCTION_ADDRESS_MISALIGNED = 0x0.U(WORD_LEN.W)
+
   io.gpio_out := csr_gpio_out
 
   //**********************************
@@ -48,6 +70,10 @@ class Core(startAddress: UInt = START_ADDR, suppressDebugMessage: Boolean = fals
   val exe_reg_imm_u_shifted = RegInit(0.U(WORD_LEN.W))
   val exe_reg_imm_z_uext    = RegInit(0.U(WORD_LEN.W))
   val exe_reg_mem_w         = RegInit(0.U(WORD_LEN.W))
+  val exe_reg_has_pending_interrupt = RegInit(false.B)
+  val exe_reg_exception_target = RegInit(0.U(WORD_LEN.W))
+  val exe_reg_mcause        = RegInit(0.U(WORD_LEN.W))
+  val exe_reg_mret          = RegInit(false.B)
 
   // EX/MEM State
   val mem_reg_pc            = RegInit(0.U(WORD_LEN.W))
@@ -69,6 +95,10 @@ class Core(startAddress: UInt = START_ADDR, suppressDebugMessage: Boolean = fals
   val wb_reg_rf_wen         = RegInit(0.U(REN_LEN.W))
   val wb_reg_wb_data        = RegInit(0.U(WORD_LEN.W))
 
+  
+  //**********************************
+  // mstatus CSR process
+  
 
   //**********************************
   // Instruction Fetch (IF) Stage
@@ -97,13 +127,12 @@ class Core(startAddress: UInt = START_ADDR, suppressDebugMessage: Boolean = fals
 
   //**********************************
   // IF/ID Register
-  id_reg_pc   := Mux(stall_flg, id_reg_pc, if_reg_pc)
+  id_reg_pc   := Mux(stall_flg || exe_br_flg || exe_jmp_flg || !io.imem.valid, id_reg_pc, if_reg_pc)
   id_reg_inst := MuxCase(if_inst, Seq(
 	  // 優先順位重要！ジャンプ成立とストールが同時発生した場合、ジャンプ処理を優先
     (exe_br_flg || exe_jmp_flg) -> BUBBLE,
     stall_flg -> id_reg_inst, 
   ))
-
 
   //**********************************
   // Instruction Decode (ID) Stage
@@ -116,10 +145,18 @@ class Core(startAddress: UInt = START_ADDR, suppressDebugMessage: Boolean = fals
   val id_rs1_data_hazard = (exe_reg_rf_wen === REN_S) && (id_rs1_addr_b =/= 0.U) && (id_rs1_addr_b === exe_reg_wb_addr)
   val id_rs2_data_hazard = (exe_reg_rf_wen === REN_S) && (id_rs2_addr_b =/= 0.U) && (id_rs2_addr_b === exe_reg_wb_addr)
   stall_flg := (id_rs1_data_hazard || id_rs2_data_hazard || mem_stall_flg)
-
+  
+  // 割り込みの処理
+  val id_enabled_mip = MipRegister(csr_mip.toMip() & csr_mie.toMie())
+  val id_has_pending_interrupt = id_enabled_mip.hasPending() && csr_mstatus.mie
+  val id_exception_cause = PriorityEncoder(id_enabled_mip.toMip())
+  // 割り込みのジャンプ先を計算する。mtvec[1:0] == 0の場合はDirectモードなのでそのまま、mtvec[1:0] == 1の場合はVectoredモードなので、cause * 4を足す
+  val id_exception_target = (csr_trap_vector & ~3.U(WORD_LEN.W)) + Mux((csr_trap_vector & 3.U) === 0.U, 0.U, id_exception_cause << 2)
+  val id_mcause = Cat(id_has_pending_interrupt, 0.U((WORD_LEN - id_exception_cause.getWidth - 1).W), id_exception_cause)
+  
   // branch,jump,stall時にIDをBUBBLE化
   val id_inst = Mux((exe_br_flg || exe_jmp_flg || stall_flg), BUBBLE, id_reg_inst)  
-
+  
   val id_rs1_addr = id_inst(19, 15)
   val id_rs2_addr = id_inst(24, 20)
   val id_wb_addr  = id_inst(11, 7)
@@ -195,7 +232,7 @@ class Core(startAddress: UInt = START_ADDR, suppressDebugMessage: Boolean = fals
       CSRRSI-> List(ALU_COPY1, OP1_IMZ, OP2_X  , MEN_X, REN_S, WB_CSR, CSR_S, MW_X),
       CSRRC -> List(ALU_COPY1, OP1_RS1, OP2_X  , MEN_X, REN_S, WB_CSR, CSR_C, MW_X),
       CSRRCI-> List(ALU_COPY1, OP1_IMZ, OP2_X  , MEN_X, REN_S, WB_CSR, CSR_C, MW_X),
-      ECALL -> List(ALU_X    , OP1_X  , OP2_X  , MEN_X, REN_X, WB_X  , CSR_E, MW_X)
+      ECALL -> List(ALU_X    , OP1_X  , OP2_X  , MEN_X, REN_X, WB_X  , CSR_E, MW_X),
 		)
 	)
   val id_exe_fun :: id_op1_sel :: id_op2_sel :: id_mem_wen :: id_rf_wen :: id_wb_sel :: id_csr_cmd :: id_mem_w :: Nil = csignals
@@ -214,13 +251,13 @@ class Core(startAddress: UInt = START_ADDR, suppressDebugMessage: Boolean = fals
   ))
 
   val id_csr_addr = Mux(id_csr_cmd === CSR_E, 0x342.U(CSR_ADDR_LEN.W), id_inst(31,20))
-
+  
+  val id_mret = id_inst === MRET
 
   //**********************************
   // ID/EX register
-  // MEMステージがストールしていない場合のみEXEのパイプラインレジスタを更新する。
+  // IF/MEMステージがストールしていない場合のみEXEのパイプラインレジスタを更新する。
   when( !mem_stall_flg ) {
-    exe_reg_pc            := id_reg_pc
     exe_reg_op1_data      := id_op1_data
     exe_reg_op2_data      := id_op2_data
     exe_reg_rs2_data      := id_rs2_data
@@ -237,6 +274,16 @@ class Core(startAddress: UInt = START_ADDR, suppressDebugMessage: Boolean = fals
     exe_reg_csr_cmd       := id_csr_cmd
     exe_reg_mem_wen       := id_mem_wen
     exe_reg_mem_w         := id_mem_w
+    exe_reg_has_pending_interrupt := id_has_pending_interrupt
+    exe_reg_exception_target := id_exception_target
+    exe_reg_mcause        := id_mcause
+    exe_reg_mret          := id_mret
+  }
+  when ( !mem_stall_flg && !(exe_br_flg || exe_jmp_flg) ) {
+    exe_reg_pc            := id_reg_pc  // Update PC reg for EX stage only when IF/MEM stage is not stalled by branch.
+  }
+  when( exe_reg_has_pending_interrupt ) {
+    exe_reg_has_pending_interrupt := false.B  // Clear pending interrupt flag after one cycle.
   }
 
   //**********************************
@@ -259,6 +306,8 @@ class Core(startAddress: UInt = START_ADDR, suppressDebugMessage: Boolean = fals
 
   // branch
   exe_br_flg := MuxCase(false.B, Seq(
+    (exe_reg_has_pending_interrupt) -> true.B,
+    (exe_reg_mret)                  -> true.B,
     (exe_reg_exe_fun === BR_BEQ)  ->  (exe_reg_op1_data === exe_reg_op2_data),
     (exe_reg_exe_fun === BR_BNE)  -> !(exe_reg_op1_data === exe_reg_op2_data),
     (exe_reg_exe_fun === BR_BLT)  ->  (exe_reg_op1_data.asSInt() < exe_reg_op2_data.asSInt()),
@@ -266,7 +315,22 @@ class Core(startAddress: UInt = START_ADDR, suppressDebugMessage: Boolean = fals
     (exe_reg_exe_fun === BR_BLTU) ->  (exe_reg_op1_data < exe_reg_op2_data),
     (exe_reg_exe_fun === BR_BGEU) -> !(exe_reg_op1_data < exe_reg_op2_data)
   ))
-  exe_br_target := exe_reg_pc + exe_reg_imm_b_sext
+  exe_br_target := MuxCase(exe_reg_pc + exe_reg_imm_b_sext, Seq(
+    (exe_reg_has_pending_interrupt) -> exe_reg_exception_target,
+    (exe_reg_mret) -> csr_mepc,
+  ))
+  
+  // 割り込み発生時
+  when(exe_reg_has_pending_interrupt) {
+    csr_mcause := exe_reg_mcause
+    csr_mepc := exe_reg_pc              // 割り込み発生時のPCをMEPCに保存
+    csr_mstatus.mpie := csr_mstatus.mie // MIEの値をMPIEに保存
+    csr_mstatus.mie := false.B          // 割り込み無効化
+  }
+  // MRET命令実行時
+  when(exe_reg_mret) {
+    csr_mstatus.mie := csr_mstatus.mpie // MIEをMPIEの値から復元
+  }
 
   exe_jmp_flg := (exe_reg_wb_sel === WB_PC)
 
@@ -306,9 +370,18 @@ class Core(startAddress: UInt = START_ADDR, suppressDebugMessage: Boolean = fals
   mem_stall_flg := io.dmem.ren && !io.dmem.rvalid
 
   // CSR
-  val csr_rdata = MuxCase(0.U(WORD_LEN.W), Seq(
-    (mem_reg_csr_addr === CSR_CUSTOM_GPIO.U) -> csr_gpio_out,
-    (mem_reg_csr_addr === CSR_MTVEC.U) -> csr_trap_vector,
+  val csr_rdata = MuxLookup(mem_reg_csr_addr, 0.U(WORD_LEN.W), Seq(
+    CSR_CUSTOM_GPIO.U -> csr_gpio_out,
+    CSR_ADDR_MSTATUS -> csr_mstatus.toMStatusL(),
+    CSR_ADDR_MISA -> 0.U,
+    CSR_ADDR_MIE -> csr_mie.toMie(),
+    CSR_ADDR_MTVEC -> csr_trap_vector,
+    CSR_ADDR_MSTATUSH -> csr_mstatus.toMStatusH(),
+    CSR_ADDR_MSCRATCH -> csr_mscratch,
+    CSR_ADDR_MEPC -> csr_mepc,
+    CSR_ADDR_MCAUSE -> csr_mcause,
+    CSR_ADDR_MTVAL -> csr_mtval,
+    CSR_ADDR_MIP -> csr_mip.toMip(),
   ))
 
   val csr_wdata = MuxCase(0.U(WORD_LEN.W), Seq(
@@ -319,10 +392,18 @@ class Core(startAddress: UInt = START_ADDR, suppressDebugMessage: Boolean = fals
   ))
   
   when(mem_reg_csr_cmd > 0.U){
-    when( mem_reg_csr_addr === CSR_MTVEC.U ) {
-      csr_trap_vector := csr_wdata
-    } .elsewhen( mem_reg_csr_addr === CSR_CUSTOM_GPIO.U ) {
-      csr_gpio_out := csr_wdata
+    switch(mem_reg_csr_addr) {
+      is(CSR_CUSTOM_GPIO.U) { csr_gpio_out := csr_wdata }
+      is(CSR_ADDR_MSTATUS)  { csr_mstatus := MStatusRegister(csr_wdata, csr_mstatus.toMStatusH()) }
+      is(CSR_ADDR_MISA)     {  }
+      is(CSR_ADDR_MIE)      { csr_mie := MieRegister(csr_wdata) }
+      is(CSR_ADDR_MTVEC)    { csr_trap_vector := csr_wdata }
+      is(CSR_ADDR_MSTATUSH) { csr_mstatus := MStatusRegister(csr_mstatus.toMStatusL(), csr_wdata) }
+      is(CSR_ADDR_MSCRATCH) { csr_mscratch := csr_wdata }
+      is(CSR_ADDR_MEPC)     { csr_mepc := csr_wdata }
+      is(CSR_ADDR_MCAUSE)   { csr_mcause := csr_wdata }
+      is(CSR_ADDR_MTVAL)    { csr_mtval := csr_wdata }
+      is(CSR_ADDR_MIP)      {  }
     }
   }
 
