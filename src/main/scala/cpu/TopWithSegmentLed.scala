@@ -4,7 +4,6 @@ import chisel3._
 import chisel3.util._
 import common.Consts._
 import uart.UartTx
-import scala.collection.mutable.MutableList
 import segled.SegmentLedWithShiftRegs
 import segled.ShiftRegisterPort
 import display.MatrixLed

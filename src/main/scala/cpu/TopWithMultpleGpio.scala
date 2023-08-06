@@ -4,7 +4,6 @@ import chisel3._
 import chisel3.util._
 import common.Consts._
 import uart.UartTx
-import scala.collection.mutable.MutableList
 
 class TopWithMultipleGpio(memoryPathGen: Int => String = i => f"../sw/bootrom_${i}.hex", suppressDebugMessage: Boolean = false, numberOfGpios: Int = 1) extends Module {
   val io = IO(new Bundle {
