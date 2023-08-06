@@ -9,6 +9,8 @@ BITSTREAM := $(BUILD_DIR)/impl/pnr/$(PROJECT_NAME).fs
 SRC_DIR := $(abspath src/$(TARGET))
 RTL_DIR := $(abspath ../../rtl)
 
+GW_SH ?= $(shell which gw_sh)
+
 FPGA_SAMPLES_DIR := $(abspath ../../external/fpga_samples)
 UTIL_DIR := $(FPGA_SAMPLES_DIR)/util
 MAPPMOD_DIR ?= $(UTIL_DIR)/mappmod
@@ -29,7 +31,7 @@ PROJECT_ADDITIONAL_CLEAN ?=
 all: synthesis
 
 $(BITSTREAM): $(SRCS)
-	mkdir -p build/$(TARGET) && cd build/$(TARGET) && gw_sh ../../project.tcl $(SRC_DIR) $(RTL_DIR) $(TARGET) $(DEVICE_FAMILY) $(DEVICE_PART) $(PROJECT_NAME) $(PROJECT_ADDITIONAL_ARGS)
+	mkdir -p build/$(TARGET) && cd build/$(TARGET) && $(GW_SH) ../../project.tcl $(SRC_DIR) $(RTL_DIR) $(TARGET) $(DEVICE_FAMILY) $(DEVICE_PART) $(PROJECT_NAME) $(PROJECT_ADDITIONAL_ARGS)
 
 synthesis: $(BITSTREAM)
 
