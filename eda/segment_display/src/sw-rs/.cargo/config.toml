@@ -1,0 +1,16 @@
+[build]
+target = "riscv32i-unknown-none-elf"
+
+[profile.dev]
+opt-level = "s"
+lto = false
+
+[profile.release]
+debug = true
+opt-level = "s"
+lto = true
+
+[target.riscv32i-unknown-none-elf]
+rustflags = [
+    "-C", "link-arg=-Tlink.ld"
+]
