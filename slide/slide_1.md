@@ -1454,6 +1454,444 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAA
 * CPUへの接続方法はGPIOと同様の方法、もしくは全く別の方法いずれでもよい
 * ファームウェアを変更して、 `Hello, RISC-V` の文字列をPCに送信する
 
+## UARTの受信処理
+
+* 送信よりも受信はすこし複雑
+  * 一般的に通信は主導権を持つ側のほうが簡単
+    * 自分の都合で処理を進められることが多い
+    * そうでもないものもある
+
+## UARTの受信の方法
+
+![center width:20cm](figure/uart_receive.drawio.svg)
+
+## UARTの受信の方法
+
+* フレームの開始を検出 (a)
+  * フレームは必ず `スタート・ビット = '0'`` で始まる
+  * 立ち下がりエッジを検出する
+* フレーム開始検出後、ビット周期の半分の時間を待つ (b)
+* LSbから順に現在の入力をビット周期ごとに読み取る (c)
+* ストップ・ビットが `1` であることを確認する
+
+![bg right:25% width:10cm](figure/uart_receive.drawio.svg)
+
+## UARTの受信回路 (1/4)
+
+```scala
+class UartRx(numberOfBits: Int, baudDivider: Int, rxSyncStages: Int) extends Module {
+    val io = IO(new Bundle{
+        val out = Decoupled(UInt(numberOfBits.W)) // 受信データを出力
+        val rx = Input(Bool())                    // UART信号入力
+        val overrun = Output(Bool())              // UARTデータ取りこぼし発生？
+    })
+
+    val rateCounter = RegInit(0.U(log2Ceil(baudDivider*3/2).W))
+    val bitCounter = RegInit(0.U(log2Ceil(numberOfBits).W))
+    val bits = Reg(Vec(numberOfBits, Bool()))
+    val rxRegs = RegInit(VecInit((0 to rxSyncStages + 1 - 1).map(_ => false.B)))
+    val overrun = RegInit(false.B)
+    val running = RegInit(false.B)
+```
+
+## UARTの受信回路 (2/4)
+
+```scala
+    // 受信データの出力信号 (VALID/READYハンドシェーク)
+    val outValid = RegInit(false.B)
+    val outBits = Reg(UInt(numberOfBits.W))
+    val outReady = WireDefault(io.out.ready)
+    io.out.valid := outValid
+    io.out.bits := outBits
+
+    when(outValid && outReady) {
+        outValid := false.B // VALID&READY成立したのでVALIDを落とす
+    }
+
+    // RX信号をクロックに同期
+    rxRegs(rxSyncStages) := io.rx
+    (0 to rxSyncStages - 1).foreach(i => rxRegs(i) := rxRegs(i + 1))
+
+    io.overrun := overrun
+```
+
+## UARTの受信回路 (3/4)
+
+```scala
+    when(!running) {
+        when(!rxRegs(1) && rxRegs(0)) {    // スタートビット検出
+            rateCounter := (baudDivider * 3 / 2 - 1).U // Wait until the center of LSB.
+            bitCounter := (numberOfBits - 1).U
+            running := true.B
+        }
+    }
+```
+
+## UARTの受信回路 (4/4)
+
+```scala
+    .otherwise {
+        when(rateCounter === 0.U) { // 1ビット周期ごとに処理
+            bits(numberOfBits-1) := rxRegs(0) // つぎのビットを出力
+            (0 to numberOfBits - 2).foreach(i => bits(i) := bits(i + 1))  // 1ビット右シフト
+            when(bitCounter === 0.U) {  // ストップビットまで出力し終わった?
+                outValid := true.B
+                outBits := Cat(rxRegs(0), Cat(bits.slice(1, numberOfBits).reverse))
+                overrun := outValid // 前のデータが処理される前に次のデータの受信完了した
+                running := false.B
+            } .otherwise {
+                rateCounter := (baudDivider - 1).U
+                bitCounter := bitCounter - 1.U
+            }
+        } .otherwise {
+            rateCounter := rateCounter - 1.U
+        }
+    }
+
+}
+```
+
+# 割り込みの実装
+
+## 割り込みと例外
+
+* CPUの現在の処理を中断し、要因に応じた別の処理を実行する機能
+  * 別の処理を実行後は、元の処理の実行に戻る場合が多い
+
+* 一般的に要因は大きく2つに分けられる
+  * 例外
+    * プロセッサが予期しない処理を実行した場合など
+  * 割り込み
+    * CPUの外部信号やタイマーなど
+
+## RISC-Vの例外・割り込み仕様
+
+* RISC-V ISA Specification Vol.2
+  * Privileged Specification 
+* 関連するCSRの機能の説明として規定される
+  * Spec上にはCPU全体としての挙動が明確に記載されないのでわかりにくい。
+
+## RISC-Vの動作モード
+
+* RISC-Vはいくつかの動作モードがある。
+  * M, S, U の順に特権レベルが高い
+* リセット直後はMモード
+* Mモードは必須
+* 今回作っているコアはMモードのみ
+
+## 例外に関連するCSR
+
+| CSR     | 内容                             |
+| :------ | :------------------------------- |
+| mtvec   | 例外ベクタのアドレスの設定       |
+| mstatus | グローバル割込有効フラグ等       |
+| mie     | 割り込み要因ごとの有効フラグ         |
+| mip     | 割り込み要因ごとのペンディングフラグ |
+| mepc    | 例外発生時のプログラム・カウンタ |
+| mcause  | 例外・割り込み要因               |
+| mtval   | 例外要因ごとの情報               |
+
+## 外部割り込み発生時の処理概要
+
+* `mcause` を外部割り込み要因に対応する値に設定
+* `mepc` を割り込み発生時の `PC` の値に設定
+* `MPIE` を `MIE` の値に設定
+* `MIE` を `0` に設定
+
+## 割り込み処理完了時の処理
+
+* 割り込みハンドラが `mret` 命令を実行する
+* `MIE` を `MPIE` から復元
+* `mepc` にジャンプ
+
+## mtvec
+
+* 例外ベクタの構造とアドレスを設定する
+* `[1:0]` MODE
+  * 0: どの例外要因でも `BASE` のアドレスに制御がうつる
+  * 1: 例外要因に応じたアドレスに制御がうつる
+    * `pc = BASE + 4*cause`
+* `[MXLEN-1:2]` BASE
+  * 例外ベクタのベースアドレス
+
+## mstatus
+
+* グローバル割り込み有効フラグ等
+* RV32とRV64で若干構造が異なる
+  * RV32では `mstatus` と `mstatush` に分かれている
+  * RV64の `mstatus[31:0]` と RV32の `mstatus` は構造が異なる
+* 今回気にしないといけないのは `MIE` `MPIE` のみ
+
+## mie, mip
+
+* `mie` 割り込み要因ごとの有効フラグ
+* `mip` 割り込み要因ごとのペンディングフラグ
+* `mie & mip` が `1` になっている割り込みが割り込み発生待ちの割り込み
+
+## mepc
+
+* 例外・割り込み発生時のプログラムカウンタの値
+* 例外・割り込みからの復帰時に使う
+
+
+## mcause
+
+* 例外・割り込みの要因を表す
+* `[MXLEN-1]` Interrupt
+  * 割り込みの場合は `1` 例外の場合は `0`
+* 割り込みの場合は `mip` のビット位置に対応する値になる
+  * Mモードでの外部割り込みは `11` 番
+
+## mtval
+
+* 例外・割り込み要因ごとの追加情報
+* アクセス例外や未定義命令例外のときに値が設定される
+  * アクセス例外: アクセス違反発生時の仮想アドレス
+  * 未定義命令例外: 未定義命令のビット列
+* それ以外の場合は `0` に設定
+
+## 外部割り込みの実装 (1/6)
+
+* 外部割り込み実装の差分 [ソースコード](https://github.com/ciniml/seccamp_riscv_cpu/commit/b43cc97c2492b950db1e671f8f932d8b68e60f66)
+* `mstatus` `mie` `mip` の各ビットに対応する型を定義 [ソースコード](https://github.com/ciniml/seccamp_riscv_cpu/blob/2023/fpga_impl/src/main/scala/cpu/CSR.scala#L6)
+  * `MStatus` `Mie` `Mip` 
+
+```scala
+class MipRegister extends Bundle{
+  val ssip = Bool()
+  val msip = Bool()
+  val stip = Bool()
+  val mtip = Bool()
+  val seip = Bool()
+  val meip = Bool()
+
+  def toMip(): UInt = { // 32bitのレジスタ値に変換
+    Cat(0.U(4.W), meip, 0.U(1.W), seip, 0.U(1.W), mtip, 0.U(1.W), stip, 0.U(1.W), msip, 0.U(1.W), ssip, 0.U(1.W))
+  }
+  def hasPending(): Bool = {  // ペンディング中の割り込みがあるかどうか
+    ssip || msip || stip || mtip || seip || meip
+  }
+}
+```
+
+## 外部割り込みの実装 (2/6)
+
+```scala
+object MipRegister {
+  // レジスタ値からmipレジスタの各信号を抽出
+  def apply(value: UInt): MipRegister = {
+    val mip = Wire(new MipRegister())
+    mip.ssip := value(1)
+    mip.msip := value(3)
+    mip.stip := value(5)
+    mip.mtip := value(7)
+    mip.seip := value(9)
+    mip.meip := value(11)
+    mip
+  }
+}
+```
+
+## 外部割り込みの実装 (3/6)
+
+* `Core` に外部割り込み入力 `interrupt_in` を追加 [ソースコード](https://github.com/ciniml/seccamp_riscv_cpu/blob/2023/fpga_impl/src/main/scala/cpu/Core.scala#L14)
+
+```scala
+val io = IO(
+  new Bundle {
+    val imem = Flipped(new ImemPortIo())
+    val dmem = Flipped(new DmemPortIo())
+    val gpio_out = Output(UInt(32.W))
+    val interrupt_in = Input(Bool())  // 追加
+    val success = Output(Bool())
+    val exit = Output(Bool())
+    val debug_pc = Output(UInt(WORD_LEN.W))
+  }
+)
+```
+
+## 外部割り込みの実装 (3/6)
+
+* `Core` にCSRを追加 [ソースコード](https://github.com/ciniml/seccamp_riscv_cpu/commit/b43cc97c2492b950db1e671f8f932d8b68e60f66#diff-a7379774385a2459290484d37a76b1de78586b3696ac0317b74fb0cd69f45c35R25)
+
+```scala
+val csr_mstatus = RegInit(MStatusRegister.default())
+val csr_mie = RegInit(MieRegister.default())
+val csr_mip = WireInit(MipRegister.default())
+val csr_mscratch = RegInit(0.U(WORD_LEN.W))
+val csr_mepc = RegInit(0.U(WORD_LEN.W))
+val csr_mcause = RegInit(0.U(WORD_LEN.W))
+val csr_mtval = RegInit(0.U(WORD_LEN.W))
+```
+
+## 外部割り込みの実装 (4/6)
+
+* `mip.MEIP` に対応する信号に 外部割り込み信号を接続 [ソースコード](https://github.com/ciniml/seccamp_riscv_cpu/commit/b43cc97c2492b950db1e671f8f932d8b68e60f66#diff-a7379774385a2459290484d37a76b1de78586b3696ac0317b74fb0cd69f45c35R35)
+
+```scala
+csr_mip.meip := io. interrupt_in
+```
+
+## 外部割り込みの実装 (5/6)
+
+* ID/EXEステージ間での割り込み絡みのデコード結果の伝達をするレジスタを追加 [ソースコード](https://github.com/ciniml/seccamp_riscv_cpu/commit/b43cc97c2492b950db1e671f8f932d8b68e60f66#diff-a7379774385a2459290484d37a76b1de78586b3696ac0317b74fb0cd69f45c35R73)
+
+```scala
+val exe_reg_has_pending_interrupt = RegInit(false.B)    // 割り込みあり？
+val exe_reg_exception_target = RegInit(0.U(WORD_LEN.W)) // 割り込み
+val exe_reg_mcause        = RegInit(0.U(WORD_LEN.W))    // 例外・割り込み発生時のmcauseの値
+val exe_reg_mret          = RegInit(false.B)            // mret命令？
+```
+
+## 外部割り込みの実装 (6/6)
+
+* IF/IDステージ間での `pc` の伝達時のストール条件を追加 [ソースコード](https://github.com/ciniml/seccamp_riscv_cpu/commit/b43cc97c2492b950db1e671f8f932d8b68e60f66#diff-a7379774385a2459290484d37a76b1de78586b3696ac0317b74fb0cd69f45c35R130)
+* ブランチ時はいままでは命令を `BUBBLE` に置き換えるだけでPCはそのまま伝達していた
+* 割り込み発生時の正しいPCをEXEステージに伝達するため、分岐時にIDのpcを更新しないように変更
+
+```scala
+// id_reg_pc   := Mux(stall_flg, id_reg_pc, if_reg_pc) // 元の条件
+   id_reg_pc   := Mux(stall_flg || exe_br_flg || exe_jmp_flg || !io.imem.valid, id_reg_pc, if_reg_pc)
+```
+
+## IDステージの変更 (1/3)
+
+* IDステージに関連CSRのデコード処理を追加 [ソースコード](https://github.com/ciniml/seccamp_riscv_cpu/commit/b43cc97c2492b950db1e671f8f932d8b68e60f66#diff-a7379774385a2459290484d37a76b1de78586b3696ac0317b74fb0cd69f45c35R149)
+* `mie` `mip` から有効かつペンディング状態の割り込みを抽出
+* `mip` から割り込み要因番号を計算
+* `mtvec` から例外・割り込みハンドラのアドレスを計算
+
+```scala
+// 割り込みの処理
+val id_enabled_mip = MipRegister(csr_mip.toMip() & csr_mie.toMie())
+val id_has_pending_interrupt = id_enabled_mip.hasPending() && csr_mstatus.mie
+val id_exception_cause = PriorityEncoder(id_enabled_mip.toMip())
+// 割り込みのジャンプ先を計算する。mtvec[1:0] == 0の場合はDirectモードなのでそのまま、mtvec[1:0] == 1の場合はVectoredモードなので、cause * 4を足す
+val id_exception_target = (csr_trap_vector & ~3.U(WORD_LEN.W)) + Mux((csr_trap_vector & 3.U) === 0.U, 0.U, id_exception_cause << 2)
+val id_mcause = Cat(id_has_pending_interrupt, 0.U((WORD_LEN - id_exception_cause.getWidth - 1).W), id_exception_cause)
+```
+
+## IDステージの変更 (2/3)
+
+* IDステージで `mret` 命令かどうかの識別処理を追加
+
+```scala
+val id_mret = id_inst === MRET
+```
+
+## IDステージの変更 (3/3)
+
+* ID/EX間レジスタの更新処理を追加
+
+```scala
+  // IF/MEMステージがストールしていない場合のみEXEのパイプラインレジスタを更新する。
+when( !mem_stall_flg ) {
+  exe_reg_op1_data      := id_op1_data
+  exe_reg_op2_data      := id_op2_data
+  exe_reg_rs2_data      := id_rs2_data
+  exe_reg_csr_cmd       := id_csr_cmd
+  exe_reg_mem_wen       := id_mem_wen
+  exe_reg_mem_w         := id_mem_w
+  exe_reg_has_pending_interrupt := id_has_pending_interrupt // 各信号をEXステージに伝達
+  exe_reg_exception_target := id_exception_target           //
+  exe_reg_mcause        := id_mcause                        //
+  exe_reg_mret          := id_mret                          //
+}
+when ( !mem_stall_flg && !(exe_br_flg || exe_jmp_flg) ) {
+  exe_reg_pc            := id_reg_pc  // ID/EXステージ間のPCをMEMストールしていないかつ分岐もしていしない場合のみに変更
+}
+when( exe_reg_has_pending_interrupt ) { // 割り込み有効フラグが立っていたなら下げる
+  exe_reg_has_pending_interrupt := false.B
+}
+```
+
+## EXステージの変更 (1/3)
+
+* 分岐フラグの条件を追加 [ソースコード](https://github.com/ciniml/seccamp_riscv_cpu/commit/b43cc97c2492b950db1e671f8f932d8b68e60f66#diff-a7379774385a2459290484d37a76b1de78586b3696ac0317b74fb0cd69f45c35R309)
+
+```scala
+exe_br_flg := MuxCase(false.B, Seq(
+  (exe_reg_has_pending_interrupt) -> true.B,  // 追加: 割り込み発生なら分岐
+  (exe_reg_mret)                  -> true.B,  // 追加: mretなら分岐
+  (exe_reg_exe_fun === BR_BEQ)  ->  (exe_reg_op1_data === exe_reg_op2_data),
+  (exe_reg_exe_fun === BR_BNE)  -> !(exe_reg_op1_data === exe_reg_op2_data),
+  (exe_reg_exe_fun === BR_BLT)  ->  (exe_reg_op1_data.asSInt() < exe_reg_op2_data.asSInt()),
+  (exe_reg_exe_fun === BR_BGE)  -> !(exe_reg_op1_data.asSInt() < exe_reg_op2_data.asSInt()),
+  (exe_reg_exe_fun === BR_BLTU) ->  (exe_reg_op1_data < exe_reg_op2_data),
+  (exe_reg_exe_fun === BR_BGEU) -> !(exe_reg_op1_data < exe_reg_op2_data)
+))
+```
+
+## EXステージの変更 (2/3)
+
+* 分岐先のアドレス計算を例外・割り込みに対応
+
+```scala
+//  exe_br_target := exe_reg_pc + exe_reg_imm_b_sext // 元の内容
+exe_br_target := MuxCase(exe_reg_pc + exe_reg_imm_b_sext, Seq(
+  (exe_reg_has_pending_interrupt) -> exe_reg_exception_target,  // 割り込みなら割り込みベクタのアドレスに
+  (exe_reg_mret) -> csr_mepc,                                   // mretならmepcに退避したアドレスに
+))
+```
+
+## EXステージの変更 (3/3)
+
+* CSRの内容の更新 [ソースコード](https://github.com/ciniml/seccamp_riscv_cpu/commit/b43cc97c2492b950db1e671f8f932d8b68e60f66#diff-a7379774385a2459290484d37a76b1de78586b3696ac0317b74fb0cd69f45c35R373)
+
+```scala
+// 割り込み発生時
+when(exe_reg_has_pending_interrupt) {
+  csr_mcause := exe_reg_mcause
+  csr_mepc := exe_reg_pc              // 割り込み発生時のPCをMEPCに保存
+  csr_mstatus.mpie := csr_mstatus.mie // MIEの値をMPIEに保存
+  csr_mstatus.mie := false.B          // 割り込み無効化
+}
+// MRET命令実行時
+when(exe_reg_mret) {
+  csr_mstatus.mie := csr_mstatus.mpie // MIEをMPIEの値から復元
+}
+```
+
+## MEMステージの変更 (1/2)
+
+* CSRの読み出し
+
+```scala
+val csr_rdata = MuxLookup(mem_reg_csr_addr, 0.U(WORD_LEN.W), Seq(
+  CSR_CUSTOM_GPIO.U -> csr_gpio_out,
+  CSR_ADDR_MSTATUS -> csr_mstatus.toMStatusL(),
+  CSR_ADDR_MISA -> 0.U,
+  CSR_ADDR_MIE -> csr_mie.toMie(),
+  CSR_ADDR_MTVEC -> csr_trap_vector,
+  CSR_ADDR_MSTATUSH -> csr_mstatus.toMStatusH(),
+  CSR_ADDR_MSCRATCH -> csr_mscratch,
+  CSR_ADDR_MEPC -> csr_mepc,
+  CSR_ADDR_MCAUSE -> csr_mcause,
+  CSR_ADDR_MTVAL -> csr_mtval,
+  CSR_ADDR_MIP -> csr_mip.toMip(),
+))
+```
+
+## MEMステージの変更 (2/2)
+
+* CSRの値を更新 [ソースコード](https://github.com/ciniml/seccamp_riscv_cpu/commit/b43cc97c2492b950db1e671f8f932d8b68e60f66#diff-a7379774385a2459290484d37a76b1de78586b3696ac0317b74fb0cd69f45c35R395)
+
+```scala
+switch(mem_reg_csr_addr) {
+  is(CSR_CUSTOM_GPIO.U) { csr_gpio_out := csr_wdata }
+  is(CSR_ADDR_MSTATUS)  { csr_mstatus := MStatusRegister(csr_wdata, csr_mstatus.toMStatusH()) }
+  is(CSR_ADDR_MISA)     {  }
+  is(CSR_ADDR_MIE)      { csr_mie := MieRegister(csr_wdata) }
+  is(CSR_ADDR_MTVEC)    { csr_trap_vector := csr_wdata }
+  is(CSR_ADDR_MSTATUSH) { csr_mstatus := MStatusRegister(csr_mstatus.toMStatusL(), csr_wdata) }
+  is(CSR_ADDR_MSCRATCH) { csr_mscratch := csr_wdata }
+  is(CSR_ADDR_MEPC)     { csr_mepc := csr_wdata }
+  is(CSR_ADDR_MCAUSE)   { csr_mcause := csr_wdata }
+  is(CSR_ADDR_MTVAL)    { csr_mtval := csr_wdata }
+  is(CSR_ADDR_MIP)      {  }
+}
+```
+
 # おまけ
 
 ## HDMIによる画面出力
@@ -1493,6 +1931,11 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAA
 * ピクセルクロックに同期してある時点の画素値をパラレルで送信する信号
 * 画面の水平位置・垂直位置の始点として、 **水平同期信号 (HSYNC)** 、 **垂直同期信号 (VSYNC)** 用いる
 
+<!--
+##
+
+メモ: SSPI as regular IOの説明
+-->
 
 <!-- 
 TODO: ビデオ信号の説明追記
