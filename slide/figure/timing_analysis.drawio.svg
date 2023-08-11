@@ -1,0 +1,68 @@
+<svg host="65bd71144e" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="581px" height="272px" viewBox="-0.5 -0.5 581 272" content="&lt;mxfile&gt;&lt;diagram id=&quot;0Tj_zkXNkCbAvNDhZYD9&quot; name=&quot;ページ1&quot;&gt;7VlRb5swEP41eVwENpDmsU3a7WGTKvVh3VPlBgesGQ4Zp4X9+tnBgAlNFi2QNVPzEPk+n8/23Xc+O5ngRVJ8FiSLv0FI+QQ5YTHBywlCV+5MfWugrACM/QqIBAsryG2BB/aLGtAx6IaFNO8oSgAuWdYFV5CmdCU7GBECXrtqa+DdWTMS0R7wsCK8j35noYwrNJg7Lf6Fsig2M8+vTEdCal0D5DEJ4dWC8O0ELwSArFpJsaBcu652SzXubk9vsy5BU3nMgLlZhizrrdFQ7dSIIGQMEaSE37boTSwTrjpd1aQFk4+q7Zj2D92eznwjLgurb1lawj0VLKGSCoMJ2KQhDWuNNLzWUVJiCimtkDvGuemvFq1XunfbBsphI1ZGCzX+VbSkoKYXpVIRlBPJXrqmiCFI1Og1Q++BqUmQU9SUdKYOctEs8Of+zPMCQ+2y6e5alEREVBojbWTUfklpqWVaId8/bU01Mw0KduJ8WL1elVFXjWr+WrIc1EJb6uzhnfMXPOrGfAxWKTaI8tEWbFNabm1tpdKW+tZGY6U6vra0qCB/CKKel1DYPazuHdY/nYBoDAK6HQKi907AtWougIPYOgAHDpmrQotvcingJ7V60HIWOINS1juRshYRDsbZTP1C+MYY7cX9hQrJVKn+Sp4pv4ecSQap6noGKSHR7qhrrvZASPK4oQDhLNKqK7V77XWbE7XZa6MjIatsZXrepIj0RWdKubpuCK035RCx1VNEJM2n4ZMsM/q05iz7tObbkWYjyiotDju/79a29HRztpZf2ztJoxNb95Er5/RIuMH4GfefHvm4nz/Bvzjym1vo27eCP+ojc2sf6hDHH8m9P7m9c+Y2Hj+3h0ttdNHF1Bv+MDg2zN5l5lvbVmMgo4KYRZE0PBC4NaTSwtfbzxEBPSmLEd45YmdHpnEwRBq7vXi+j1fZGEV1kEfTG6/7TvjqZ8vQr/mxn0f+ZWb6OJV119nnvTZ7H6X1XKU16JfWU0+JY8McXGbC7S2thQ7J+yqt2N8prfPxSqsS29/kq/O3/V8D3/4G&lt;/diagram&gt;&lt;/mxfile&gt;">
+    <defs/>
+    <g>
+        <path d="M 90 220 L 80.02 220.02 L 80.02 60.02 L 90.02 60" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 90 220 L 80.02 220.02 L 80.02 270.02 L 480.02 270.02 L 480 220" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 190 180 L 205 180.02 L 205 175 L 220 175" fill="none" stroke="#2d7600" stroke-miterlimit="10" pointer-events="stroke"/>
+        <rect x="110" y="160" width="60" height="80" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="all"/>
+        <path d="M 90 180 L 110 180 M 90 220 L 110 220 M 170 180 L 190 180 M 161 215 L 169 215 M 110 215 L 120 220 L 110 225 M 170 220 L 190 220" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <g fill="#000000" font-family="Arial,Helvetica" text-anchor="middle" font-size="11px">
+            <text x="114.5" y="182.5">
+                D
+            </text>
+        </g>
+        <g fill="#000000" font-family="Arial,Helvetica" text-anchor="middle" font-size="11px">
+            <text x="164.5" y="182.5">
+                Q
+            </text>
+        </g>
+        <g fill="#000000" font-family="Arial,Helvetica" text-anchor="middle" font-size="11px">
+            <text x="164.5" y="222.5">
+                Q
+            </text>
+        </g>
+        <path d="M 190 60 L 210.02 60.02 L 210.02 195 L 340 195" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="stroke"/>
+        <rect x="110" y="0" width="60" height="80" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="all"/>
+        <path d="M 90 20 L 110 20 M 90 60 L 110 60 M 170 20 L 190 20 M 161 55 L 169 55 M 110 55 L 120 60 L 110 65 M 170 60 L 190 60" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <g fill="#000000" font-family="Arial,Helvetica" text-anchor="middle" font-size="11px">
+            <text x="114.5" y="22.5">
+                D
+            </text>
+        </g>
+        <g fill="#000000" font-family="Arial,Helvetica" text-anchor="middle" font-size="11px">
+            <text x="164.5" y="22.5">
+                Q
+            </text>
+        </g>
+        <g fill="#000000" font-family="Arial,Helvetica" text-anchor="middle" font-size="11px">
+            <text x="164.5" y="62.5">
+                Q
+            </text>
+        </g>
+        <path d="M 320 160 L 330.02 160.02 L 330.02 165 L 340 165" fill="none" stroke="#2d7600" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 300 160 L 320 160 M 220 145 L 240 145 M 220 175 L 240 175" fill="none" stroke="#2d7600" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 240 130 L 270 130 C 286.57 130 300 143.43 300 160 C 300 176.57 286.57 190 270 190 L 240 190 Z" fill="#60a917" stroke="#2d7600" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 480 220 L 480.02 270.02 L 0 270" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="stroke"/>
+        <rect x="500" y="160" width="60" height="80" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="all"/>
+        <path d="M 480 180 L 500 180 M 480 220 L 500 220 M 560 180 L 580 180 M 551 215 L 559 215 M 500 215 L 510 220 L 500 225 M 560 220 L 580 220" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <g fill="#000000" font-family="Arial,Helvetica" text-anchor="middle" font-size="11px">
+            <text x="504.5" y="182.5">
+                D
+            </text>
+        </g>
+        <g fill="#000000" font-family="Arial,Helvetica" text-anchor="middle" font-size="11px">
+            <text x="554.5" y="182.5">
+                Q
+            </text>
+        </g>
+        <g fill="#000000" font-family="Arial,Helvetica" text-anchor="middle" font-size="11px">
+            <text x="554.5" y="222.5">
+                Q
+            </text>
+        </g>
+        <path d="M 440 180 L 480 180" fill="none" stroke="#2d7600" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 420 180 L 440 180 M 340 165 L 363 165 M 340 195 L 363 195" fill="none" stroke="#2d7600" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 350 150 C 360.72 168.56 360.72 191.44 350 210" fill="none" stroke="#2d7600" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 380 150 C 397.47 150.56 413.06 162.25 420 180 C 413.06 197.75 397.47 209.44 380 210 L 355 210 C 365.72 191.44 365.72 168.56 355 150 Z" fill="#60a917" stroke="#2d7600" stroke-miterlimit="10" pointer-events="all"/>
+    </g>
+</svg>

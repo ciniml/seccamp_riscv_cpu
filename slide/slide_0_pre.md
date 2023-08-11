@@ -16,8 +16,6 @@ _paginate: false
 _header: ""
 -->
 
-## 目次
-
 ## 事前学習内容について
 
 * 書籍 「RISC-VとChiselで学ぶ初めてのCPU自作」 第3部まで
@@ -86,6 +84,7 @@ _header: ""
 * openFPGALoader
   * FPGAへの回路情報書き込みツール
 * Icarus Verilog (RTLシミュレータ)
+  * 応募課題で必要なので入れているはず
 
 ## ComProc CPU Boardの動作確認
 
