@@ -10,7 +10,7 @@ import display.MatrixLed
 import display.MatrixLedConfig
 import uart.UartRx
 
-class TopWithSegmentLed(memoryPathGen: Int => String = i => f"../sw/bootrom_${i}.hex", suppressDebugMessage: Boolean = false) extends Module {
+class TopWithSegmentLed(memoryPathGen: Int => String = i => f"../sw/bootrom_${i}.hex", suppressDebugMessage: Boolean = false, memorySize: Int, enableProbe: Boolean = false) extends Module {
   val io = IO(new Bundle {
     val debug_pc = Output(UInt(WORD_LEN.W))
     val uartTx = Output(Bool())
@@ -28,15 +28,14 @@ class TopWithSegmentLed(memoryPathGen: Int => String = i => f"../sw/bootrom_${i}
 
   val clockFreqHz = 27000000
   val baseAddress = BigInt("00000000", 16)
-  val memSize = 8192
   val core = Module(new Core(startAddress = baseAddress.U(WORD_LEN.W), suppressDebugMessage))
 
-  val memory = Module(new Memory(Some(memoryPathGen), baseAddress.U(WORD_LEN.W), memSize))
+  val memory = Module(new Memory(Some(memoryPathGen), baseAddress.U(WORD_LEN.W), memorySize))
   val gpios = Module(new GpioArray((0 until 6).map(_ => BigInt("ffffffff", 16))))  // GPIO Array (6ポート)
   val uartRegs = Module(new IORegister(Seq((0x100ff, 0xff), (0x03, 0x00))))           // UART IOレジスタ
 
   val decoder = Module(new DMemDecoder(Seq(
-    (BigInt(0x00000000L), BigInt(memSize)),         // メモリ
+    (BigInt(0x00000000L), BigInt(memorySize)),         // メモリ
     (BigInt(0xA0000000L), gpios.ADDRESS_RANGE),     // GPIO Array (5ポート)
     (BigInt(0xA0001000L), uartRegs.ADDRESS_RANGE),  // UART IO
   )))
@@ -94,18 +93,22 @@ class TopWithSegmentLed(memoryPathGen: Int => String = i => f"../sw/bootrom_${i}
   io.debug_pc := core.io.debug_pc
 
   // 信号観測用プローブを構築
-  val probe = Module(new diag.Probe(new diag.ProbeConfig(bufferDepth = 512, triggerPosition = 512 - 16), 33))
-  probe.io.in := Cat(io.switchIn(0), core.io.debug_pc)
-  val noActivityCounter = RegInit(0.U(log2Ceil(256).W))
-  when( gpios.io.mem.wen ) {
-    noActivityCounter := 0.U
-  } .otherwise {
-    noActivityCounter := noActivityCounter + 1.U
+  if( enableProbe ) {
+    val probe = Module(new diag.Probe(new diag.ProbeConfig(bufferDepth = 512, triggerPosition = 512 - 16), 33))
+    probe.io.in := Cat(io.switchIn(0), core.io.debug_pc)
+    val noActivityCounter = RegInit(0.U(log2Ceil(256).W))
+    when( gpios.io.mem.wen ) {
+      noActivityCounter := 0.U
+    } .otherwise {
+      noActivityCounter := noActivityCounter + 1.U
+    }
+    probe.io.trigger := (noActivityCounter === 255.U) | !io.switchIn(0)
+    val probeFrameAdapter = Module(new diag.ProbeFrameAdapter(probe.width))
+    probeFrameAdapter.io.in <> probe.io.out
+    val probeUartTx = Module(new UartTx(numberOfBits = 8, baudDivider = clockFreqHz / 115200))
+    probeUartTx.io.in <> probeFrameAdapter.io.out
+    io.probeOut := probeUartTx.io.tx
+  } else {
+    io.probeOut := true.B
   }
-  probe.io.trigger := (noActivityCounter === 255.U) | !io.switchIn(0)
-  val probeFrameAdapter = Module(new diag.ProbeFrameAdapter(probe.width))
-  probeFrameAdapter.io.in <> probe.io.out
-  val probeUartTx = Module(new UartTx(numberOfBits = 8, baudDivider = clockFreqHz / 115200))
-  probeUartTx.io.in <> probeFrameAdapter.io.out
-  io.probeOut := probeUartTx.io.tx
 }

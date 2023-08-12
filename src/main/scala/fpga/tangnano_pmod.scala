@@ -11,8 +11,11 @@ import chisel3.stage.ChiselStage
 import cpu.TopWithSegmentLed
 
 object Elaborate_TangNanoPmod_SegmentLed extends App {
-  (new ChiselStage).emitVerilog(new TopWithSegmentLed, Array(
-    "-o", "riscv.v",
-    "--target-dir", "rtl/tangnano_pmod_segment_led",
+  val directory = args(0)
+  val filename = args(1)
+  val memorySize = args(2).toInt
+  (new ChiselStage).emitVerilog(new TopWithSegmentLed(memorySize = memorySize), Array(
+    "-o", filename,
+    "--target-dir", directory,
   ))
 }

@@ -50,8 +50,7 @@ src/$(TARGET)/pins.cst:
 endif
 
 $(RISCV_CORE_SRC): $(CHISEL_DESIGN_SRCS)
-	cd $(ROOT_DIR) && sbt "project root; runMain $(RISCV_ELABORATE)"
-	cp $(RISCV_ELABORATE_OUTPUT_DIR)/riscv.v $@
+	cd $(ROOT_DIR) && sbt "project root; runMain $(RISCV_ELABORATE) $(dir $(abspath $@)) $(notdir $@) 8192"
 
 .PHONY: test
 test: $(CHISEL_DESIGN_SRCS) src/sw/bootrom.hex
