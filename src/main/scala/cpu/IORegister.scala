@@ -3,7 +3,6 @@ package cpu
 import chisel3._
 import chisel3.util._
 import common.Consts._
-import chisel3.stage.ChiselStage
 
 class IORegister(masks: Seq[(BigInt, BigInt)]) extends Module {
   val io = IO(new Bundle {

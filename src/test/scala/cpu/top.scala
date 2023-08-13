@@ -43,7 +43,7 @@ class TopWithSegmentLedTestSystem extends Module {
     val exit = Output(Bool())
   })
 
-  val top = Module(new TopWithSegmentLed(i => f"eda/segment_display/src/sw/bootrom_${i}.hex", true))
+  val top = Module(new TopWithSegmentLed(memoryPathGen = i => f"eda/segment_display/src/sw/bootrom_${i}.hex", suppressDebugMessage = true, forSimulation = true))
   io.success := top.io.success
   io.exit := top.io.exit
   top.io.switchIn := 0.U
@@ -65,7 +65,10 @@ class TopTest extends AnyFlatSpec with ChiselScalatestTester {
 }
 
 class TopWithSegmentLedTest extends AnyFlatSpec with ChiselScalatestTester {
-      it must "runs TopWithSegmentLed" in { test(new TopWithSegmentLedTestSystem).withAnnotations(Seq(VerilatorBackendAnnotation, WriteFstAnnotation)) { c =>
+      it must "runs TopWithSegmentLed" in { test(new TopWithSegmentLedTestSystem)
+        //.withAnnotations(Seq(VerilatorBackendAnnotation, WriteFstAnnotation)) 
+        .withAnnotations(Seq(WriteFstAnnotation)) 
+      { c =>
         c.io.uartTx.initSource().setSourceClock(c.clock)
         c.reset.poke(true.B)
         c.clock.step(4)

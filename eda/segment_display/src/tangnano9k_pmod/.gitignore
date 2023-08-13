@@ -2,3 +2,4 @@ output.vcd
 testbench
 riscv.v
 pins.cst
+chisel_output

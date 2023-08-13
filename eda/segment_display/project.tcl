@@ -17,10 +17,12 @@ if {${TARGET} == "tangnano9k_pmod"} {
     set_option -use_sspi_as_gpio 1
 }
 
-add_file -type verilog [file normalize ${RISCV_CORE_SRC}]
-add_file -type verilog [file normalize ${SRC_DIR}/../reset_seq.sv]
 add_file -type verilog [file normalize ${SRC_DIR}/../top.sv]
+add_file -type verilog [file normalize ${RISCV_CORE_SRC}]
+#add_file -type verilog [file normalize ${SRC_DIR}/../reset_seq.sv]
 add_file -type cst [file normalize ${SRC_DIR}/pins.cst]
 add_file -type sdc [file normalize ${SRC_DIR}/timing.sdc]
+
+set_option -top_module top
 
 run all

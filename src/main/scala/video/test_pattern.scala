@@ -8,9 +8,7 @@ package video
 
 import chisel3._
 import chisel3.util._
-import chisel3.experimental.chiselName
 
-@chiselName
 class TestPatternGenerator(pixelBits: Int, width: Int, height: Int, val rectSize: Int = 32) extends Module {
     val io = IO(new Bundle{
         val data = Irrevocable(new VideoSignal(pixelBits))

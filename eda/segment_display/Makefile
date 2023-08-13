@@ -12,11 +12,11 @@ BOOTROM_HEX ?= src/sw/bootrom.hex
 
 RISCV_ELABORATE := fpga.Elaborate_TangNanoPmod_SegmentLed 
 RISCV_TEST := cpu.TopWithSegmentLedTest
-RISCV_ELABORATE_OUTPUT_DIR := $(RTL_DIR)/tangnano_pmod_segment_led
+RISCV_ELABORATE_OUTPUT_DIR := src/$(TARGET)/chisel_output
 
-RISCV_CORE_SRC := src/$(TARGET)/riscv.v
+RISCV_CORE_SRC := $(RISCV_ELABORATE_OUTPUT_DIR)/TopWithSegmentLed.v
 PROJECT_ADDITIONAL_ARGS := $(abspath $(RISCV_CORE_SRC))
-PROJECT_ADDITIONAL_CLEAN := $(RISCV_CORE_SRC)
+PROJECT_ADDITIONAL_CLEAN := src/$(TARGET)/chisel_output/*
 
 SRCS := $(wildcard src/$(TARGET)/*.cst) $(wildcard src/$(TARGET)/*.sdc) $(wildcard src/$(TARGET)/*.sv) $(RISCV_CORE_SRC) project.tcl $(BOOTROM_HEX)
 
@@ -50,11 +50,11 @@ src/$(TARGET)/pins.cst:
 endif
 
 $(RISCV_CORE_SRC): $(CHISEL_DESIGN_SRCS)
-	cd $(ROOT_DIR) && sbt "project root; runMain $(RISCV_ELABORATE) $(dir $(abspath $@)) $(notdir $@) 8192"
+	cd $(ROOT_DIR) && sbt "project root; runMain $(RISCV_ELABORATE) $(dir $(abspath $@)) 8192 $(abspath src/sw) "
 
 .PHONY: test
 test: $(CHISEL_DESIGN_SRCS) src/sw/bootrom.hex
-	cd $(ROOT_DIR) && sbt "project root; testOnly $(RISCV_TEST)"
+	cd $(ROOT_DIR) && sbt "project root; testOnly $(RISCV_TEST) -- -DwriteVcd=1"
 
 .PHONY: show
 show:

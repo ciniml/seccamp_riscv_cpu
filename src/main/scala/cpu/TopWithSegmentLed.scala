@@ -10,7 +10,7 @@ import display.MatrixLed
 import display.MatrixLedConfig
 import uart.UartRx
 
-class TopWithSegmentLed(memoryPathGen: Int => String = i => f"../sw/bootrom_${i}.hex", suppressDebugMessage: Boolean = false, memorySize: Int, enableProbe: Boolean = false) extends Module {
+class TopWithSegmentLed(memoryPathGen: Int => String = i => f"../sw/bootrom_${i}.hex", suppressDebugMessage: Boolean = false, memorySize: Int = 8192, enableProbe: Boolean = false, forSimulation: Boolean = false, useTargetPrimitive: Boolean = false) extends Module {
   val io = IO(new Bundle {
     val debug_pc = Output(UInt(WORD_LEN.W))
     val uartTx = Output(Bool())
@@ -30,7 +30,7 @@ class TopWithSegmentLed(memoryPathGen: Int => String = i => f"../sw/bootrom_${i}
   val baseAddress = BigInt("00000000", 16)
   val core = Module(new Core(startAddress = baseAddress.U(WORD_LEN.W), suppressDebugMessage))
 
-  val memory = Module(new Memory(Some(memoryPathGen), baseAddress.U(WORD_LEN.W), memorySize))
+  val memory = Module(new Memory(Some(memoryPathGen), baseAddress.U(WORD_LEN.W), memorySize, forSimulation, useTargetPrimitive = useTargetPrimitive))
   val gpios = Module(new GpioArray((0 until 6).map(_ => BigInt("ffffffff", 16))))  // GPIO Array (6ポート)
   val uartRegs = Module(new IORegister(Seq((0x100ff, 0xff), (0x03, 0x00))))           // UART IOレジスタ
 
@@ -94,8 +94,8 @@ class TopWithSegmentLed(memoryPathGen: Int => String = i => f"../sw/bootrom_${i}
 
   // 信号観測用プローブを構築
   if( enableProbe ) {
-    val probe = Module(new diag.Probe(new diag.ProbeConfig(bufferDepth = 512, triggerPosition = 512 - 16), 33))
-    probe.io.in := Cat(io.switchIn(0), core.io.debug_pc)
+    val probe = Module(new diag.Probe(new diag.ProbeConfig(bufferDepth = 512, triggerPosition = 512 - 16), 65))
+    probe.io.in := Cat( core.io.imem.valid, core.io.imem.addr, core.io.imem.inst )
     val noActivityCounter = RegInit(0.U(log2Ceil(256).W))
     when( gpios.io.mem.wen ) {
       noActivityCounter := 0.U

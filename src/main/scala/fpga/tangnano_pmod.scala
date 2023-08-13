@@ -7,15 +7,14 @@
 package fpga
 
 import chisel3._
-import chisel3.stage.ChiselStage
 import cpu.TopWithSegmentLed
+import chisel3.stage.ChiselStage
 
 object Elaborate_TangNanoPmod_SegmentLed extends App {
   val directory = args(0)
-  val filename = args(1)
-  val memorySize = args(2).toInt
-  (new ChiselStage).emitVerilog(new TopWithSegmentLed(memorySize = memorySize), Array(
-    "-o", filename,
+  val memorySize = args(1).toInt
+  val bootromDir = args(2)
+  (new ChiselStage).emitVerilog(new TopWithSegmentLed(memoryPathGen = i => f"${bootromDir}/bootrom_${i}.hex", memorySize = memorySize, forSimulation = false, enableProbe = false, useTargetPrimitive = true), Array(
     "--target-dir", directory,
   ))
 }

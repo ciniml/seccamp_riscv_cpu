@@ -178,9 +178,9 @@ class Core(startAddress: UInt = START_ADDR, suppressDebugMessage: Boolean = fals
   val id_imm_s = Cat(id_inst(31, 25), id_inst(11, 7))
   val id_imm_s_sext = Cat(Fill(20, id_imm_s(11)), id_imm_s)
   val id_imm_b = Cat(id_inst(31), id_inst(7), id_inst(30, 25), id_inst(11, 8))
-  val id_imm_b_sext = Cat(Fill(19, id_imm_b(11)), id_imm_b, 0.U(1.U))
+  val id_imm_b_sext = Cat(Fill(19, id_imm_b(11)), id_imm_b, 0.U(1.W))
   val id_imm_j = Cat(id_inst(31), id_inst(19, 12), id_inst(20), id_inst(30, 21))
-  val id_imm_j_sext = Cat(Fill(11, id_imm_j(19)), id_imm_j, 0.U(1.U))
+  val id_imm_j_sext = Cat(Fill(11, id_imm_j(19)), id_imm_j, 0.U(1.W))
   val id_imm_u = id_inst(31,12)
   val id_imm_u_shifted = Cat(id_imm_u, Fill(12, 0.U))
   val id_imm_z = id_inst(19,15)
@@ -296,10 +296,10 @@ class Core(startAddress: UInt = START_ADDR, suppressDebugMessage: Boolean = fals
     (exe_reg_exe_fun === ALU_OR)    -> (exe_reg_op1_data | exe_reg_op2_data),
     (exe_reg_exe_fun === ALU_XOR)   -> (exe_reg_op1_data ^ exe_reg_op2_data),
     (exe_reg_exe_fun === ALU_SLL)   -> (exe_reg_op1_data << exe_reg_op2_data(4, 0))(31, 0),
-    (exe_reg_exe_fun === ALU_SRL)   -> (exe_reg_op1_data >> exe_reg_op2_data(4, 0)).asUInt(),
-    (exe_reg_exe_fun === ALU_SRA)   -> (exe_reg_op1_data.asSInt() >> exe_reg_op2_data(4, 0)).asUInt(),
-    (exe_reg_exe_fun === ALU_SLT)   -> (exe_reg_op1_data.asSInt() < exe_reg_op2_data.asSInt()).asUInt(),
-    (exe_reg_exe_fun === ALU_SLTU)  -> (exe_reg_op1_data < exe_reg_op2_data).asUInt(),
+    (exe_reg_exe_fun === ALU_SRL)   -> (exe_reg_op1_data >> exe_reg_op2_data(4, 0)),
+    (exe_reg_exe_fun === ALU_SRA)   -> (exe_reg_op1_data.asSInt >> exe_reg_op2_data(4, 0)).asUInt,
+    (exe_reg_exe_fun === ALU_SLT)   -> (exe_reg_op1_data.asSInt < exe_reg_op2_data.asSInt).asUInt,
+    (exe_reg_exe_fun === ALU_SLTU)  -> (exe_reg_op1_data < exe_reg_op2_data),
     (exe_reg_exe_fun === ALU_JALR)  -> ((exe_reg_op1_data + exe_reg_op2_data) & ~1.U(WORD_LEN.W)),
     (exe_reg_exe_fun === ALU_COPY1) -> exe_reg_op1_data
   ))
@@ -310,8 +310,8 @@ class Core(startAddress: UInt = START_ADDR, suppressDebugMessage: Boolean = fals
     (exe_reg_mret)                  -> true.B,
     (exe_reg_exe_fun === BR_BEQ)  ->  (exe_reg_op1_data === exe_reg_op2_data),
     (exe_reg_exe_fun === BR_BNE)  -> !(exe_reg_op1_data === exe_reg_op2_data),
-    (exe_reg_exe_fun === BR_BLT)  ->  (exe_reg_op1_data.asSInt() < exe_reg_op2_data.asSInt()),
-    (exe_reg_exe_fun === BR_BGE)  -> !(exe_reg_op1_data.asSInt() < exe_reg_op2_data.asSInt()),
+    (exe_reg_exe_fun === BR_BLT)  ->  (exe_reg_op1_data.asSInt < exe_reg_op2_data.asSInt).asUInt,
+    (exe_reg_exe_fun === BR_BGE)  -> !(exe_reg_op1_data.asSInt < exe_reg_op2_data.asSInt).asUInt,
     (exe_reg_exe_fun === BR_BLTU) ->  (exe_reg_op1_data < exe_reg_op2_data),
     (exe_reg_exe_fun === BR_BGEU) -> !(exe_reg_op1_data < exe_reg_op2_data)
   ))

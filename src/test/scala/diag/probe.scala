@@ -114,7 +114,7 @@ class ProbeFrameAdapterTest extends AnyFlatSpec with ChiselScalatestTester {
       c.clock.step(1)
       c.io.out.valid.expect(false.B)
       c.clock.step(1)
-    }.join
+    }.join()
   }
   
   it must "1bit" in { test(new ProbeFrameAdapter(1)).withAnnotations(Seq(VerilatorBackendAnnotation, WriteFstAnnotation)) { c =>
