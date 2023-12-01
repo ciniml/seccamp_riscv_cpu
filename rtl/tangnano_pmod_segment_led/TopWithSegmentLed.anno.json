@@ -53,9 +53,9 @@
       "ShiftDigit":2,
       "SetupDigit":1,
       "OutputDigit":5,
+      "SetupSegment":3,
       "ShiftSegment":4,
-      "Reset":0,
-      "SetupSegment":3
+      "Reset":0
     }
   },
   {

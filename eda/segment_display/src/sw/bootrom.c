@@ -83,6 +83,10 @@ static const uint8_t hex_digit_pattern[16] = {
     0b01110001,
 };
 
+volatile uint32_t a = 0;
+volatile uint32_t b = 0;
+volatile uint32_t c = 0;
+
 static void put_led_hex(uint32_t value)
 {
     *REG_GPIO_LED_L = (hex_digit_pattern[(value >> 20)  & 0xf] << 0)

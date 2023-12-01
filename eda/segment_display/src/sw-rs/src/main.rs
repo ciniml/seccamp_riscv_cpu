@@ -1,12 +1,14 @@
 #![no_std]
 #![no_main]
 
-use core::{arch::{global_asm, asm}, panic::PanicInfo, sync::atomic::{compiler_fence, Ordering}};
+use core::{arch::{global_asm, asm}, panic::PanicInfo, sync::atomic::{compiler_fence, Ordering}, cell::RefCell};
 use bootrom_pac;
 
 mod uart;
-use uart::Uart;
+use uart::{Uart, UartReader, UartWriter};
 use core::fmt::Write;
+use fwtool::server::{Server, ServerHandler};
+
 
 #[allow(unused_imports)]
 use riscv::asm;
@@ -69,19 +71,57 @@ fn panic(_info: &PanicInfo) -> ! {
     loop {}
 }
 
+static mut APPIMAGE_BUFFER: [u8; 8192] = [0; 8192];
+
+#[derive(Debug)]
+struct Handler {}
+
+impl ServerHandler for Handler {
+    fn on_query_version(&mut self) -> Result<u32, fwtool::server::ServerError> {
+        Ok(1)
+    }
+    fn on_read_memory(&mut self, address: u32, buffer: &mut [u8]) -> Result<(), fwtool::server::ServerError> {
+        let address = address as usize;
+        if address + buffer.len()  > unsafe { APPIMAGE_BUFFER.len() } {
+            Err(fwtool::server::ServerError::InvalidAddress)
+        } else {
+            unsafe {
+                buffer.copy_from_slice(&APPIMAGE_BUFFER[address..address + buffer.len()]);
+            }
+            Ok(())
+        }
+    }
+    fn on_write_memory(&mut self, address: u32, buffer: &[u8]) -> Result<(), fwtool::server::ServerError> {
+        let address = address as usize;
+        if address + buffer.len()  > unsafe { APPIMAGE_BUFFER.len() } {
+            Err(fwtool::server::ServerError::InvalidAddress)
+        } else {
+            unsafe {
+                APPIMAGE_BUFFER[address..address + buffer.len()].copy_from_slice(buffer);
+            }
+            Ok(())
+        }
+    }
+    fn on_run(&mut self, address: u32) -> Result<(), fwtool::server::ServerError> {
+        Ok(())
+    }
+    
+}
 
 #[no_mangle]
 pub extern "C" fn main() -> ! {
     let peripherals = bootrom_pac::Peripherals::take().unwrap();
-    let mut uart = Uart::<bootrom_pac::UART>::init(peripherals.UART);
-    
-    writeln!(&mut uart, "Hello, RISC-V from Rust").unwrap();
+    let uart = RefCell::new(Uart::<bootrom_pac::UART>::init(peripherals.UART));
+
+    let handler = Handler{};
+    let mut server = Server::<_, 128>::new(handler);
 
     let mut led_out = 1;
+    let mut reader = UartReader::new(&uart);
+    let mut writer = UartWriter::new(&uart);
     loop {
         peripherals.GPIO.led_out.write(|w| w.bits(led_out));
         led_out = ((led_out << 1) & 0x3f) | (led_out >> 5);
-        //writeln!(&mut uart, "Hello, RISC-V from Rust").unwrap();
-        for _ in 0..100000 { unsafe { asm!("nop"); } }
+        server.process(&mut reader, &mut writer);
     }
 }

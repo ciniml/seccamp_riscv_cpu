@@ -8,7 +8,7 @@ edition = "2021"
 [features]
 default = ["std", "alloc"]
 test = ["no_std_io/std", "no_std_io/alloc"]
-std = ["no_std_io/std", "bytes/std", "dep:tokio", "dep:tokio-stream", "dep:tokio-util", "dep:async-stream"]
+std = ["no_std_io/std", "dep:tokio", "dep:tokio-stream", "dep:tokio-util", "dep:async-stream"]
 alloc = ["no_std_io/alloc"]
 
 [dependencies]
@@ -18,4 +18,3 @@ tokio = { version = "1.29.1", features = ["full"], optional = true }
 tokio-stream = { version = "0.1.14", features = ["full"], optional = true }
 tokio-util = { version = "0.7.8", features = ["full"], optional = true }
 async-stream = { version = "0.3.5", optional = true }
-bytes = "1.4.0"

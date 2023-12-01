@@ -12,3 +12,6 @@ embedded-hal = "=1.0.0-alpha.11"
 heapless = "0.7"
 embedded-hal-nb = "1.0.0-alpha.3"
 nb = "1.1.0"
+fwtool = { path = "../../../../tool/fwtool/fwtool", default-features = false }
+portable-atomic = { version = "1.4.2", features = ["critical-section"] }
+no_std_io = "0.6.0"

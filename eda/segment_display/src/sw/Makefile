@@ -4,16 +4,18 @@ CC = riscv64-unknown-elf-gcc
 OBJDUMP = riscv64-unknown-elf-objdump
 OBJCOPY = riscv64-unknown-elf-objcopy
 CFLAGS = -mabi=ilp32 -march=rv32i -Os -g
-LDFLAGS = -Wl,-Tlink.ld -nostartfiles 
+LDFLAGS = -Wl,-Tlink.ld -nostartfiles
 
 OBJS := bootrom.o
 
 BOOTROM_TARGETS := bootrom.hex bootrom_0.hex bootrom_1.hex bootrom_2.hex bootrom_3.hex
 
+LIBGCC := $(shell $(CC) $(CFLAGS) -print-libgcc-file-name)
+
 all: bootrom.bin $(BOOTROM_TARGETS) bootrom.dump
 
 bootrom.elf: $(OBJS) link.ld
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(OBJS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(LIBGCC) $(OBJS)
 
 %.o: %.c
 	$(CC) -c -o $@ $(CFLAGS) $<

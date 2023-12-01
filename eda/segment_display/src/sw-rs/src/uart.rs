@@ -1,3 +1,5 @@
+use core::cell::RefCell;
+
 use bootrom_pac;
 use embedded_hal_nb::serial::*;
 
@@ -76,3 +78,72 @@ fn read_line<const N: usize>(uart: &mut Uart<bootrom_pac::UART>, line: &mut heap
         }
     }
 }
+
+pub struct UartReader<'a, UART> {
+    uart: &'a RefCell<Uart<UART>>,
+}
+
+impl<'a, UART> UartReader<'a, UART> {
+    pub fn new(uart: &'a RefCell<Uart<UART>>) -> Self {
+        Self {
+            uart,
+        }
+    }
+}
+
+pub struct UartWriter<'a, UART> {
+    uart: &'a RefCell<Uart<UART>>,
+}
+
+impl<'a, UART> UartWriter<'a, UART> {
+    pub fn new(uart: &'a RefCell<Uart<UART>>) -> Self {
+        Self {
+            uart,
+        }
+    }
+}
+
+impl<'a> no_std_io::io::Read for UartReader<'a, bootrom_pac::UART> {
+    fn read(&mut self, buf: &mut [u8]) -> no_std_io::io::Result<usize> {
+        let mut count = 0;
+        for b in buf.iter_mut() {
+            match self.uart.borrow_mut().read() {
+                Ok(v) => {
+                    *b = v;
+                    count += 1;
+                },
+                Err(embedded_hal_nb::nb::Error::WouldBlock) => {
+                    break;
+                },
+                Err(err) => {
+                    return Err(no_std_io::io::Error::from(no_std_io::io::ErrorKind::Other));
+                },
+            }
+        }
+        Ok(count)
+    }
+} 
+
+
+impl<'a> no_std_io::io::Write for UartWriter<'a, bootrom_pac::UART> {
+    fn write(&mut self, buf: &[u8]) -> no_std_io::io::Result<usize> {
+        let mut count = 0;
+        for b in buf.iter() {
+            match self.uart.borrow_mut().write(*b) {
+                Ok(v) => {
+                    count += 1;
+                },
+                Err(embedded_hal_nb::nb::Error::WouldBlock) => {
+                    break;
+                },
+                Err(err) => {
+                    return Err(no_std_io::io::Error::from(no_std_io::io::ErrorKind::Other));
+                },
+            }
+        }
+        Ok(count)
+    }
+    fn flush(&mut self) -> no_std_io::io::Result<()> {
+        Ok(())
+    }
+} 

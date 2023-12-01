@@ -10,7 +10,11 @@ debug = true
 opt-level = "s"
 lto = true
 
+[target.riscv32imc-unknown-none-elf]
+rustflags = [
+    "-Clink-args=-Tlink.ld -Map=output.map"
+]
 [target.riscv32i-unknown-none-elf]
 rustflags = [
-    "-C", "link-arg=-Tlink.ld"
+    "-Clink-args=-Tlink.ld -Map=output.map"
 ]
