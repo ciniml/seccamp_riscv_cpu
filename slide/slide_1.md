@@ -179,7 +179,7 @@ import cpu.Top
 object Elaborate_Minimal extends App {
   (new ChiselStage).emitVerilog(new Top, Array(
     "-o", "riscv.v",
-    "--target-dir", "rtl/comproc_cpu_board",
+    "--target-dir", "rtl/chisel_output",
   ))
 }
 ```
@@ -199,12 +199,12 @@ Done elaborating.
 
 ## Chiselのエラボレーション(3/3)
 
-* `--target-dir` パラメータで指定したディレクトリ (`rtl/comproc_cpu_board`) に変換後のVerilogのモジュールが出力される
+* `--target-dir` パラメータで指定したディレクトリ (`rtl/chisel_output`) に変換後のVerilogのモジュールが出力される
 * 出力ファイル名は `-o` パラメータで指定したファイル名 (`riscv.v`)
 
 ```
 rtl
-└── comproc_cpu_board
+└── chisel_output
     ├── firrtl_black_box_resource_files.f
     ├── riscv.v
     ├── Top.anno.json
@@ -222,7 +222,7 @@ eda/cpu_riscv_chisel_book$ make
 (省略)
 Running inference ...
 ERROR (RP0001) : The number(131072) of DFF in the design exceeds the resource limit(6480) of current device(GW1NR-LV9QN88PC6/I5)
-ERROR (IF0003) : Cannot infer "mem" due to multiple write clocks("/home/kenta/repos/seccamp_2022_y4_riscv/fpga_impl/rtl/comproc_cpu_board/riscv.v":1029)
+ERROR (IF0003) : Cannot infer "mem" due to multiple write clocks("/home/kenta/repos/seccamp_2022_y4_riscv/fpga_impl/rtl/chisel_output/riscv.v":1029)
 GowinSynthesis finish
 ```
 
@@ -380,7 +380,7 @@ val mem = SyncReadMem(16384, UInt(8.W))
 
 ```
 ERROR (RP0001) : The number(131072) of DFF in the design exceeds the resource limit(6480) of current device(GW1NR-LV9QN88PC6/I5)
-ERROR (IF0003) : Cannot infer "mem" due to multiple write clocks("/home/kenta/repos/seccamp_2022_y4_riscv/fpga_impl/rtl/comproc_cpu_board/riscv.v":1039)
+ERROR (IF0003) : Cannot infer "mem" due to multiple write clocks("/home/kenta/repos/seccamp_2022_y4_riscv/fpga_impl/rtl/chisel_output/riscv.v":1039)
 ```
 
 * エラーメッセージに変化なし
