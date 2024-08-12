@@ -23,25 +23,17 @@ class Memory extends Module {
     val dmem = new DmemPortIo()
   })
 
-  val mem = Mem(16384, UInt(8.W))
+  // 要素型を8bit幅x4つの配列にし、メモリの長さを1/4に変更
+  val mem = SyncReadMem(16384/4, Vec(4, UInt(8.W))) 
   loadMemoryFromFile(mem, "src/hex/hazard_ex.hex")
   io.imem.inst := Cat(
-    mem(io.imem.addr + 3.U(WORD_LEN.W)), 
-    mem(io.imem.addr + 2.U(WORD_LEN.W)),
-    mem(io.imem.addr + 1.U(WORD_LEN.W)),
-    mem(io.imem.addr)
+    mem.read(io.imem.addr >> 2).reverse,  // アドレスをワード単位に変換。長さ4のVecが返ってくるのでreverseで逆順にしてCatで結合
   )
   io.dmem.rdata := Cat(
-    mem(io.dmem.addr + 3.U(WORD_LEN.W)),
-    mem(io.dmem.addr + 2.U(WORD_LEN.W)), 
-    mem(io.dmem.addr + 1.U(WORD_LEN.W)),
-    mem(io.dmem.addr)
+    mem.read(io.dmem.addr >> 2).reverse,
   )
-
   when(io.dmem.wen){
-    mem(io.dmem.addr)                   := io.dmem.wdata( 7,  0)
-    mem(io.dmem.addr + 1.U(WORD_LEN.W)) := io.dmem.wdata(15,  8)
-    mem(io.dmem.addr + 2.U(WORD_LEN.W)) := io.dmem.wdata(23, 16)
-    mem(io.dmem.addr + 3.U(WORD_LEN.W)) := io.dmem.wdata(31, 24)
+    // wdataを8bit単位に切り分けて逆順に並べなおしたものを書き込む
+    mem.write(io.dmem.addr >> 2, VecInit((0 to 3).map(i => io.dmem.wdata(8*(i+1)-1, 8*i)).reverse))
   }
 }
