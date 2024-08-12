@@ -1,3 +1,6 @@
 {
-    "markdown.marp.enableHtml": true
+    "markdown.marp.enableHtml": true,
+    "files.watcherExclude": {
+        "**/target": true
+    }
 }
