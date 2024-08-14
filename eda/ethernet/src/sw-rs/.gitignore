@@ -1,0 +1,6 @@
+*.o
+*.dump
+*.bin
+*.elf
+*.hex
+Cargo.lock

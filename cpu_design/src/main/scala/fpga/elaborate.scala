@@ -9,6 +9,7 @@ package fpga
 import chisel3._
 import cpu.{Top, TopWithHDMI, TopWithSegmentLed, TopWithStepper}
 import _root_.circt.stage.ChiselStage
+import cpu.TopWithEthernet
 
 object Elaborate_Minimal extends App {
   val directory = args(0)
@@ -38,6 +39,17 @@ object Elaborate_SegmentLed extends App {
   val bootromDir = args(2)
   ChiselStage.emitSystemVerilogFile(
     new TopWithSegmentLed(memoryPathGen = i => f"${bootromDir}/bootrom_${i}.hex", memorySize = memorySize, forSimulation = false, enableProbe = true, useTargetPrimitive = false), 
+    Array("--target-dir", directory),
+    Array("--lowering-options=disallowLocalVariables")
+  )
+}
+
+object Elaborate_Ethernet extends App {
+  val directory = args(0)
+  val memorySize = args(1).toInt
+  val bootromDir = args(2)
+  ChiselStage.emitSystemVerilogFile(
+    new TopWithEthernet(memoryPathGen = i => f"${bootromDir}/bootrom_${i}.hex", memorySize = memorySize, forSimulation = false, enableProbe = false, useTargetPrimitive = true), 
     Array("--target-dir", directory),
     Array("--lowering-options=disallowLocalVariables")
   )
