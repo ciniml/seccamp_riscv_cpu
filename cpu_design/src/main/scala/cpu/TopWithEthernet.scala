@@ -48,13 +48,15 @@ class TopWithEthernet(memoryPathGen: Int => String = i => f"../sw/bootrom_${i}.h
   val core = Module(new Core(startAddress = baseAddress.U(WORD_LEN.W), suppressDebugMessage))
 
   val memory = Module(new Memory(Some(memoryPathGen), baseAddress.U(WORD_LEN.W), memorySize, forSimulation, useTargetPrimitive = useTargetPrimitive))
-  val gpios = Module(new GpioArray((0 until 6).map(_ => BigInt("ffffffff", 16))))  // GPIO Array (6ポート)
-  val uartRegs = Module(new IORegister(Seq((0x100ff, 0xff), (0x03, 0x00))))           // UART IOレジスタ
+  val gpios = Module(new GpioArray((0 until 6).map(_ => BigInt("ffffffff", 16)))) // GPIO Array (6ポート)
+  val uartRegs = Module(new IORegister(Seq((0x100ff, 0xff), (0x03, 0x00))))       // UART IOレジスタ
+  val ethernetRegs = Module(new IORegister(Seq((0x3ff, 0x1ff), (0x1, 0x0))))      // ETHERNET IOレジスタ
 
   val decoder = Module(new DMemDecoder(Seq(
     (BigInt(0x00000000L), BigInt(memorySize)),         // メモリ
     (BigInt(0xA0000000L), gpios.ADDRESS_RANGE),     // GPIO Array (5ポート)
     (BigInt(0xA0001000L), uartRegs.ADDRESS_RANGE),  // UART IO
+    (BigInt(0xA0002000L), ethernetRegs.ADDRESS_RANGE),  // ETHERNET IO
   )))
   core.io.imem <> memory.io.imem
   core.io.dmem <> decoder.io.initiator  // CPUにデコーダを接続
@@ -62,7 +64,8 @@ class TopWithEthernet(memoryPathGen: Int => String = i => f"../sw/bootrom_${i}.h
   decoder.io.targets(0) <> memory.io.dmem   // 0番ポートにメモリを接続
   decoder.io.targets(1) <> gpios.io.mem     // 1番ポートにGPIOを接続
   decoder.io.targets(2) <> uartRegs.io.mem  // 2番ポートにUART IOを接続
-  
+  decoder.io.targets(3) <> ethernetRegs.io.mem  // 3番ポートにETHERNET IOを接続
+
   // GPIO port 0, 1 に8セグメント6桁LED用のドライバを接続
   val segmentLeds = Module(new SegmentLedWithShiftRegs(8, 6, 2, 2700, true, true))
   io.segmentOut <> segmentLeds.io.segmentOut
@@ -110,7 +113,7 @@ class TopWithEthernet(memoryPathGen: Int => String = i => f"../sw/bootrom_${i}.h
   io.debug_pc := core.io.debug_pc
 
   // Ethernet IF
-  val ethernetFifoRx = Module(new AsyncFIFO(Flushable(UInt(8.W)), 2))
+  val ethernetFifoRx = Module(new AsyncFIFO(Flushable(UInt(8.W)), 11))
   val ethernetFifoTx = Module(new AsyncFIFO(Flushable(UInt(8.W)), 2))
   ethernetFifoRx.io.readClock := clock
   ethernetFifoRx.io.readReset := reset
@@ -121,22 +124,40 @@ class TopWithEthernet(memoryPathGen: Int => String = i => f"../sw/bootrom_${i}.h
   ethernetFifoTx.io.writeClock := clock
   ethernetFifoTx.io.writeReset := reset
 
+  // Ethernet registers
+  // 0x0: read: {RX valid, RX last, RX data} write: {TX last, TX data}
+  // 0x4: read: {TX ready} write: {}
+  ethernetRegs.io.in(0).valid := true.B
+  ethernetRegs.io.in(0).bits := Cat(ethernetFifoRx.io.read.valid, ethernetFifoRx.io.read.bits.last, ethernetFifoRx.io.read.bits.data)
+  ethernetFifoRx.io.read.ready := ethernetRegs.io.in(0).ready
+
+  ethernetFifoTx.io.write.valid := ethernetRegs.io.out(0).valid
+  ethernetFifoTx.io.write.bits.data := ethernetRegs.io.out(0).bits(7, 0)
+  ethernetFifoTx.io.write.bits.last := ethernetRegs.io.out(0).bits(8)
+  ethernetRegs.io.in(1).valid := true.B
+  ethernetRegs.io.in(1).bits := ethernetFifoTx.io.write.ready
+
+  // Ethernet MAC clock domain (RMII REFCLK 50MHz)
   withClockAndReset(io.rmiiClock, io.rmiiReset) {
     // Connect async FIFO to Ethernet MAC interface
     ethernetFifoRx.io.write.valid := io.macInValid
     io.macInReady := ethernetFifoRx.io.write.ready
     ethernetFifoRx.io.write.bits.data := io.macInData
     ethernetFifoRx.io.write.bits.last := io.macInLast
-    io.macOutValid := ethernetFifoTx.io.read.valid
-    io.macOutData := ethernetFifoTx.io.read.bits.data
-    io.macOutLast := ethernetFifoTx.io.read.bits.last
-    ethernetFifoTx.io.read.ready := io.macOutReady
+
+    // Connect TX packet FIFO and TX async FIFO
+    val txPacketFifo = Module(new PacketQueue(Flushable(UInt(8.W)), 1536))
+    txPacketFifo.io.write <> ethernetFifoTx.io.read
+
+    // Connect TX packet FIFO
+    io.macOutValid := txPacketFifo.io.read.valid
+    io.macOutData := txPacketFifo.io.read.bits.data
+    io.macOutLast := txPacketFifo.io.read.bits.last
+    txPacketFifo.io.read.ready := io.macOutReady
   }
 
-  // Loopback the Ethernet frame.
-  val ethernetFifo = Module(new PacketQueue(Flushable(UInt(8.W)), 1536))
-  ethernetFifoTx.io.write <> ethernetFifo.io.read
-  ethernetFifo.io.write <> ethernetFifoRx.io.read
+  // Drop all received data
+  ethernetFifoRx.io.read.ready := true.B
 
   // 信号観測用プローブを構築
   if( enableProbe ) {

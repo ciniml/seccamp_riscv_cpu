@@ -55,14 +55,16 @@ extern void __attribute__((naked)) start(void)
 }
 
 
-static volatile uint32_t* const REG_GPIO_LED_L =    (volatile uint32_t*)0xA0000000;
-static volatile uint32_t* const REG_GPIO_LED_H =    (volatile uint32_t*)0xA0000010;
-static volatile uint32_t* const REG_GPIO_MATRIX_L = (volatile uint32_t*)0xA0000020;
-static volatile uint32_t* const REG_GPIO_MATRIX_H = (volatile uint32_t*)0xA0000030;
-static volatile uint32_t* const REG_GPIO_LED =      (volatile uint32_t*)0xA0000040;
-static volatile uint32_t* const REG_GPIO_SW_IN =    (volatile uint32_t*)0xA0000054;
-static volatile uint32_t* const REG_UART_DATA =     (volatile uint32_t*)0xA0001000;
-static volatile uint32_t* const REG_UART_STATUS =   (volatile uint32_t*)0xA0001004;
+static volatile uint32_t* const REG_GPIO_LED_L =      (volatile uint32_t*)0xA0000000;
+static volatile uint32_t* const REG_GPIO_LED_H =      (volatile uint32_t*)0xA0000010;
+static volatile uint32_t* const REG_GPIO_MATRIX_L =   (volatile uint32_t*)0xA0000020;
+static volatile uint32_t* const REG_GPIO_MATRIX_H =   (volatile uint32_t*)0xA0000030;
+static volatile uint32_t* const REG_GPIO_LED =        (volatile uint32_t*)0xA0000040;
+static volatile uint32_t* const REG_GPIO_SW_IN =      (volatile uint32_t*)0xA0000054;
+static volatile uint32_t* const REG_UART_DATA =       (volatile uint32_t*)0xA0001000;
+static volatile uint32_t* const REG_UART_STATUS =     (volatile uint32_t*)0xA0001004;
+static volatile uint32_t* const REG_ETHERNET_DATA =   (volatile uint32_t*)0xA0002000;
+static volatile uint32_t* const REG_ETHERNET_STATUS = (volatile uint32_t*)0xA0002004;
 
 static const uint8_t hex_digit_pattern[16] = {
     0b00111111,
@@ -126,6 +128,20 @@ static void uart_tx_string(const char* str)
     }
 }
 
+static bool ethernet_tx_ready(void)
+{
+    return (*REG_ETHERNET_STATUS & 0x1) != 0;
+}
+static void ethernet_tx_byte(uint32_t byte_and_last)
+{
+    while( !ethernet_tx_ready() );
+    *REG_ETHERNET_DATA = byte_and_last;
+}
+static uint32_t ethernet_rx_byte(void)
+{
+    return *REG_ETHERNET_DATA;
+}
+
 
 static uint32_t uart_rx_data = 0;
 void __attribute__((interrupt)) isr_extint_handler(void)
@@ -133,6 +149,25 @@ void __attribute__((interrupt)) isr_extint_handler(void)
     uart_rx_data = *REG_UART_DATA;
 }
 
+#define ETHERNET_LOOPBACK
+#ifdef ETHERNET_LOOPBACK
+void __attribute__((noreturn)) main(void)
+{
+    uint32_t rx_data;
+    for(;;)
+    {
+        if((rx_data & 0x200) == 0) {
+            rx_data = ethernet_rx_byte();
+        }
+        if((rx_data & 0x200) != 0 ) {
+            if( ethernet_tx_ready() ) {
+                ethernet_tx_byte(rx_data);
+                rx_data = 0;
+            }
+        }
+    }
+}
+#else
 void __attribute__((noreturn)) main(void)
 {
     uint32_t counter = 0;
@@ -173,3 +208,4 @@ void __attribute__((noreturn)) main(void)
         }
     }
 }
+#endif // ETHERNET_LOOPBACK

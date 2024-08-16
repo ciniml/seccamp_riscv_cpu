@@ -50,7 +50,7 @@ src/$(TARGET)/pins.cst:
 	echo Use pre-generated pin definition.
 endif
 
-$(RISCV_CORE_SRC): $(CHISEL_DESIGN_SRCS)
+$(RISCV_CORE_SRC): $(CHISEL_DESIGN_SRCS) $(BOOTROM_HEX)
 	cd $(ROOT_DIR) && sbt "project cpu_design; runMain $(RISCV_ELABORATE) $(dir $(abspath $@)) 8192 $(abspath src/sw) "
 
 .PHONY: test
