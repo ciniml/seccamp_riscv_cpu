@@ -156,9 +156,6 @@ class TopWithEthernet(memoryPathGen: Int => String = i => f"../sw/bootrom_${i}.h
     txPacketFifo.io.read.ready := io.macOutReady
   }
 
-  // Drop all received data
-  ethernetFifoRx.io.read.ready := true.B
-
   // 信号観測用プローブを構築
   if( enableProbe ) {
     val probe = Module(new diag.Probe(new diag.ProbeConfig(bufferDepth = 512, triggerPosition = 512 - 16), 65))

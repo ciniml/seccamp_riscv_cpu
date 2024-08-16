@@ -26,12 +26,9 @@ class IORegister(masks: Seq[(BigInt, BigInt)]) extends Module {
   val mask = Cat((0 to 3).map(i => Mux(io.mem.wstrb(i), 0xff.U(8.W), 0x00.U(8.W))).reverse)
 
   for( gpioIndex <- 0 until masks.length) {
-    io.out(gpioIndex).valid := false.B
-    io.in(gpioIndex).ready := false.B
+    val selected = io.mem.addr(ADDRESS_BITS, 2) === gpioIndex.U
+    io.out(gpioIndex).valid := selected && io.mem.wen
+    io.in(gpioIndex).ready := selected && io.mem.ren
     io.out(gpioIndex).bits := (io.mem.wdata & mask) & masks(gpioIndex)._2.U
-    when(io.mem.addr(ADDRESS_BITS, 2) === gpioIndex.U) {
-      io.out(gpioIndex).valid := io.mem.wen
-      io.in(gpioIndex).ready := io.mem.ren
-    }
   }
 }
