@@ -165,9 +165,9 @@ void __attribute__((noreturn)) main(void)
         *REG_GPIO_LED = is_transmitting ? 1 : 0;
         if( !is_transmitting ) {    // receiving
             uint32_t rx_data = ethernet_rx_byte();
-            if( rx_data & 0x200 ) {
+            if( rx_data & 0x200 ) { // RX data is valid
                 s_packet_buffer[s_packet_length++] = rx_data & 0xff;
-                if( (rx_data & 0x100) != 0 || s_packet_length >= MAX_PACKET_SIZE ) {
+                if( (rx_data & 0x100) != 0 || s_packet_length >= MAX_PACKET_SIZE ) {    // RX data is the last byte or buffer is full
                     // Loopback
                     if( s_packet_length >= 12 ) {   // Source MAC address and destination MAC address exists
                         // Swap the addresses.
