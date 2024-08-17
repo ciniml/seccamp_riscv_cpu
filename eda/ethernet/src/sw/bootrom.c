@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdbool.h>
+#include <stddef.h>
 
 extern void __attribute__((naked)) __attribute__((section(".isr_vector"))) isr_vector(void)
 {
@@ -151,18 +152,44 @@ void __attribute__((interrupt)) isr_extint_handler(void)
 
 #define ETHERNET_LOOPBACK
 #ifdef ETHERNET_LOOPBACK
+#define MAX_PACKET_SIZE 256
+static uint8_t s_packet_buffer[MAX_PACKET_SIZE];
+static size_t s_packet_length = 0;
 void __attribute__((noreturn)) main(void)
 {
-    uint32_t rx_data;
+    size_t packet_counter = 0;
+    bool is_transmitting = false;
+
     for(;;)
     {
-        if((rx_data & 0x200) == 0) {
-            rx_data = ethernet_rx_byte();
+        *REG_GPIO_LED = is_transmitting ? 1 : 0;
+        if( !is_transmitting ) {    // receiving
+            uint32_t rx_data = ethernet_rx_byte();
+            if( rx_data & 0x200 ) {
+                s_packet_buffer[s_packet_length++] = rx_data & 0xff;
+                if( (rx_data & 0x100) != 0 || s_packet_length >= MAX_PACKET_SIZE ) {
+                    // Loopback
+                    if( s_packet_length >= 12 ) {   // Source MAC address and destination MAC address exists
+                        // Swap the addresses.
+                        for(size_t i = 0; i < 6; i++) {
+                            uint8_t tmp = s_packet_buffer[i];
+                            s_packet_buffer[i] = s_packet_buffer[i + 6];
+                            s_packet_buffer[i + 6] = tmp;
+                        }
+                    }
+                    is_transmitting = true;
+                }
+            }
         }
-        if((rx_data & 0x200) != 0 ) {
-            if( ethernet_tx_ready() ) {
-                ethernet_tx_byte(rx_data);
-                rx_data = 0;
+        if( is_transmitting && ethernet_tx_ready() ) {     // transmitting
+            if( packet_counter < s_packet_length ) {
+                ethernet_tx_byte(s_packet_buffer[packet_counter] | (packet_counter == s_packet_length - 1 ? 0x100 : 0x000));
+                packet_counter++;
+                if( packet_counter >= s_packet_length ) {
+                    is_transmitting = false;
+                    s_packet_length = 0;
+                    packet_counter = 0;
+                }
             }
         }
     }

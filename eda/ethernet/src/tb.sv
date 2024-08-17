@@ -55,12 +55,13 @@ module tb ();
     );
 
 
-    localparam int RECEIVE_DATA_LEN = 8 + 6 + 6 + 2;
+    localparam int RECEIVE_DATA_LEN = 8 + 6 + 6 + 2 + 4;
     bit [7:0] RECEIVE_DATA[0:RECEIVE_DATA_LEN - 1] = '{
         8'h55, 8'h55, 8'h55, 8'h55, 8'h55, 8'h55, 8'h55, 8'hd5,
         8'hff, 8'hff, 8'hff, 8'hff, 8'hff, 8'hff,
         8'h00, 8'h11, 8'h22, 8'h33, 8'h44, 8'h55,
-        8'h08, 8'h06
+        8'h08, 8'h06,
+        8'h00, 8'h00, 8'h00, 8'h00 // FCS
     };
     int receive_counter;
 
@@ -73,7 +74,7 @@ module tb ();
             receive_counter <= 0;
         end
         else begin
-            if( ((receive_counter) >> 2) < RECEIVE_DATA_LEN ) begin
+            if( receive_counter < RECEIVE_DATA_LEN*4 ) begin
                 rmii_crs_dv <= 1;
                 rmii_rxd <= RECEIVE_DATA[receive_counter >> 2] >> (2 * ((receive_counter & 3)));
             end

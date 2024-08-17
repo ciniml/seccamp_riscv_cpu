@@ -49,7 +49,7 @@ object Elaborate_Ethernet extends App {
   val memorySize = args(1).toInt
   val bootromDir = args(2)
   ChiselStage.emitSystemVerilogFile(
-    new TopWithEthernet(memoryPathGen = i => f"${bootromDir}/bootrom_${i}.hex", memorySize = memorySize, forSimulation = false, enableProbe = false, useTargetPrimitive = false), 
+    new TopWithEthernet(memoryPathGen = i => f"${bootromDir}/bootrom_${i}.hex", memorySize = memorySize, forSimulation = false, enableProbe = true, useTargetPrimitive = false), 
     Array("--target-dir", directory),
     Array("--lowering-options=disallowLocalVariables")
   )

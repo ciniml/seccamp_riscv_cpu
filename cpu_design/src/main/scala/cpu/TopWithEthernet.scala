@@ -158,15 +158,17 @@ class TopWithEthernet(memoryPathGen: Int => String = i => f"../sw/bootrom_${i}.h
 
   // 信号観測用プローブを構築
   if( enableProbe ) {
-    val probe = Module(new diag.Probe(new diag.ProbeConfig(bufferDepth = 512, triggerPosition = 512 - 16), 65))
-    probe.io.in := Cat( core.io.imem.valid, core.io.debug_if_inst, core.io.debug_pc )
-    val noActivityCounter = RegInit(0.U(log2Ceil(256).W))
-    when( gpios.io.mem.wen ) {
-      noActivityCounter := 0.U
-    } .otherwise {
-      noActivityCounter := noActivityCounter + 1.U
-    }
-    probe.io.trigger := (noActivityCounter === 255.U) | !io.switchIn(0)
+    val probe = Module(new diag.Probe(new diag.ProbeConfig(bufferDepth = 512, triggerPosition = 16), 11))
+    // probe.io.in := Cat( core.io.imem.valid, core.io.debug_if_inst, core.io.debug_pc )
+    // val noActivityCounter = RegInit(0.U(log2Ceil(256).W))
+    // when( gpios.io.mem.wen ) {
+    //   noActivityCounter := 0.U
+    // } .otherwise {
+    //   noActivityCounter := noActivityCounter + 1.U
+    // }
+    // probe.io.trigger := (noActivityCounter === 255.U) | !io.switchIn(0)
+    probe.io.in := Cat(ethernetRegs.io.out(0).valid, ethernetFifoTx.io.write.ready, ethernetRegs.io.out(0).bits(8), ethernetRegs.io.out(0).bits(7, 0))
+    probe.io.trigger := ethernetRegs.io.out(0).valid
     val probeFrameAdapter = Module(new diag.ProbeFrameAdapter(probe.width))
     probeFrameAdapter.io.in <> probe.io.out
     val probeUartTx = Module(new UartTx(numberOfBits = 8, baudDivider = clockFreqHz / 115200))
