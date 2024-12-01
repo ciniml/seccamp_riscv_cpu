@@ -28,12 +28,16 @@ module top (
   input  wire  [7:0] switch_in,
   
   // Matrix LED
-  output logic [7:0] anode,
-  output logic [7:0] cathode,
+  // output logic [7:0] anode,
+  // output logic [7:0] cathode,
   
   // UART
   input  wire  uart_rx,
   output logic uart_tx,
+
+  // MSMP
+  input  wire  msmp_rx,
+  output logic msmp_tx,
   
   // RMII PHY interface
   input  wire        rmii_txclk,
@@ -97,8 +101,10 @@ module top (
     .*
   );
 
-  logic io_uartTx;
-  logic io_uartRx;
+  logic io_uartTx_0;
+  logic io_uartRx_0;
+  logic io_uartTx_1;
+  logic io_uartRx_1;
   logic io_segmentOut_outputEnable;
   logic io_segmentOut_shiftClock;
   logic io_segmentOut_latch;
@@ -125,11 +131,14 @@ module top (
 
     led_out   <= ~io_ledOut[5:0];
     io_switchIn <= {24'd0, switch_in};
-    anode     <= io_matrixColumnOut;
-    cathode   <= ~io_matrixRowOut;
+    //anode     <= io_matrixColumnOut;
+    //cathode   <= ~io_matrixRowOut;
 
-    uart_tx   <= io_uartTx;
-    io_uartRx <= uart_rx;
+    uart_tx     <= io_uartTx_0;
+    io_uartRx_0 <= uart_rx;
+
+    msmp_tx     <= ~io_uartTx_1;// Invert MSMP TX signal
+    io_uartRx_1 <= ~msmp_rx;    // Invert MSMP RX signal
 
     probe_out <= io_probeOut;
   end

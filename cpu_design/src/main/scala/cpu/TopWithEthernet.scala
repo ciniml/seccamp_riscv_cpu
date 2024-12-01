@@ -17,8 +17,9 @@ import _root_.util.PacketQueue
 class TopWithEthernet(memoryPathGen: Int => String = i => f"../sw/bootrom_${i}.hex", suppressDebugMessage: Boolean = false, memorySize: Int = 8192, enableProbe: Boolean = false, forSimulation: Boolean = false, useTargetPrimitive: Boolean = false) extends Module {
   val io = IO(new Bundle {
     val debug_pc = Output(UInt(WORD_LEN.W))
-    val uartTx = Output(Bool())
-    val uartRx = Input(Bool())
+    val uartTx = Output(Vec(2, Bool()))
+    val uartRx = Input(Vec(2, Bool()))
+
     val success = Output(Bool())
     val segmentOut = ShiftRegisterPort()
     val digitSelector = ShiftRegisterPort()
@@ -48,23 +49,33 @@ class TopWithEthernet(memoryPathGen: Int => String = i => f"../sw/bootrom_${i}.h
   val core = Module(new Core(startAddress = baseAddress.U(WORD_LEN.W), suppressDebugMessage))
 
   val memory = Module(new Memory(Some(memoryPathGen), baseAddress.U(WORD_LEN.W), memorySize, forSimulation, useTargetPrimitive = useTargetPrimitive))
-  val gpios = Module(new GpioArray((0 until 6).map(_ => BigInt("ffffffff", 16)))) // GPIO Array (6ポート)
-  val uartRegs = Module(new IORegister(Seq((0x100ff, 0xff), (0x03, 0x00))))       // UART IOレジスタ
-  val ethernetRegs = Module(new IORegister(Seq((0x3ff, 0x1ff), (0x1, 0x0))))      // ETHERNET IOレジスタ
+  val gpios = Module(new GpioArray((0 until 6).map(_ => BigInt("ffffffff", 16))))               // GPIO Array (6ポート)
+  val uartRegs = (0 to 1).map(_ => Module(new IORegister(Seq((0x100ff, 0xff), (0x03, 0x00)))))  // UART IOレジスタ
+  val ethernetRegs = Module(new IORegister(Seq((0x3ff, 0x1ff), (0x1, 0x0))))                    // ETHERNET IOレジスタ
+  val interruptIn = WireInit(VecInit(Seq.fill(2)(false.B)))
 
   val decoder = Module(new DMemDecoder(Seq(
     (BigInt(0x00000000L), BigInt(memorySize)),         // メモリ
-    (BigInt(0xA0000000L), gpios.ADDRESS_RANGE),     // GPIO Array (5ポート)
-    (BigInt(0xA0001000L), uartRegs.ADDRESS_RANGE),  // UART IO
-    (BigInt(0xA0002000L), ethernetRegs.ADDRESS_RANGE),  // ETHERNET IO
+    (BigInt(0xA0000000L), gpios.ADDRESS_RANGE),        // GPIO Array (5ポート)
+    (BigInt(0xA0001000L), uartRegs(0).ADDRESS_RANGE),  // UART IO
+    (BigInt(0xA0002000L), ethernetRegs.ADDRESS_RANGE), // ETHERNET IO
+    (BigInt(0xA0003000L), uartRegs(1).ADDRESS_RANGE),  // UART IO (MSMP用)
+    (BigInt(0xA0004000L), 4),                          // カウンタ
   )))
   core.io.imem <> memory.io.imem
   core.io.dmem <> decoder.io.initiator  // CPUにデコーダを接続
 
   decoder.io.targets(0) <> memory.io.dmem   // 0番ポートにメモリを接続
   decoder.io.targets(1) <> gpios.io.mem     // 1番ポートにGPIOを接続
-  decoder.io.targets(2) <> uartRegs.io.mem  // 2番ポートにUART IOを接続
+  decoder.io.targets(2) <> uartRegs(0).io.mem   // 2番ポートにUART IOを接続
   decoder.io.targets(3) <> ethernetRegs.io.mem  // 3番ポートにETHERNET IOを接続
+  decoder.io.targets(4) <> uartRegs(1).io.mem   // 4番ポートにUART IO (MSMP) を接続
+
+  // カウンタ
+  val counter = RegInit(0.U(32.W))
+  counter := counter + 1.U
+  decoder.io.targets(5).rvalid := true.B
+  decoder.io.targets(5).rdata := counter
 
   // GPIO port 0, 1 に8セグメント6桁LED用のドライバを接続
   val segmentLeds = Module(new SegmentLedWithShiftRegs(8, 6, 2, 2700, true, true))
@@ -89,25 +100,30 @@ class TopWithEthernet(memoryPathGen: Int => String = i => f"../sw/bootrom_${i}.h
   // GPIO port 5にピン入力のドライバを接続
   io.switchIn <> gpios.io.in(5)
 
-  val uartTx = Module(new UartTx(8, clockFreqHz / 115200))
-  val uartRx = Module(new UartRx(8, clockFreqHz / 115200, 2))
-  val uartTxValidReady = Wire(new DecoupledIO(UInt(8.W)))
-  val uartTxQueue = Queue(uartTxValidReady, 16)
-  val uartRxQueue = Queue(uartRx.io.out, 16)
+  for(i <- 0 to 1) {
+    val baudRate = if( i == 0 ) { 115200 } else { 9600 }
+    val uartTx = Module(new UartTx(8, clockFreqHz / baudRate))
+    val uartRx = Module(new UartRx(8, clockFreqHz / baudRate, 2))
+    val uartTxValidReady = Wire(new DecoupledIO(UInt(8.W)))
+    val uartTxQueue = Queue(uartTxValidReady, 16)
+    val uartRxQueue = Queue(uartRx.io.out, 16)
 
-  io.uartTx <> uartTx.io.tx
-  uartTx.io.in <> uartTxQueue
-  uartTxValidReady.valid := uartRegs.io.out(0).valid
-  uartTxValidReady.bits := uartRegs.io.out(0).bits
-  uartRegs.io.in(1).bits := Cat(0.U(30.W), uartRxQueue.valid, uartTxValidReady.ready)
-  uartRegs.io.in(1).valid := true.B
-  core.io.interrupt_in := uartRxQueue.valid
+    // UARTを接続
+    io.uartTx(i) <> uartTx.io.tx
+    uartTx.io.in <> uartTxQueue
+    uartTxValidReady.valid := uartRegs(i).io.out(0).valid
+    uartTxValidReady.bits := uartRegs(i).io.out(0).bits
+    uartRegs(i).io.in(1).bits := Cat(0.U(30.W), uartRxQueue.valid, uartTxValidReady.ready)
+    uartRegs(i).io.in(1).valid := true.B
+    interruptIn(i) := uartRxQueue.valid
 
-  io.uartRx <> uartRx.io.rx
-  uartRegs.io.in(0).bits := Cat(0.U(15.W), uartRxQueue.valid, 0.U(8.W), uartRxQueue.bits)
-  uartRegs.io.in(0).valid := true.B
-  uartRxQueue.ready := uartRegs.io.in(0).ready
+    io.uartRx(i) <> uartRx.io.rx
+    uartRegs(i).io.in(0).bits := Cat(0.U(15.W), uartRxQueue.valid, 0.U(8.W), uartRxQueue.bits)
+    uartRegs(i).io.in(0).valid := true.B
+    uartRxQueue.ready := uartRegs(i).io.in(0).ready
+  }
 
+  core.io.interrupt_in := interruptIn.asUInt.orR
   io.success := core.io.success
   io.exit := core.io.exit
   io.debug_pc := core.io.debug_pc
