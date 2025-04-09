@@ -27,6 +27,7 @@ class TopWithEthernet(memoryPathGen: Int => String = i => f"../sw/bootrom_${i}.h
     val switchIn = Input(UInt(32.W))
     val matrixColumnOut = Output(UInt(8.W))
     val matrixRowOut = Output(UInt(8.W))
+    val dviDigitsOut = Output(UInt(32.W))
 
     // Ethernet IF
     val rmiiClock = Input(Clock())
@@ -49,7 +50,7 @@ class TopWithEthernet(memoryPathGen: Int => String = i => f"../sw/bootrom_${i}.h
   val core = Module(new Core(startAddress = baseAddress.U(WORD_LEN.W), suppressDebugMessage))
 
   val memory = Module(new Memory(Some(memoryPathGen), baseAddress.U(WORD_LEN.W), memorySize, forSimulation, useTargetPrimitive = useTargetPrimitive))
-  val gpios = Module(new GpioArray((0 until 6).map(_ => BigInt("ffffffff", 16))))               // GPIO Array (6ポート)
+  val gpios = Module(new GpioArray((0 until 7).map(_ => BigInt("ffffffff", 16))))               // GPIO Array (7ポート)
   val uartRegs = (0 to 1).map(_ => Module(new IORegister(Seq((0x100ff, 0xff), (0x03, 0x00)))))  // UART IOレジスタ
   val ethernetRegs = Module(new IORegister(Seq((0x3ff, 0x1ff), (0x1, 0x0))))                    // ETHERNET IOレジスタ
   val interruptIn = WireInit(VecInit(Seq.fill(2)(false.B)))
@@ -99,6 +100,10 @@ class TopWithEthernet(memoryPathGen: Int => String = i => f"../sw/bootrom_${i}.h
 
   // GPIO port 5にピン入力のドライバを接続
   io.switchIn <> gpios.io.in(5)
+
+  // GPIO port 6にDVIディスプレイ用のドライバを接続
+  io.dviDigitsOut := gpios.io.out(6)
+  gpios.io.in(6) := 0.U
 
   for(i <- 0 to 1) {
     val baudRate = if( i == 0 ) { 115200 } else { 9600 }

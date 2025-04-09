@@ -69,6 +69,7 @@ static volatile uint32_t* const REG_GPIO_MATRIX_L =   (volatile uint32_t*)0xA000
 static volatile uint32_t* const REG_GPIO_MATRIX_H =   (volatile uint32_t*)0xA0000030;
 static volatile uint32_t* const REG_GPIO_LED =        (volatile uint32_t*)0xA0000040;
 static volatile uint32_t* const REG_GPIO_SW_IN =      (volatile uint32_t*)0xA0000054;
+static volatile uint32_t* const REG_GPIO_DIGITS =     (volatile uint32_t*)0xA0000060;
 static volatile uart_regs_t* const REG_UART =         (volatile uart_regs_t*)0xA0001000;
 static volatile uint32_t* const REG_UART_STATUS =     (volatile uint32_t*)0xA0001004;
 static volatile uint32_t* const REG_ETHERNET_DATA =   (volatile uint32_t*)0xA0002000;
@@ -316,21 +317,44 @@ static bool process_ethernet(const uint8_t* tx_data, size_t tx_data_len)
                             uart_tx_string(REG_UART, "MY IP! ");
                             memcpy(s_msmp_tx_ip, ip + 12, 4);   // Update MSMP TX IP address by the source IP address
                             memcpy(s_msmp_tx_mac, s_packet_buffer + 6, 6); // Update MSMP TX MAC address by the source MAC address
+                            if( ip[9] == 0x01 ) {   // ICMP
+                                uart_tx_string(REG_UART, "ICMP! ");
+                                uint8_t* const icmp = ip + 20;
+                                if( icmp[0] == 0x08 ) { // ICMP Echo Request
+                                    uart_tx_string(REG_UART, "Echo Request! ");
+                                    // Update Ethernet header
+                                    memcpy(s_packet_buffer, s_packet_buffer + 6, 6);    // Destination address <- Source address
+                                    memcpy(s_packet_buffer + 6, TARGET_MAC_ADDRESS, 6); // Source address <- Target address
+                                    // Update ICMP header
+                                    icmp[0] = 0x00; // ICMP Echo Reply
+                                    icmp[2] = 0x00;
+                                    icmp[3] = 0x00;
+                                    uint16_t icmp_checksum = calculate_internet_checksum(icmp, s_packet_length - 20 - 20);
+                                    icmp[2] = icmp_checksum >> 8;   // Update ICMP checksum
+                                    icmp[3] = icmp_checksum & 0xff; // /
+                                    // Update IP header
+                                    memcpy(ip + 12, MY_IP_ADDRESS, 4); // Source IP address
+                                    memcpy(ip + 16, s_msmp_tx_ip, 4); // Destination IP address
+                                    ip[10] = 0;
+                                    ip[11] = 0;
+                                    uint16_t header_checksum = calculate_internet_checksum(ip, 20);
+                                    ip[10] = header_checksum >> 8;   // Update header checksum
+                                    ip[11] = header_checksum & 0xff; // /
+                                    // Send the packet
+                                    state = STATE_TX;
+                                }
+                            }
                             if( ip[9] == 0x11 ) {   // UDP
                                 uart_tx_string(REG_UART, "UDP! ");
                                 uint8_t* const udp = ip + 20;
                                 uint16_t destination_port = udp[2] << 8 | udp[3];
                                 if( destination_port == 10000 ) {
-                                    uart_tx_string(REG_UART, "MSMP TX! ");
+                                    uart_tx_string(REG_UART, "SET CLOCK! ");
                                     uint16_t length = udp[4] << 8 | udp[5];
                                     uint8_t* payload = udp + 8;
                                     uint32_t last_counter = *REG_COUNTER;
-                                    while(length--) {
-                                        while((*REG_COUNTER - last_counter) < FREQ_HZ / 1000 * 50);
-                                        last_counter = *REG_COUNTER;
-                                        if( uart_tx_ready(REG_MSMP) ) {
-                                            uart_tx_byte(REG_MSMP, *payload++);
-                                        }
+                                    if( length >= 4 ) {
+                                        *REG_GPIO_DIGITS = payload[0] << 24 | payload[1] << 16 | payload[2] << 8 | payload[3];
                                     }
                                 }
                             }
@@ -369,7 +393,7 @@ static bool process_ethernet(const uint8_t* tx_data, size_t tx_data_len)
         ip[10] = 0x00; // Header checksum
         ip[11] = 0x00; // /
         memcpy(ip + 12, MY_IP_ADDRESS, 4); // Source IP address
-        memcpy(ip + 16, s_msmp_tx_ip, 4); // Source IP address
+        memcpy(ip + 16, s_msmp_tx_ip, 4); // Destination IP address
         uint16_t header_checksum = calculate_internet_checksum(ip, 20);
         ip[10] = header_checksum >> 8;   // Update header checksum
         ip[11] = header_checksum & 0xff; // /
@@ -430,6 +454,8 @@ void __attribute__((noreturn)) main(void)
     enum { MSMP_RX_STATE_RX, MSMP_RX_STATE_PENDING_UDP, MSMP_RX_STATE_FORWARDING } msmp_rx_state = MSMP_RX_STATE_RX;
     
     uint32_t msmp_tx_last_counter = 0;
+
+    *REG_GPIO_DIGITS = 0x12a34a56;  // ss:mm:hh
 
     enable_interrupt();
 

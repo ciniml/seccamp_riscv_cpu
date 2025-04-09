@@ -1,0 +1,1456 @@
+     VMA      LMA     Size Align Out     In      Symbol
+       0        0        4     1 .isr_vector
+       0        0        0     1         . = ALIGN ( 4 )
+       0        0        4     1         /home/kenta/repos/seccamp_riscv_cpu/eda/segment_display/src/sw-rs/target/riscv32i-unknown-none-elf/release/deps/bootrom_rs-c8b598439e3bd8ab.bootrom_rs.30c8e88d2669ccfd-cgu.0.rcgu.o:(.isr_vector)
+       4        4        0     1         . = ALIGN ( 4 )
+       4        4     12e8     4 .text
+       4        4        0     1         . = ALIGN ( 4 )
+       4        4       28     4         /home/kenta/repos/seccamp_riscv_cpu/eda/segment_display/src/sw-rs/target/riscv32i-unknown-none-elf/release/deps/bootrom_rs-c8b598439e3bd8ab.bootrom_rs.30c8e88d2669ccfd-cgu.0.rcgu.o:(.text)
+       4        4        0     1                 _start
+       4        4        0     1                 .Lpcrel_hi0
+      1c       1c        0     1                 .Lpcrel_hi1
+      2c       2c        4     4         /home/kenta/repos/seccamp_riscv_cpu/eda/segment_display/src/sw-rs/target/riscv32i-unknown-none-elf/release/deps/bootrom_rs-c8b598439e3bd8ab.bootrom_rs.30c8e88d2669ccfd-cgu.0.rcgu.o:(.text.trap_handler)
+      2c       2c        0     1                 
+      2c       2c        0     1                 
+      2c       2c        0     1                 
+      2c       2c        4     1                 trap_handler
+      30       30        0     1                 
+      30       30        c     4         /home/kenta/repos/seccamp_riscv_cpu/eda/segment_display/src/sw-rs/target/riscv32i-unknown-none-elf/release/deps/bootrom_rs-c8b598439e3bd8ab.bootrom_rs.30c8e88d2669ccfd-cgu.0.rcgu.o:(.text.start_rust)
+      30       30        0     1                 
+      30       30        0     1                 
+      30       30        0     1                 
+      30       30        c     1                 start_rust
+      3c       3c        0     1                 
+      3c       3c      e20     4         /home/kenta/repos/seccamp_riscv_cpu/eda/segment_display/src/sw-rs/target/riscv32i-unknown-none-elf/release/deps/bootrom_rs-c8b598439e3bd8ab.bootrom_rs.30c8e88d2669ccfd-cgu.0.rcgu.o:(.text.main)
+      3c       3c        0     1                 
+      3c       3c        0     1                 
+      3c       3c        0     1                 
+      3c       3c      e20     1                 main
+      40       40        0     1                 
+      40       40        0     1                 
+      78       78        0     1                 
+      78       78        0     1                 
+      80       80        0     1                 
+      80       80        0     1                 
+      84       84        0     1                 
+      84       84        0     1                 
+      88       88        0     1                 
+      8c       8c        0     1                 
+      8c       8c        0     1                 
+      90       90        0     1                 
+      90       90        0     1                 
+      94       94        0     1                 
+      98       98        0     1                 
+      98       98        0     1                 
+      9c       9c        0     1                 
+      9c       9c        0     1                 
+      a0       a0        0     1                 
+      b8       b8        0     1                 
+      b8       b8        0     1                 
+      cc       cc        0     1                 
+      ec       ec        0     1                 
+      ec       ec        0     1                 
+      f4       f4        0     1                 
+      f4       f4        0     1                 
+     17c      17c        0     1                 
+     17c      17c        0     1                 
+     184      184        0     1                 
+     184      184        0     1                 
+     188      188        0     1                 
+     188      188        0     1                 
+     190      190        0     1                 
+     194      194        0     1                 
+     198      198        0     1                 
+     198      198        0     1                 
+     19c      19c        0     1                 
+     19c      19c        0     1                 
+     1a0      1a0        0     1                 
+     1a0      1a0        0     1                 
+     1a4      1a4        0     1                 
+     1a8      1a8        0     1                 
+     1a8      1a8        0     1                 
+     1ac      1ac        0     1                 
+     1ac      1ac        0     1                 
+     1b0      1b0        0     1                 
+     1b0      1b0        0     1                 
+     1b4      1b4        0     1                 
+     1b4      1b4        0     1                 
+     1b8      1b8        0     1                 
+     1b8      1b8        0     1                 
+     1bc      1bc        0     1                 
+     1bc      1bc        0     1                 
+     1c0      1c0        0     1                 
+     1c0      1c0        0     1                 
+     1c4      1c4        0     1                 
+     1c4      1c4        0     1                 
+     1cc      1cc        0     1                 
+     1cc      1cc        0     1                 
+     1d0      1d0        0     1                 
+     1d0      1d0        0     1                 
+     1d4      1d4        0     1                 
+     1d4      1d4        0     1                 
+     1d8      1d8        0     1                 
+     1d8      1d8        0     1                 
+     1dc      1dc        0     1                 
+     1e0      1e0        0     1                 
+     1e0      1e0        0     1                 
+     1e4      1e4        0     1                 
+     1e4      1e4        0     1                 
+     1e8      1e8        0     1                 
+     1e8      1e8        0     1                 
+     1ec      1ec        0     1                 
+     1ec      1ec        0     1                 
+     1f0      1f0        0     1                 
+     1f0      1f0        0     1                 
+     1f4      1f4        0     1                 
+     1f4      1f4        0     1                 
+     1f8      1f8        0     1                 
+     1f8      1f8        0     1                 
+     200      200        0     1                 
+     200      200        0     1                 
+     210      210        0     1                 
+     214      214        0     1                 
+     214      214        0     1                 
+     218      218        0     1                 
+     218      218        0     1                 
+     220      220        0     1                 
+     220      220        0     1                 
+     224      224        0     1                 
+     228      228        0     1                 
+     228      228        0     1                 
+     230      230        0     1                 
+     230      230        0     1                 
+     234      234        0     1                 
+     234      234        0     1                 
+     238      238        0     1                 
+     238      238        0     1                 
+     23c      23c        0     1                 
+     23c      23c        0     1                 
+     240      240        0     1                 
+     240      240        0     1                 
+     244      244        0     1                 
+     248      248        0     1                 
+     248      248        0     1                 
+     24c      24c        0     1                 
+     24c      24c        0     1                 
+     250      250        0     1                 
+     250      250        0     1                 
+     254      254        0     1                 
+     254      254        0     1                 
+     258      258        0     1                 
+     258      258        0     1                 
+     25c      25c        0     1                 
+     260      260        0     1                 
+     260      260        0     1                 
+     264      264        0     1                 
+     264      264        0     1                 
+     268      268        0     1                 
+     268      268        0     1                 
+     26c      26c        0     1                 
+     26c      26c        0     1                 
+     270      270        0     1                 
+     270      270        0     1                 
+     274      274        0     1                 
+     274      274        0     1                 
+     278      278        0     1                 
+     278      278        0     1                 
+     27c      27c        0     1                 
+     27c      27c        0     1                 
+     280      280        0     1                 
+     280      280        0     1                 
+     288      288        0     1                 
+     288      288        0     1                 
+     28c      28c        0     1                 
+     28c      28c        0     1                 
+     290      290        0     1                 
+     290      290        0     1                 
+     29c      29c        0     1                 
+     29c      29c        0     1                 
+     2a0      2a0        0     1                 
+     2a8      2a8        0     1                 
+     2a8      2a8        0     1                 
+     2ac      2ac        0     1                 
+     2ac      2ac        0     1                 
+     2b8      2b8        0     1                 
+     2b8      2b8        0     1                 
+     2bc      2bc        0     1                 
+     2bc      2bc        0     1                 
+     2c0      2c0        0     1                 
+     2c0      2c0        0     1                 
+     2c8      2c8        0     1                 
+     2d0      2d0        0     1                 
+     2d4      2d4        0     1                 
+     2d4      2d4        0     1                 
+     2dc      2dc        0     1                 
+     2dc      2dc        0     1                 
+     2ec      2ec        0     1                 
+     2ec      2ec        0     1                 
+     2f0      2f0        0     1                 
+     2f0      2f0        0     1                 
+     2f4      2f4        0     1                 
+     2f8      2f8        0     1                 
+     2f8      2f8        0     1                 
+     304      304        0     1                 
+     30c      30c        0     1                 
+     310      310        0     1                 
+     320      320        0     1                 
+     328      328        0     1                 
+     32c      32c        0     1                 
+     330      330        0     1                 
+     334      334        0     1                 
+     334      334        0     1                 
+     338      338        0     1                 
+     33c      33c        0     1                 
+     340      340        0     1                 
+     340      340        0     1                 
+     344      344        0     1                 
+     348      348        0     1                 
+     348      348        0     1                 
+     34c      34c        0     1                 
+     34c      34c        0     1                 
+     350      350        0     1                 
+     350      350        0     1                 
+     354      354        0     1                 
+     354      354        0     1                 
+     35c      35c        0     1                 
+     35c      35c        0     1                 
+     360      360        0     1                 
+     360      360        0     1                 
+     37c      37c        0     1                 
+     37c      37c        0     1                 
+     39c      39c        0     1                 
+     3ac      3ac        0     1                 
+     3ac      3ac        0     1                 
+     3c4      3c4        0     1                 
+     3dc      3dc        0     1                 
+     3dc      3dc        0     1                 
+     3e4      3e4        0     1                 
+     3ec      3ec        0     1                 
+     3ec      3ec        0     1                 
+     3f0      3f0        0     1                 
+     3f0      3f0        0     1                 
+     3f8      3f8        0     1                 
+     3f8      3f8        0     1                 
+     3fc      3fc        0     1                 
+     408      408        0     1                 
+     408      408        0     1                 
+     40c      40c        0     1                 
+     40c      40c        0     1                 
+     414      414        0     1                 
+     418      418        0     1                 
+     418      418        0     1                 
+     41c      41c        0     1                 
+     41c      41c        0     1                 
+     420      420        0     1                 
+     420      420        0     1                 
+     42c      42c        0     1                 
+     438      438        0     1                 
+     438      438        0     1                 
+     43c      43c        0     1                 
+     444      444        0     1                 
+     44c      44c        0     1                 
+     460      460        0     1                 
+     474      474        0     1                 
+     478      478        0     1                 
+     478      478        0     1                 
+     480      480        0     1                 
+     484      484        0     1                 
+     484      484        0     1                 
+     488      488        0     1                 
+     488      488        0     1                 
+     48c      48c        0     1                 
+     490      490        0     1                 
+     494      494        0     1                 
+     494      494        0     1                 
+     49c      49c        0     1                 
+     4e8      4e8        0     1                 
+     500      500        0     1                 
+     504      504        0     1                 
+     508      508        0     1                 
+     50c      50c        0     1                 
+     514      514        0     1                 
+     514      514        0     1                 
+     520      520        0     1                 
+     520      520        0     1                 
+     524      524        0     1                 
+     524      524        0     1                 
+     530      530        0     1                 
+     530      530        0     1                 
+     534      534        0     1                 
+     534      534        0     1                 
+     540      540        0     1                 
+     540      540        0     1                 
+     548      548        0     1                 
+     54c      54c        0     1                 
+     550      550        0     1                 
+     558      558        0     1                 
+     55c      55c        0     1                 
+     55c      55c        0     1                 
+     560      560        0     1                 
+     560      560        0     1                 
+     568      568        0     1                 
+     568      568        0     1                 
+     56c      56c        0     1                 
+     574      574        0     1                 
+     578      578        0     1                 
+     578      578        0     1                 
+     580      580        0     1                 
+     59c      59c        0     1                 
+     59c      59c        0     1                 
+     5a4      5a4        0     1                 
+     5a8      5a8        0     1                 
+     5b0      5b0        0     1                 
+     5b0      5b0        0     1                 
+     5b4      5b4        0     1                 
+     5b4      5b4        0     1                 
+     5bc      5bc        0     1                 
+     5bc      5bc        0     1                 
+     5c0      5c0        0     1                 
+     5c4      5c4        0     1                 
+     5c4      5c4        0     1                 
+     5c8      5c8        0     1                 
+     5cc      5cc        0     1                 
+     5cc      5cc        0     1                 
+     5d8      5d8        0     1                 
+     5dc      5dc        0     1                 
+     608      608        0     1                 
+     608      608        0     1                 
+     610      610        0     1                 
+     610      610        0     1                 
+     614      614        0     1                 
+     618      618        0     1                 
+     618      618        0     1                 
+     620      620        0     1                 
+     620      620        0     1                 
+     624      624        0     1                 
+     628      628        0     1                 
+     62c      62c        0     1                 
+     630      630        0     1                 
+     630      630        0     1                 
+     638      638        0     1                 
+     640      640        0     1                 
+     640      640        0     1                 
+     64c      64c        0     1                 
+     64c      64c        0     1                 
+     654      654        0     1                 
+     654      654        0     1                 
+     658      658        0     1                 
+     660      660        0     1                 
+     660      660        0     1                 
+     668      668        0     1                 
+     670      670        0     1                 
+     670      670        0     1                 
+     674      674        0     1                 
+     684      684        0     1                 
+     684      684        0     1                 
+     690      690        0     1                 
+     690      690        0     1                 
+     694      694        0     1                 
+     698      698        0     1                 
+     6a0      6a0        0     1                 
+     6a0      6a0        0     1                 
+     6a4      6a4        0     1                 
+     6a4      6a4        0     1                 
+     6a8      6a8        0     1                 
+     6a8      6a8        0     1                 
+     6ac      6ac        0     1                 
+     6ac      6ac        0     1                 
+     6c4      6c4        0     1                 
+     6c4      6c4        0     1                 
+     6cc      6cc        0     1                 
+     6cc      6cc        0     1                 
+     6d4      6d4        0     1                 
+     6d4      6d4        0     1                 
+     6dc      6dc        0     1                 
+     6dc      6dc        0     1                 
+     6f4      6f4        0     1                 
+     6f4      6f4        0     1                 
+     6f8      6f8        0     1                 
+     6f8      6f8        0     1                 
+     710      710        0     1                 
+     710      710        0     1                 
+     720      720        0     1                 
+     720      720        0     1                 
+     728      728        0     1                 
+     728      728        0     1                 
+     738      738        0     1                 
+     738      738        0     1                 
+     744      744        0     1                 
+     748      748        0     1                 
+     748      748        0     1                 
+     784      784        0     1                 
+     784      784        0     1                 
+     78c      78c        0     1                 
+     79c      79c        0     1                 
+     7a0      7a0        0     1                 
+     7ac      7ac        0     1                 
+     7b4      7b4        0     1                 
+     7b4      7b4        0     1                 
+     7b8      7b8        0     1                 
+     7b8      7b8        0     1                 
+     7c0      7c0        0     1                 
+     7c0      7c0        0     1                 
+     7d0      7d0        0     1                 
+     7d0      7d0        0     1                 
+     7d4      7d4        0     1                 
+     7d8      7d8        0     1                 
+     7d8      7d8        0     1                 
+     818      818        0     1                 
+     818      818        0     1                 
+     81c      81c        0     1                 
+     81c      81c        0     1                 
+     820      820        0     1                 
+     820      820        0     1                 
+     828      828        0     1                 
+     828      828        0     1                 
+     830      830        0     1                 
+     830      830        0     1                 
+     834      834        0     1                 
+     87c      87c        0     1                 
+     880      880        0     1                 
+     880      880        0     1                 
+     888      888        0     1                 
+     888      888        0     1                 
+     88c      88c        0     1                 
+     894      894        0     1                 
+     894      894        0     1                 
+     898      898        0     1                 
+     89c      89c        0     1                 
+     89c      89c        0     1                 
+     8a0      8a0        0     1                 
+     8ac      8ac        0     1                 
+     8ac      8ac        0     1                 
+     8b4      8b4        0     1                 
+     8b4      8b4        0     1                 
+     8bc      8bc        0     1                 
+     8bc      8bc        0     1                 
+     8c4      8c4        0     1                 
+     8c4      8c4        0     1                 
+     8dc      8dc        0     1                 
+     8dc      8dc        0     1                 
+     8e0      8e0        0     1                 
+     8e0      8e0        0     1                 
+     8f4      8f4        0     1                 
+     908      908        0     1                 
+     90c      90c        0     1                 
+     90c      90c        0     1                 
+     914      914        0     1                 
+     914      914        0     1                 
+     924      924        0     1                 
+     924      924        0     1                 
+     928      928        0     1                 
+     928      928        0     1                 
+     974      974        0     1                 
+     978      978        0     1                 
+     97c      97c        0     1                 
+     97c      97c        0     1                 
+     980      980        0     1                 
+     980      980        0     1                 
+     9c4      9c4        0     1                 
+     9c4      9c4        0     1                 
+     9c8      9c8        0     1                 
+     9c8      9c8        0     1                 
+     9cc      9cc        0     1                 
+     9cc      9cc        0     1                 
+     9d0      9d0        0     1                 
+     9d8      9d8        0     1                 
+     9d8      9d8        0     1                 
+     9e0      9e0        0     1                 
+     9e0      9e0        0     1                 
+     9f4      9f4        0     1                 
+     9f8      9f8        0     1                 
+     9fc      9fc        0     1                 
+     a00      a00        0     1                 
+     a00      a00        0     1                 
+     a04      a04        0     1                 
+     a04      a04        0     1                 
+     a08      a08        0     1                 
+     a08      a08        0     1                 
+     a0c      a0c        0     1                 
+     a0c      a0c        0     1                 
+     a10      a10        0     1                 
+     a10      a10        0     1                 
+     a24      a24        0     1                 
+     a24      a24        0     1                 
+     a28      a28        0     1                 
+     a34      a34        0     1                 
+     a34      a34        0     1                 
+     a48      a48        0     1                 
+     a5c      a5c        0     1                 
+     a5c      a5c        0     1                 
+     a60      a60        0     1                 
+     a60      a60        0     1                 
+     a74      a74        0     1                 
+     a78      a78        0     1                 
+     a78      a78        0     1                 
+     a80      a80        0     1                 
+     a84      a84        0     1                 
+     a84      a84        0     1                 
+     a88      a88        0     1                 
+     a88      a88        0     1                 
+     a8c      a8c        0     1                 
+     a90      a90        0     1                 
+     a94      a94        0     1                 
+     a9c      a9c        0     1                 
+     b04      b04        0     1                 
+     b10      b10        0     1                 
+     b14      b14        0     1                 
+     b18      b18        0     1                 
+     b1c      b1c        0     1                 
+     b24      b24        0     1                 
+     b24      b24        0     1                 
+     b28      b28        0     1                 
+     b38      b38        0     1                 
+     b38      b38        0     1                 
+     b3c      b3c        0     1                 
+     b3c      b3c        0     1                 
+     b40      b40        0     1                 
+     b40      b40        0     1                 
+     b4c      b4c        0     1                 
+     b50      b50        0     1                 
+     b50      b50        0     1                 
+     b54      b54        0     1                 
+     b58      b58        0     1                 
+     b58      b58        0     1                 
+     b5c      b5c        0     1                 
+     b5c      b5c        0     1                 
+     b60      b60        0     1                 
+     b60      b60        0     1                 
+     b64      b64        0     1                 
+     b64      b64        0     1                 
+     b68      b68        0     1                 
+     b68      b68        0     1                 
+     b74      b74        0     1                 
+     b84      b84        0     1                 
+     b84      b84        0     1                 
+     b8c      b8c        0     1                 
+     b8c      b8c        0     1                 
+     b94      b94        0     1                 
+     b94      b94        0     1                 
+     ba4      ba4        0     1                 
+     ba4      ba4        0     1                 
+     ba8      ba8        0     1                 
+     ba8      ba8        0     1                 
+     bd8      bd8        0     1                 
+     bd8      bd8        0     1                 
+     bdc      bdc        0     1                 
+     bdc      bdc        0     1                 
+     be0      be0        0     1                 
+     be0      be0        0     1                 
+     bf0      bf0        0     1                 
+     bf0      bf0        0     1                 
+     c08      c08        0     1                 
+     c08      c08        0     1                 
+     c0c      c0c        0     1                 
+     c0c      c0c        0     1                 
+     c10      c10        0     1                 
+     c10      c10        0     1                 
+     c14      c14        0     1                 
+     c14      c14        0     1                 
+     c18      c18        0     1                 
+     c1c      c1c        0     1                 
+     c1c      c1c        0     1                 
+     c24      c24        0     1                 
+     c24      c24        0     1                 
+     c30      c30        0     1                 
+     c40      c40        0     1                 
+     c40      c40        0     1                 
+     c48      c48        0     1                 
+     c48      c48        0     1                 
+     c58      c58        0     1                 
+     c58      c58        0     1                 
+     c5c      c5c        0     1                 
+     c5c      c5c        0     1                 
+     c88      c88        0     1                 
+     c88      c88        0     1                 
+     c8c      c8c        0     1                 
+     c8c      c8c        0     1                 
+     c94      c94        0     1                 
+     c94      c94        0     1                 
+     cac      cac        0     1                 
+     cac      cac        0     1                 
+     cb0      cb0        0     1                 
+     cb0      cb0        0     1                 
+     cb4      cb4        0     1                 
+     cb8      cb8        0     1                 
+     cb8      cb8        0     1                 
+     cc4      cc4        0     1                 
+     cc4      cc4        0     1                 
+     cc8      cc8        0     1                 
+     cc8      cc8        0     1                 
+     ccc      ccc        0     1                 
+     ccc      ccc        0     1                 
+     cd0      cd0        0     1                 
+     cd0      cd0        0     1                 
+     cd8      cd8        0     1                 
+     cd8      cd8        0     1                 
+     cdc      cdc        0     1                 
+     ce0      ce0        0     1                 
+     ce0      ce0        0     1                 
+     ce8      ce8        0     1                 
+     ce8      ce8        0     1                 
+     cf0      cf0        0     1                 
+     cf0      cf0        0     1                 
+     d08      d08        0     1                 
+     d14      d14        0     1                 
+     d18      d18        0     1                 
+     d1c      d1c        0     1                 
+     d24      d24        0     1                 
+     d24      d24        0     1                 
+     d2c      d2c        0     1                 
+     d2c      d2c        0     1                 
+     d30      d30        0     1                 
+     d34      d34        0     1                 
+     d34      d34        0     1                 
+     d44      d44        0     1                 
+     d44      d44        0     1                 
+     d5c      d5c        0     1                 
+     d5c      d5c        0     1                 
+     d68      d68        0     1                 
+     d68      d68        0     1                 
+     d74      d74        0     1                 
+     d74      d74        0     1                 
+     d78      d78        0     1                 
+     d78      d78        0     1                 
+     d8c      d8c        0     1                 
+     d94      d94        0     1                 
+     d98      d98        0     1                 
+     d98      d98        0     1                 
+     d9c      d9c        0     1                 
+     d9c      d9c        0     1                 
+     da4      da4        0     1                 
+     da4      da4        0     1                 
+     da8      da8        0     1                 
+     dac      dac        0     1                 
+     dac      dac        0     1                 
+     db0      db0        0     1                 
+     db0      db0        0     1                 
+     db4      db4        0     1                 
+     dbc      dbc        0     1                 
+     dc4      dc4        0     1                 
+     dc4      dc4        0     1                 
+     dc8      dc8        0     1                 
+     dc8      dc8        0     1                 
+     de4      de4        0     1                 
+     de4      de4        0     1                 
+     de8      de8        0     1                 
+     df8      df8        0     1                 
+     df8      df8        0     1                 
+     dfc      dfc        0     1                 
+     e00      e00        0     1                 
+     e00      e00        0     1                 
+     e04      e04        0     1                 
+     e04      e04        0     1                 
+     e10      e10        0     1                 
+     e10      e10        0     1                 
+     e2c      e2c        0     1                 
+     e2c      e2c        0     1                 
+     e38      e38        0     1                 
+     e38      e38        0     1                 
+     e40      e40        0     1                 
+     e40      e40        0     1                 
+     e44      e44        0     1                 
+     e44      e44        0     1                 
+     e4c      e4c        0     1                 
+     e4c      e4c        0     1                 
+     e54      e54        0     1                 
+     e54      e54        0     1                 
+     e5c      e5c        0     1                 
+     e5c      e5c        0     1                 
+     e5c      e5c        0     1                 
+     e5c      e5c        0     1                 
+     e5c      e5c        4     4         /home/kenta/repos/seccamp_riscv_cpu/eda/segment_display/src/sw-rs/target/riscv32i-unknown-none-elf/release/deps/bootrom_rs-c8b598439e3bd8ab.bootrom_rs.30c8e88d2669ccfd-cgu.0.rcgu.o:(.text.unlikely._ZN4core9panicking9panic_fmt17he24b2eebf23feb75E)
+     e5c      e5c        4     1                 core::panicking::panic_fmt::he24b2eebf23feb75
+     e5c      e5c        0     1                 
+     e5c      e5c        0     1                 
+     e5c      e5c        0     1                 
+     e60      e60        0     1                 
+     e60      e60       14     4         /home/kenta/repos/seccamp_riscv_cpu/eda/segment_display/src/sw-rs/target/riscv32i-unknown-none-elf/release/deps/bootrom_rs-c8b598439e3bd8ab.bootrom_rs.30c8e88d2669ccfd-cgu.0.rcgu.o:(.text.unlikely._ZN4core9panicking5panic17h6a4799849df3a62aE)
+     e60      e60       14     1                 core::panicking::panic::h6a4799849df3a62a
+     e60      e60        0     1                 
+     e60      e60        0     1                 
+     e60      e60        0     1                 
+     e64      e64        0     1                 
+     e74      e74        0     1                 
+     e74      e74       14     4         /home/kenta/repos/seccamp_riscv_cpu/eda/segment_display/src/sw-rs/target/riscv32i-unknown-none-elf/release/deps/bootrom_rs-c8b598439e3bd8ab.bootrom_rs.30c8e88d2669ccfd-cgu.0.rcgu.o:(.text.unlikely._ZN4core5slice5index22slice_index_order_fail17h62cd0c9f836e2246E)
+     e74      e74       14     1                 core::slice::index::slice_index_order_fail::h62cd0c9f836e2246
+     e74      e74        0     1                 
+     e74      e74        0     1                 
+     e74      e74        0     1                 
+     e78      e78        0     1                 
+     e78      e78        0     1                 
+     e88      e88        0     1                 
+     e88      e88       88     4         /home/kenta/repos/seccamp_riscv_cpu/eda/segment_display/src/sw-rs/target/riscv32i-unknown-none-elf/release/deps/bootrom_rs-c8b598439e3bd8ab.bootrom_rs.30c8e88d2669ccfd-cgu.0.rcgu.o:(.text._ZN3crc5crc1640_$LT$impl$u20$crc..Digest$LT$u16$GT$$GT$6update17h6be59369f5b0c585E)
+     e88      e88       88     1                 crc::crc16::_$LT$impl$u20$crc..Digest$LT$u16$GT$$GT$::update::h6be59369f5b0c585
+     e88      e88        0     1                 
+     e88      e88        0     1                 
+     e88      e88        0     1                 
+     e8c      e8c        0     1                 
+     e94      e94        0     1                 
+     e98      e98        0     1                 
+     e9c      e9c        0     1                 
+     ea0      ea0        0     1                 
+     ea0      ea0        0     1                 
+     ea4      ea4        0     1                 
+     ea4      ea4        0     1                 
+     ea8      ea8        0     1                 
+     eac      eac        0     1                 
+     eb8      eb8        0     1                 
+     ebc      ebc        0     1                 
+     ec0      ec0        0     1                 
+     ec4      ec4        0     1                 
+     ec4      ec4        0     1                 
+     ed4      ed4        0     1                 
+     ed4      ed4        0     1                 
+     ed8      ed8        0     1                 
+     ed8      ed8        0     1                 
+     edc      edc        0     1                 
+     ee8      ee8        0     1                 
+     ee8      ee8        0     1                 
+     eec      eec        0     1                 
+     ef4      ef4        0     1                 
+     ef8      ef8        0     1                 
+     ef8      ef8        0     1                 
+     efc      efc        0     1                 
+     efc      efc        0     1                 
+     f00      f00        0     1                 
+     f08      f08        0     1                 
+     f08      f08        0     1                 
+     f0c      f0c        0     1                 
+     f10      f10        0     1                 
+     f10      f10        0     1                 
+     f10      f10        0     1                 
+     f10      f10        8     4         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.026.rcgu.o):(.text.memcpy)
+     f10      f10        0     1                 
+     f10      f10        0     1                 
+     f10      f10        0     1                 
+     f10      f10        8     1                 memcpy
+     f18      f18        0     1                 
+     f18      f18       e4     4         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.006.rcgu.o):(.text._ZN17compiler_builtins3mem6memcpy17hd648d64c6a161c9fE)
+     f18      f18        0     1                 
+     f18      f18        0     1                 
+     f18      f18        0     1                 
+     f18      f18       e4     1                 compiler_builtins::mem::memcpy::hd648d64c6a161c9f
+     f1c      f1c        0     1                 
+     f1c      f1c        0     1                 
+     f20      f20        0     1                 
+     f20      f20        0     1                 
+     f24      f24        0     1                 
+     f28      f28        0     1                 
+     f28      f28        0     1                 
+     f2c      f2c        0     1                 
+     f30      f30        0     1                 
+     f38      f38        0     1                 
+     f3c      f3c        0     1                 
+     f40      f40        0     1                 
+     f40      f40        0     1                 
+     f44      f44        0     1                 
+     f44      f44        0     1                 
+     f48      f48        0     1                 
+     f4c      f4c        0     1                 
+     f4c      f4c        0     1                 
+     f50      f50        0     1                 
+     f54      f54        0     1                 
+     f58      f58        0     1                 
+     f5c      f5c        0     1                 
+     f60      f60        0     1                 
+     f64      f64        0     1                 
+     f64      f64        0     1                 
+     f68      f68        0     1                 
+     f68      f68        0     1                 
+     f6c      f6c        0     1                 
+     f70      f70        0     1                 
+     f80      f80        0     1                 
+     f84      f84        0     1                 
+     f88      f88        0     1                 
+     f8c      f8c        0     1                 
+     f90      f90        0     1                 
+     f94      f94        0     1                 
+     f98      f98        0     1                 
+     f98      f98        0     1                 
+     f9c      f9c        0     1                 
+     fac      fac        0     1                 
+     fac      fac        0     1                 
+     fb8      fb8        0     1                 
+     fb8      fb8        0     1                 
+     fbc      fbc        0     1                 
+     fc0      fc0        0     1                 
+     fc4      fc4        0     1                 
+     fc8      fc8        0     1                 
+     fc8      fc8        0     1                 
+     fcc      fcc        0     1                 
+     fcc      fcc        0     1                 
+     fd0      fd0        0     1                 
+     fd4      fd4        0     1                 
+     fd4      fd4        0     1                 
+     fd8      fd8        0     1                 
+     fe0      fe0        0     1                 
+     fe4      fe4        0     1                 
+     fe4      fe4        0     1                 
+     fe8      fe8        0     1                 
+     fec      fec        0     1                 
+     fec      fec        0     1                 
+     ff0      ff0        0     1                 
+     ff0      ff0        0     1                 
+     ff8      ff8        0     1                 
+     ff8      ff8        0     1                 
+     ffc      ffc        0     1                 
+     ffc      ffc        0     1                 
+     ffc      ffc        0     1                 
+     ffc      ffc      1f0     4         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.006.rcgu.o):(.text._ZN17compiler_builtins3mem7memmove17h5b8d1469f00c83c8E)
+     ffc      ffc        0     1                 
+     ffc      ffc        0     1                 
+     ffc      ffc        0     1                 
+     ffc      ffc      1f0     1                 compiler_builtins::mem::memmove::h5b8d1469f00c83c8
+    1000     1000        0     1                 
+    1004     1004        0     1                 
+    1004     1004        0     1                 
+    100c     100c        0     1                 
+    100c     100c        0     1                 
+    1010     1010        0     1                 
+    1014     1014        0     1                 
+    1018     1018        0     1                 
+    1018     1018        0     1                 
+    101c     101c        0     1                 
+    101c     101c        0     1                 
+    1020     1020        0     1                 
+    102c     102c        0     1                 
+    1030     1030        0     1                 
+    1030     1030        0     1                 
+    1034     1034        0     1                 
+    1038     1038        0     1                 
+    1044     1044        0     1                 
+    1044     1044        0     1                 
+    1048     1048        0     1                 
+    104c     104c        0     1                 
+    1050     1050        0     1                 
+    1054     1054        0     1                 
+    105c     105c        0     1                 
+    105c     105c        0     1                 
+    1060     1060        0     1                 
+    1060     1060        0     1                 
+    1068     1068        0     1                 
+    1068     1068        0     1                 
+    1078     1078        0     1                 
+    107c     107c        0     1                 
+    1080     1080        0     1                 
+    1084     1084        0     1                 
+    1088     1088        0     1                 
+    108c     108c        0     1                 
+    108c     108c        0     1                 
+    1090     1090        0     1                 
+    1094     1094        0     1                 
+    10a8     10a8        0     1                 
+    10a8     10a8        0     1                 
+    10ac     10ac        0     1                 
+    10ac     10ac        0     1                 
+    10b0     10b0        0     1                 
+    10b0     10b0        0     1                 
+    10b4     10b4        0     1                 
+    10b8     10b8        0     1                 
+    10b8     10b8        0     1                 
+    10bc     10bc        0     1                 
+    10c0     10c0        0     1                 
+    10c8     10c8        0     1                 
+    10cc     10cc        0     1                 
+    10d0     10d0        0     1                 
+    10d0     10d0        0     1                 
+    10d4     10d4        0     1                 
+    10d4     10d4        0     1                 
+    10d8     10d8        0     1                 
+    10dc     10dc        0     1                 
+    10dc     10dc        0     1                 
+    10e0     10e0        0     1                 
+    10e4     10e4        0     1                 
+    10e8     10e8        0     1                 
+    10ec     10ec        0     1                 
+    10f0     10f0        0     1                 
+    10f4     10f4        0     1                 
+    10f4     10f4        0     1                 
+    10f8     10f8        0     1                 
+    10f8     10f8        0     1                 
+    10fc     10fc        0     1                 
+    1100     1100        0     1                 
+    1110     1110        0     1                 
+    1114     1114        0     1                 
+    1118     1118        0     1                 
+    111c     111c        0     1                 
+    1120     1120        0     1                 
+    1124     1124        0     1                 
+    1128     1128        0     1                 
+    1128     1128        0     1                 
+    112c     112c        0     1                 
+    113c     113c        0     1                 
+    113c     113c        0     1                 
+    1150     1150        0     1                 
+    1150     1150        0     1                 
+    115c     115c        0     1                 
+    1160     1160        0     1                 
+    1160     1160        0     1                 
+    1164     1164        0     1                 
+    1168     1168        0     1                 
+    1174     1174        0     1                 
+    1174     1174        0     1                 
+    1178     1178        0     1                 
+    1178     1178        0     1                 
+    117c     117c        0     1                 
+    1188     1188        0     1                 
+    118c     118c        0     1                 
+    1190     1190        0     1                 
+    1190     1190        0     1                 
+    1194     1194        0     1                 
+    1198     1198        0     1                 
+    11a8     11a8        0     1                 
+    11a8     11a8        0     1                 
+    11ac     11ac        0     1                 
+    11b0     11b0        0     1                 
+    11b4     11b4        0     1                 
+    11b8     11b8        0     1                 
+    11b8     11b8        0     1                 
+    11bc     11bc        0     1                 
+    11bc     11bc        0     1                 
+    11c0     11c0        0     1                 
+    11c4     11c4        0     1                 
+    11c4     11c4        0     1                 
+    11c8     11c8        0     1                 
+    11d0     11d0        0     1                 
+    11d4     11d4        0     1                 
+    11d4     11d4        0     1                 
+    11d8     11d8        0     1                 
+    11dc     11dc        0     1                 
+    11dc     11dc        0     1                 
+    11e0     11e0        0     1                 
+    11e0     11e0        0     1                 
+    11e8     11e8        0     1                 
+    11e8     11e8        0     1                 
+    11ec     11ec        0     1                 
+    11ec     11ec        0     1                 
+    11ec     11ec        0     1                 
+    11ec     11ec       c4     4         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.006.rcgu.o):(.text._ZN17compiler_builtins3mem6memset17heac6b16b559b3196E)
+    11ec     11ec        0     1                 
+    11ec     11ec        0     1                 
+    11ec     11ec        0     1                 
+    11ec     11ec       c4     1                 compiler_builtins::mem::memset::heac6b16b559b3196
+    1214     1214        0     1                 
+    1214     1214        0     1                 
+    1218     1218        0     1                 
+    1218     1218        0     1                 
+    121c     121c        0     1                 
+    1220     1220        0     1                 
+    1220     1220        0     1                 
+    1224     1224        0     1                 
+    1228     1228        0     1                 
+    122c     122c        0     1                 
+    1230     1230        0     1                 
+    1230     1230        0     1                 
+    1234     1234        0     1                 
+    1238     1238        0     1                 
+    1238     1238        0     1                 
+    123c     123c        0     1                 
+    1240     1240        0     1                 
+    1240     1240        0     1                 
+    124c     124c        0     1                 
+    1254     1254        0     1                 
+    1254     1254        0     1                 
+    1258     1258        0     1                 
+    125c     125c        0     1                 
+    1260     1260        0     1                 
+    1260     1260        0     1                 
+    1264     1264        0     1                 
+    1268     1268        0     1                 
+    1268     1268        0     1                 
+    1274     1274        0     1                 
+    1280     1280        0     1                 
+    1280     1280        0     1                 
+    1284     1284        0     1                 
+    1284     1284        0     1                 
+    128c     128c        0     1                 
+    128c     128c        0     1                 
+    12a8     12a8        0     1                 
+    12b0     12b0        0     1                 
+    12b0     12b0        0     1                 
+    12b0     12b0        0     1                 
+    12b0     12b0       2c     4         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.037.rcgu.o):(.text.__mulsi3)
+    12b0     12b0        0     1                 
+    12b0     12b0        0     1                 
+    12b0     12b0        0     1                 
+    12b0     12b0       2c     1                 __mulsi3
+    12b4     12b4        0     1                 
+    12b4     12b4        0     1                 
+    12b8     12b8        0     1                 
+    12c8     12c8        0     1                 
+    12cc     12cc        0     1                 
+    12d0     12d0        0     1                 
+    12d4     12d4        0     1                 
+    12d4     12d4        0     1                 
+    12dc     12dc        0     1                 
+    12dc     12dc        0     1                 
+    12dc     12dc        0     1                 
+    12dc     12dc        8     4         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.100.rcgu.o):(.text.memset)
+    12dc     12dc        0     1                 
+    12dc     12dc        0     1                 
+    12dc     12dc        0     1                 
+    12dc     12dc        8     1                 memset
+    12e4     12e4        0     1                 
+    12e4     12e4        8     4         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.102.rcgu.o):(.text.memmove)
+    12e4     12e4        0     1                 
+    12e4     12e4        0     1                 
+    12e4     12e4        0     1                 
+    12e4     12e4        8     1                 memmove
+    12ec     12ec        0     1                 
+    12ec     12ec        0     1         . = ALIGN ( 4 )
+    12ec     12ec      218     4 .rodata
+    12ec     12ec        0     1         . = ALIGN ( 4 )
+    12ec     12ec        0     4         /home/kenta/repos/seccamp_riscv_cpu/eda/segment_display/src/sw-rs/target/riscv32i-unknown-none-elf/release/deps/bootrom_rs-c8b598439e3bd8ab.bootrom_rs.30c8e88d2669ccfd-cgu.0.rcgu.o:(.rodata..Lanon.6494c7b6b4a16a4028046f4f8907efff.3)
+    12ec     12ec        0     1                 .Lanon.6494c7b6b4a16a4028046f4f8907efff.3
+    12ec     12ec        e     2         /home/kenta/repos/seccamp_riscv_cpu/eda/segment_display/src/sw-rs/target/riscv32i-unknown-none-elf/release/deps/bootrom_rs-c8b598439e3bd8ab.bootrom_rs.30c8e88d2669ccfd-cgu.0.rcgu.o:(.rodata..Lanon.6494c7b6b4a16a4028046f4f8907efff.11)
+    12ec     12ec        e     1                 .Lanon.6494c7b6b4a16a4028046f4f8907efff.11
+    12fc     12fc      204     4         /home/kenta/repos/seccamp_riscv_cpu/eda/segment_display/src/sw-rs/target/riscv32i-unknown-none-elf/release/deps/bootrom_rs-c8b598439e3bd8ab.bootrom_rs.30c8e88d2669ccfd-cgu.0.rcgu.o:(.rodata..Lanon.6494c7b6b4a16a4028046f4f8907efff.12)
+    12fc     12fc      204     1                 .Lanon.6494c7b6b4a16a4028046f4f8907efff.12
+    1500     1500        1     1         /home/kenta/repos/seccamp_riscv_cpu/eda/segment_display/src/sw-rs/target/riscv32i-unknown-none-elf/release/deps/bootrom_rs-c8b598439e3bd8ab.bootrom_rs.30c8e88d2669ccfd-cgu.0.rcgu.o:(.rodata..Lanon.6494c7b6b4a16a4028046f4f8907efff.13)
+    1500     1500        1     1                 .Lanon.6494c7b6b4a16a4028046f4f8907efff.13
+    1501     1501        3     1         . = ALIGN ( 4 )
+    1504     1504        0     1 .data
+    1504     1504        0     1         PROVIDE ( _data_start = . )
+    1504     1504        0     1         PROVIDE ( _data_rom_start = LOADADDR ( .data ) )
+    1504     1504        0     1         . = ALIGN ( 4 )
+    1504     1504        0     1         . = ALIGN ( 4 )
+    1504     1504        0     1         PROVIDE ( _data_end = . )
+    1504     1504     2004     1 .bss
+    1504     1504        0     1         PROVIDE ( _bss_start = . )
+    1504     1504     2000     1         /home/kenta/repos/seccamp_riscv_cpu/eda/segment_display/src/sw-rs/target/riscv32i-unknown-none-elf/release/deps/bootrom_rs-c8b598439e3bd8ab.bootrom_rs.30c8e88d2669ccfd-cgu.0.rcgu.o:(.bss._ZN10bootrom_rs15APPIMAGE_BUFFER17h850eb0afe21c02cdE)
+    1504     1504     2000     1                 bootrom_rs::APPIMAGE_BUFFER::h850eb0afe21c02cd
+    3504     3504        1     1         /home/kenta/repos/seccamp_riscv_cpu/eda/segment_display/src/sw-rs/target/riscv32i-unknown-none-elf/release/deps/bootrom_rs-c8b598439e3bd8ab.bootrom_rs.30c8e88d2669ccfd-cgu.0.rcgu.o:(.sbss)
+    3504     3504        1     1                 DEVICE_PERIPHERALS
+    3505     3505        3     1         . = ALIGN ( 4 )
+    3508     3508        0     1         PROVIDE ( _bss_end = . )
+    3508     3508        0     1 PROVIDE ( ramend = ORIGIN ( mem ) + LENGTH ( mem ) )
+       0        0      164     4 .eh_frame
+       0        0       28     1         /home/kenta/repos/seccamp_riscv_cpu/eda/segment_display/src/sw-rs/target/riscv32i-unknown-none-elf/release/deps/bootrom_rs-c8b598439e3bd8ab.bootrom_rs.30c8e88d2669ccfd-cgu.0.rcgu.o:(.eh_frame+0x0)
+      28       28       9c     1         /home/kenta/repos/seccamp_riscv_cpu/eda/segment_display/src/sw-rs/target/riscv32i-unknown-none-elf/release/deps/bootrom_rs-c8b598439e3bd8ab.bootrom_rs.30c8e88d2669ccfd-cgu.0.rcgu.o:(.eh_frame+0x3c)
+      c4       c4       14     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.026.rcgu.o):(.eh_frame+0x14)
+      d8       d8       4c     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.006.rcgu.o):(.eh_frame+0x14)
+     124      124       14     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.037.rcgu.o):(.eh_frame+0x14)
+     138      138       14     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.100.rcgu.o):(.eh_frame+0x14)
+     14c      14c       14     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.102.rcgu.o):(.eh_frame+0x14)
+       0        0     28df     1 .debug_loc
+       0        0     28df     1         /home/kenta/repos/seccamp_riscv_cpu/eda/segment_display/src/sw-rs/target/riscv32i-unknown-none-elf/release/deps/bootrom_rs-c8b598439e3bd8ab.bootrom_rs.30c8e88d2669ccfd-cgu.0.rcgu.o:(.debug_loc)
+       0        0        0     1                 
+      1b       1b        0     1                 
+      36       36        0     1                 
+      51       51        0     1                 
+      6c       6c        0     1                 
+      87       87        0     1                 
+      a2       a2        0     1                 
+      ca       ca        0     1                 
+      fc       fc        0     1                 
+     16b      16b        0     1                 
+     19d      19d        0     1                 
+     20d      20d        0     1                 
+     239      239        0     1                 
+     259      259        0     1                 
+     279      279        0     1                 
+     299      299        0     1                 
+     2bb      2bb        0     1                 
+     2dd      2dd        0     1                 
+     31b      31b        0     1                 
+     342      342        0     1                 
+     381      381        0     1                 
+     3bd      3bd        0     1                 
+     3f9      3f9        0     1                 
+     414      414        0     1                 
+     43f      43f        0     1                 
+     47f      47f        0     1                 
+     49f      49f        0     1                 
+     4c5      4c5        0     1                 
+     4ec      4ec        0     1                 
+     516      516        0     1                 
+     540      540        0     1                 
+     560      560        0     1                 
+     580      580        0     1                 
+     5a0      5a0        0     1                 
+     5de      5de        0     1                 
+     61b      61b        0     1                 
+     666      666        0     1                 
+     68c      68c        0     1                 
+     6b2      6b2        0     1                 
+     71a      71a        0     1                 
+     757      757        0     1                 
+     77d      77d        0     1                 
+     7b1      7b1        0     1                 
+     7d7      7d7        0     1                 
+     7fd      7fd        0     1                 
+     831      831        0     1                 
+     863      863        0     1                 
+     897      897        0     1                 
+     8c5      8c5        0     1                 
+     8f6      8f6        0     1                 
+     911      911        0     1                 
+     937      937        0     1                 
+     99b      99b        0     1                 
+     9b6      9b6        0     1                 
+     9e0      9e0        0     1                 
+     a11      a11        0     1                 
+     a2f      a2f        0     1                 
+     a4d      a4d        0     1                 
+     a68      a68        0     1                 
+     a83      a83        0     1                 
+     ab7      ab7        0     1                 
+     adf      adf        0     1                 
+     aff      aff        0     1                 
+     b1f      b1f        0     1                 
+     b3f      b3f        0     1                 
+     b6d      b6d        0     1                 
+     b9e      b9e        0     1                 
+     bcf      bcf        0     1                 
+     bf5      bf5        0     1                 
+     c8e      c8e        0     1                 
+     cbd      cbd        0     1                 
+     ce3      ce3        0     1                 
+     d02      d02        0     1                 
+     d28      d28        0     1                 
+     d4e      d4e        0     1                 
+     d69      d69        0     1                 
+     d84      d84        0     1                 
+     dbf      dbf        0     1                 
+     ddf      ddf        0     1                 
+     e10      e10        0     1                 
+     e4b      e4b        0     1                 
+    102f     102f        0     1                 
+    13ec     13ec        0     1                 
+    143c     143c        0     1                 
+    14c3     14c3        0     1                 
+    154c     154c        0     1                 
+    160a     160a        0     1                 
+    162a     162a        0     1                 
+    16b0     16b0        0     1                 
+    16cc     16cc        0     1                 
+    16ec     16ec        0     1                 
+    1709     1709        0     1                 
+    1725     1725        0     1                 
+    1746     1746        0     1                 
+    1762     1762        0     1                 
+    1782     1782        0     1                 
+    179e     179e        0     1                 
+    17bf     17bf        0     1                 
+    17e6     17e6        0     1                 
+    1806     1806        0     1                 
+    1822     1822        0     1                 
+    1842     1842        0     1                 
+    185e     185e        0     1                 
+    187f     187f        0     1                 
+    18a0     18a0        0     1                 
+    18bc     18bc        0     1                 
+    18f9     18f9        0     1                 
+    1928     1928        0     1                 
+    1983     1983        0     1                 
+    19b1     19b1        0     1                 
+    19e3     19e3        0     1                 
+    1a11     1a11        0     1                 
+    1a37     1a37        0     1                 
+    1a5d     1a5d        0     1                 
+    1a8b     1a8b        0     1                 
+    1ab1     1ab1        0     1                 
+    1ad0     1ad0        0     1                 
+    1b17     1b17        0     1                 
+    1b3d     1b3d        0     1                 
+    1b58     1b58        0     1                 
+    1b84     1b84        0     1                 
+    1bc3     1bc3        0     1                 
+    1be3     1be3        0     1                 
+    1c0a     1c0a        0     1                 
+    1c3e     1c3e        0     1                 
+    1c72     1c72        0     1                 
+    1ca6     1ca6        0     1                 
+    1cda     1cda        0     1                 
+    1d0e     1d0e        0     1                 
+    1d31     1d31        0     1                 
+    1d51     1d51        0     1                 
+    1d71     1d71        0     1                 
+    1d91     1d91        0     1                 
+    1dcc     1dcc        0     1                 
+    1ded     1ded        0     1                 
+    1e0c     1e0c        0     1                 
+    1e2b     1e2b        0     1                 
+    1e4a     1e4a        0     1                 
+    1e69     1e69        0     1                 
+    1ea7     1ea7        0     1                 
+    1ed9     1ed9        0     1                 
+    1eff     1eff        0     1                 
+    1f25     1f25        0     1                 
+    1f45     1f45        0     1                 
+    1f65     1f65        0     1                 
+    1f86     1f86        0     1                 
+    1fa7     1fa7        0     1                 
+    1fca     1fca        0     1                 
+    1fed     1fed        0     1                 
+    2050     2050        0     1                 
+    2093     2093        0     1                 
+    20b3     20b3        0     1                 
+    20cf     20cf        0     1                 
+    20ef     20ef        0     1                 
+    210b     210b        0     1                 
+    212c     212c        0     1                 
+    2147     2147        0     1                 
+    2168     2168        0     1                 
+    2183     2183        0     1                 
+    219f     219f        0     1                 
+    21cc     21cc        0     1                 
+    21ee     21ee        0     1                 
+    221b     221b        0     1                 
+    2248     2248        0     1                 
+    226a     226a        0     1                 
+    2287     2287        0     1                 
+    22ae     22ae        0     1                 
+    22e5     22e5        0     1                 
+    2300     2300        0     1                 
+    231b     231b        0     1                 
+    2336     2336        0     1                 
+    2351     2351        0     1                 
+    2371     2371        0     1                 
+    2391     2391        0     1                 
+    23ac     23ac        0     1                 
+    23de     23de        0     1                 
+    2410     2410        0     1                 
+    2442     2442        0     1                 
+    2474     2474        0     1                 
+    249a     249a        0     1                 
+    24c0     24c0        0     1                 
+    24ee     24ee        0     1                 
+    250e     250e        0     1                 
+    252e     252e        0     1                 
+    255c     255c        0     1                 
+    258e     258e        0     1                 
+    25b4     25b4        0     1                 
+    25da     25da        0     1                 
+    2607     2607        0     1                 
+    2629     2629        0     1                 
+    2656     2656        0     1                 
+    2683     2683        0     1                 
+    26a5     26a5        0     1                 
+    26c2     26c2        0     1                 
+    26f5     26f5        0     1                 
+    2724     2724        0     1                 
+    2753     2753        0     1                 
+    276e     276e        0     1                 
+    2796     2796        0     1                 
+    27df     27df        0     1                 
+    2813     2813        0     1                 
+    2826     2826        0     1                 
+    2842     2842        0     1                 
+    285e     285e        0     1                 
+    2871     2871        0     1                 
+    2884     2884        0     1                 
+    289f     289f        0     1                 
+    28bf     28bf        0     1                 
+       0        0      8ae     1 .debug_abbrev
+       0        0      6ee     1         /home/kenta/repos/seccamp_riscv_cpu/eda/segment_display/src/sw-rs/target/riscv32i-unknown-none-elf/release/deps/bootrom_rs-c8b598439e3bd8ab.bootrom_rs.30c8e88d2669ccfd-cgu.0.rcgu.o:(.debug_abbrev)
+     6ee      6ee       31     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.026.rcgu.o):(.debug_abbrev)
+     71f      71f       c8     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.006.rcgu.o):(.debug_abbrev)
+     7e7      7e7       65     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.037.rcgu.o):(.debug_abbrev)
+     84c      84c       31     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.100.rcgu.o):(.debug_abbrev)
+     87d      87d       31     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.102.rcgu.o):(.debug_abbrev)
+       0        0     96c1     1 .debug_info
+       0        0     8df4     1         /home/kenta/repos/seccamp_riscv_cpu/eda/segment_display/src/sw-rs/target/riscv32i-unknown-none-elf/release/deps/bootrom_rs-c8b598439e3bd8ab.bootrom_rs.30c8e88d2669ccfd-cgu.0.rcgu.o:(.debug_info)
+       0        0        0     1                 
+    4c28     4c28        0     1                 
+    4c68     4c68        0     1                 
+    4cc3     4cc3        0     1                 
+    4cf3     4cf3        0     1                 
+    4de3     4de3        0     1                 
+    50cc     50cc        0     1                 
+    53df     53df        0     1                 
+    7e2d     7e2d        0     1                 
+    7edc     7edc        0     1                 
+    7fd4     7fd4        0     1                 
+    81ad     81ad        0     1                 
+    8a07     8a07        0     1                 
+    8a37     8a37        0     1                 
+    8d43     8d43        0     1                 
+    8df4     8df4       4b     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.026.rcgu.o):(.debug_info)
+    8df4     8df4        0     1                 
+    8e3f     8e3f      757     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.006.rcgu.o):(.debug_info)
+    8e3f     8e3f        0     1                 
+    9596     9596       95     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.037.rcgu.o):(.debug_info)
+    9596     9596        0     1                 
+    95f3     95f3        0     1                 
+    962b     962b       4b     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.100.rcgu.o):(.debug_info)
+    962b     962b        0     1                 
+    9676     9676       4b     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.102.rcgu.o):(.debug_info)
+    9676     9676        0     1                 
+       0        0      1a0     1 .debug_aranges
+       0        0       d8     1         /home/kenta/repos/seccamp_riscv_cpu/eda/segment_display/src/sw-rs/target/riscv32i-unknown-none-elf/release/deps/bootrom_rs-c8b598439e3bd8ab.bootrom_rs.30c8e88d2669ccfd-cgu.0.rcgu.o:(.debug_aranges)
+      d8       d8       20     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.026.rcgu.o):(.debug_aranges)
+      f8       f8       48     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.006.rcgu.o):(.debug_aranges)
+     140      140       20     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.037.rcgu.o):(.debug_aranges)
+     160      160       20     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.100.rcgu.o):(.debug_aranges)
+     180      180       20     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.102.rcgu.o):(.debug_aranges)
+       0        0      e70     1 .debug_ranges
+       0        0      df0     1         /home/kenta/repos/seccamp_riscv_cpu/eda/segment_display/src/sw-rs/target/riscv32i-unknown-none-elf/release/deps/bootrom_rs-c8b598439e3bd8ab.bootrom_rs.30c8e88d2669ccfd-cgu.0.rcgu.o:(.debug_ranges)
+       0        0        0     1                 
+      18       18        0     1                 
+      30       30        0     1                 
+      48       48        0     1                 
+      60       60        0     1                 
+      78       78        0     1                 
+      90       90        0     1                 
+      a8       a8        0     1                 
+      c0       c0        0     1                 
+      d8       d8        0     1                 
+      f0       f0        0     1                 
+     108      108        0     1                 
+     120      120        0     1                 
+     138      138        0     1                 
+     150      150        0     1                 
+     168      168        0     1                 
+     180      180        0     1                 
+     198      198        0     1                 
+     1b0      1b0        0     1                 
+     1c8      1c8        0     1                 
+     1e0      1e0        0     1                 
+     1f8      1f8        0     1                 
+     218      218        0     1                 
+     240      240        0     1                 
+     258      258        0     1                 
+     270      270        0     1                 
+     288      288        0     1                 
+     2a0      2a0        0     1                 
+     2b8      2b8        0     1                 
+     2d0      2d0        0     1                 
+     2f0      2f0        0     1                 
+     358      358        0     1                 
+     3c8      3c8        0     1                 
+     3e8      3e8        0     1                 
+     408      408        0     1                 
+     428      428        0     1                 
+     458      458        0     1                 
+     478      478        0     1                 
+     490      490        0     1                 
+     4a8      4a8        0     1                 
+     4c0      4c0        0     1                 
+     4d8      4d8        0     1                 
+     548      548        0     1                 
+     560      560        0     1                 
+     578      578        0     1                 
+     590      590        0     1                 
+     5a8      5a8        0     1                 
+     5c8      5c8        0     1                 
+     5e8      5e8        0     1                 
+     600      600        0     1                 
+     628      628        0     1                 
+     650      650        0     1                 
+     678      678        0     1                 
+     6a0      6a0        0     1                 
+     6c8      6c8        0     1                 
+     6e0      6e0        0     1                 
+     6f8      6f8        0     1                 
+     710      710        0     1                 
+     728      728        0     1                 
+     740      740        0     1                 
+     758      758        0     1                 
+     770      770        0     1                 
+     788      788        0     1                 
+     7a0      7a0        0     1                 
+     7b8      7b8        0     1                 
+     7d0      7d0        0     1                 
+     7e8      7e8        0     1                 
+     850      850        0     1                 
+     8d0      8d0        0     1                 
+     920      920        0     1                 
+     958      958        0     1                 
+     988      988        0     1                 
+     9b8      9b8        0     1                 
+     9d8      9d8        0     1                 
+     9f8      9f8        0     1                 
+     a18      a18        0     1                 
+     a40      a40        0     1                 
+     a68      a68        0     1                 
+     a80      a80        0     1                 
+     a98      a98        0     1                 
+     ab0      ab0        0     1                 
+     ad8      ad8        0     1                 
+     b00      b00        0     1                 
+     b28      b28        0     1                 
+     b50      b50        0     1                 
+     b78      b78        0     1                 
+     b90      b90        0     1                 
+     ba8      ba8        0     1                 
+     bc0      bc0        0     1                 
+     be8      be8        0     1                 
+     c08      c08        0     1                 
+     c20      c20        0     1                 
+     c38      c38        0     1                 
+     c50      c50        0     1                 
+     c68      c68        0     1                 
+     c80      c80        0     1                 
+     c98      c98        0     1                 
+     cb8      cb8        0     1                 
+     cd8      cd8        0     1                 
+     cf8      cf8        0     1                 
+     d18      d18        0     1                 
+     d30      d30        0     1                 
+     d48      d48        0     1                 
+     d60      d60        0     1                 
+     d78      d78        0     1                 
+     d90      d90        0     1                 
+     db8      db8        0     1                 
+     dd0      dd0        0     1                 
+     df0      df0       80     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.006.rcgu.o):(.debug_ranges)
+     df0      df0        0     1                 
+     e08      e08        0     1                 
+     e20      e20        0     1                 
+     e38      e38        0     1                 
+       0        0     a162     1 .debug_str
+       0        0     a162     1         <internal>:(.debug_str)
+       0        0     3410     1 .debug_pubnames
+       0        0     3053     1         /home/kenta/repos/seccamp_riscv_cpu/eda/segment_display/src/sw-rs/target/riscv32i-unknown-none-elf/release/deps/bootrom_rs-c8b598439e3bd8ab.bootrom_rs.30c8e88d2669ccfd-cgu.0.rcgu.o:(.debug_pubnames)
+    3053     3053       3b     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.026.rcgu.o):(.debug_pubnames)
+    308e     308e      28d     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.006.rcgu.o):(.debug_pubnames)
+    331b     331b       7e     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.037.rcgu.o):(.debug_pubnames)
+    3399     3399       3b     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.100.rcgu.o):(.debug_pubnames)
+    33d4     33d4       3c     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.102.rcgu.o):(.debug_pubnames)
+       0        0     3723     1 .debug_pubtypes
+       0        0     36b7     1         /home/kenta/repos/seccamp_riscv_cpu/eda/segment_display/src/sw-rs/target/riscv32i-unknown-none-elf/release/deps/bootrom_rs-c8b598439e3bd8ab.bootrom_rs.30c8e88d2669ccfd-cgu.0.rcgu.o:(.debug_pubtypes)
+    36b7     36b7       12     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.026.rcgu.o):(.debug_pubtypes)
+    36c9     36c9       12     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.006.rcgu.o):(.debug_pubtypes)
+    36db     36db       24     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.037.rcgu.o):(.debug_pubtypes)
+    36ff     36ff       12     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.100.rcgu.o):(.debug_pubtypes)
+    3711     3711       12     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.102.rcgu.o):(.debug_pubtypes)
+       0        0       40     1 .comment
+       0        0       40     1         <internal>:(.comment)
+       0        0       1c     1 .riscv.attributes
+       0        0       1c     1         <internal>:(.riscv.attributes)
+       0        0     2543     1 .debug_line
+       0        0     1bdc     1         /home/kenta/repos/seccamp_riscv_cpu/eda/segment_display/src/sw-rs/target/riscv32i-unknown-none-elf/release/deps/bootrom_rs-c8b598439e3bd8ab.bootrom_rs.30c8e88d2669ccfd-cgu.0.rcgu.o:(.debug_line)
+       0        0        0     1                 .Lline_table_start0
+    13d3     13d3        0     1                 .Lline_table_start1
+    13f1     13f1        0     1                 .Lline_table_start2
+    1421     1421        0     1                 .Lline_table_start3
+    143f     143f        0     1                 .Lline_table_start4
+    145d     145d        0     1                 .Lline_table_start5
+    147b     147b        0     1                 .Lline_table_start6
+    1499     1499        0     1                 .Lline_table_start7
+    17f4     17f4        0     1                 .Lline_table_start8
+    1812     1812        0     1                 .Lline_table_start9
+    1830     1830        0     1                 .Lline_table_start10
+    184e     184e        0     1                 .Lline_table_start11
+    19df     19df        0     1                 .Lline_table_start12
+    19fd     19fd        0     1                 .Lline_table_start13
+    1add     1add        0     1                 .Lline_table_start14
+    1bdc     1bdc       43     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.026.rcgu.o):(.debug_line)
+    1bdc     1bdc        0     1                 .Lline_table_start0
+    1c1f     1c1f      7ee     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.006.rcgu.o):(.debug_line)
+    1c1f     1c1f        0     1                 .Lline_table_start0
+    240d     240d       b0     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.037.rcgu.o):(.debug_line)
+    240d     240d        0     1                 .Lline_table_start0
+    248e     248e        0     1                 .Lline_table_start1
+    24bd     24bd       43     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.100.rcgu.o):(.debug_line)
+    24bd     24bd        0     1                 .Lline_table_start0
+    2500     2500       43     1         /home/kenta/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/riscv32i-unknown-none-elf/lib/libcompiler_builtins-500e818cccd01e7d.rlib(compiler_builtins-500e818cccd01e7d.compiler_builtins.a8e638c0d00f6350-cgu.102.rcgu.o):(.debug_line)
+    2500     2500        0     1                 .Lline_table_start0
+       0        0     9e50     4 .symtab
+       0        0     9e50     4         <internal>:(.symtab)
+       0        0       de     1 .shstrtab
+       0        0       de     1         <internal>:(.shstrtab)
+       0        0      5c7     1 .strtab
+       0        0      5c7     1         <internal>:(.strtab)
