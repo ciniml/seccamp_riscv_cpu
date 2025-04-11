@@ -7,7 +7,8 @@ ThisBuild / organization     := "%ORGANIZATION%"
 lazy val commonSettings = Seq (
   libraryDependencies ++= Seq(
     "org.chipsalliance" %% "chisel" % "6.2.0",
-    "org.scalatest" %% "scalatest" % "3.2.16" % "test"
+    "org.scalatest" %% "scalatest" % "3.2.16" % "test",
+    "edu.berkeley.cs" %% "chiseltest" % "6.0.0"
   ),
   scalacOptions ++= Seq(
     "-language:reflectiveCalls",

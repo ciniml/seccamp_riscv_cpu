@@ -24,7 +24,7 @@ SRCS := $(wildcard src/*.sv) $(wildcard src/$(TARGET)/*.cst) $(wildcard src/$(TA
 PMOD_PORT_OFFSET ?= 0
 PMOD_TARGETS := tangnano9k_pmod
 
-PMOD_MODULES := pmod_ethernet_w_adapter
+PMOD_MODULES := pmod_ethernet_w_adapter pmod_msmp
 
 # Check if the target contains PMOD ports
 ifneq (,$(filter $(TARGET),$(PMOD_TARGETS)))

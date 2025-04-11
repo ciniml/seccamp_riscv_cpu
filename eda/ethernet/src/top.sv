@@ -117,6 +117,7 @@ module top (
   logic [31:0] io_switchIn;
   logic [7:0]  io_matrixColumnOut;
   logic [7:0]  io_matrixRowOut;
+  logic [31:0] io_dviDigitsOut;
   logic io_probeOut;
   
   always_comb begin
@@ -137,8 +138,8 @@ module top (
     uart_tx     <= io_uartTx_0;
     io_uartRx_0 <= uart_rx;
 
-    msmp_tx     <= ~io_uartTx_1;// Invert MSMP TX signal
-    io_uartRx_1 <= ~msmp_rx;    // Invert MSMP RX signal
+    msmp_tx     <= io_uartTx_1;// MSMP TX signal
+    io_uartRx_1 <= msmp_rx;    // MSMP RX signal
 
     probe_out <= io_probeOut;
   end

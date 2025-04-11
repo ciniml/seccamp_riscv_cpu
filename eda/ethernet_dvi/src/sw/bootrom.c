@@ -352,9 +352,24 @@ static bool process_ethernet(const uint8_t* tx_data, size_t tx_data_len)
                                     uart_tx_string(REG_UART, "SET CLOCK! ");
                                     uint16_t length = udp[4] << 8 | udp[5];
                                     uint8_t* payload = udp + 8;
-                                    uint32_t last_counter = *REG_COUNTER;
-                                    if( length >= 4 ) {
+                                    if( length >= 8 + 4 ) {
                                         *REG_GPIO_DIGITS = payload[0] << 24 | payload[1] << 16 | payload[2] << 8 | payload[3];
+                                    }
+                                }
+                                if( destination_port == 10001 ) {
+                                    uart_tx_string(REG_UART, "MSMP TX! ");
+                                    uint16_t length = udp[4] << 8 | udp[5];
+                                    uint8_t* payload = udp + 8;
+                                    uint32_t last_counter = *REG_COUNTER;
+                                    if( length >= 8 ) { // Subtract UDP header length
+                                        length -= 8;
+                                    }
+                                    while(length--) {
+                                        while((*REG_COUNTER - last_counter) < FREQ_HZ / 1000 * 50);
+                                        last_counter = *REG_COUNTER;
+                                        if( uart_tx_ready(REG_MSMP) ) {
+                                            uart_tx_byte(REG_MSMP, *payload++);
+                                        }
                                     }
                                 }
                             }
@@ -502,8 +517,22 @@ void __attribute__((noreturn)) main(void)
                     const uint8_t length = msmp_rx_buffer[1] & 0x3f;
                     if( msmp_bytes_received == length + 2 ) {
                         if( (msmp_rx_buffer[0] >> 4) == MSMP_MY_ADDRESS ) {
-                            uart_tx_string(REG_UART, "UDP ");
-                            msmp_rx_state = MSMP_RX_STATE_PENDING_UDP;
+                            uint8_t msmp_service_id = msmp_rx_buffer[2];
+                            if( msmp_service_id == 1 ) {
+                                uart_tx_string(REG_UART, "UDP ");
+                                msmp_rx_state = MSMP_RX_STATE_PENDING_UDP;
+                            } else if( msmp_service_id == 2 && length == 1 + 6 ) {
+                                const uint8_t* digits = msmp_rx_buffer + 3;
+                                uart_tx_string(REG_UART, "TIME ");
+                                *REG_GPIO_DIGITS = (digits[5] & 0x0f) << 28 | 
+                                                   (digits[4] & 0x0f) << 24 |
+                                                   (0x0a) << 20 | // :
+                                                   (digits[3] & 0x0f) << 16 |
+                                                   (digits[2] & 0x0f) << 12 |
+                                                   (0x0a) << 8 | // :
+                                                   (digits[1] & 0x0f) << 4 |
+                                                   (digits[0] & 0x0f) << 0;
+                            }
                         } else {
                             uart_tx_string(REG_UART, "FWD ");
                             msmp_rx_state = MSMP_RX_STATE_FORWARDING;

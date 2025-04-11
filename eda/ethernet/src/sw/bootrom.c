@@ -325,6 +325,9 @@ static bool process_ethernet(const uint8_t* tx_data, size_t tx_data_len)
                                     uint16_t length = udp[4] << 8 | udp[5];
                                     uint8_t* payload = udp + 8;
                                     uint32_t last_counter = *REG_COUNTER;
+                                    if( length >= 8 ) { // Subtract UDP header length
+                                        length -= 8;
+                                    }
                                     while(length--) {
                                         while((*REG_COUNTER - last_counter) < FREQ_HZ / 1000 * 50);
                                         last_counter = *REG_COUNTER;

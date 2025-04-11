@@ -35,6 +35,10 @@ module top (
   input  wire  uart_rx,
   output logic uart_tx,
 
+  // MSMP
+  input  wire  msmp_rx,
+  output logic msmp_tx,
+  
   // RMII PHY interface
   input  wire        rmii_txclk,
   input  wire  [1:0] rmii_rxd,
@@ -129,7 +133,7 @@ module top (
   logic io_uartTx_0;
   logic io_uartRx_0;
   logic io_uartTx_1;
-  logic io_uartRx_1 = 1'b1;
+  logic io_uartRx_1;
   logic io_segmentOut_outputEnable;
   logic io_segmentOut_shiftClock;
   logic io_segmentOut_latch;
@@ -162,6 +166,9 @@ module top (
 
     uart_tx     <= io_uartTx_0;
     io_uartRx_0 <= uart_rx;
+
+    msmp_tx     <= io_uartTx_1;// MSMP TX signal
+    io_uartRx_1 <= msmp_rx;    // MSMP RX signal
 
     probe_out <= io_probeOut;
   end

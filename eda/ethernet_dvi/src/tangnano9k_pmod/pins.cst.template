@@ -32,6 +32,9 @@ IO_LOC  "uart_tx" 17;
 IO_PORT "uart_rx" IO_TYPE=LVCMOS33;
 IO_PORT "uart_tx" IO_TYPE=LVCMOS33;
 
+IO_PORT "msmp_rx" IO_TYPE=LVCMOS33;
+IO_PORT "msmp_tx" IO_TYPE=LVCMOS33;
+
 // embedded logic probe output
 IO_LOC  "probe_out" 32
 IO_PORT "probe_out" IO_TYPE=LVCMOS33;
